@@ -1,0 +1,1 @@
+Improve auto-select behavior when the desired tab creation is newBackgroundTab or newForegroundTab. This will require the tab where the alias is selected to be refreshed/duplicated, I think, which isn't ideal if you have a website that performs a login on refresh (such as the Azure Portal).

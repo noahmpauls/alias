@@ -1,0 +1,31 @@
+{
+  "manifest_version": 3,
+  "name": "Alias",
+  "version": "0.0.0",
+  "description": "Browser extension for creating omnibox shortcuts.",
+
+  "omnibox": {
+    "keyword": "!"
+  },
+
+  "permissions": [
+    "alarms",
+    "storage",
+    "webNavigation"
+  ],
+  
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  
+  "background": {
+    "service_worker": "dist/scripts/background.js",
+    "scripts": ["dist/scripts/background.js"]
+  },
+
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "alias@noahpauls.com"
+    }
+  }
+}
