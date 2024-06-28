@@ -1,1 +1,0 @@
-Make aliases configurable by user, stored in local storage.

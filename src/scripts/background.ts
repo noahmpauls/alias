@@ -1,71 +1,31 @@
+import type { Alias } from "@alias/alias";
 import { browser } from "@alias/browser/index";
-import type { Omnibox } from "webextension-polyfill";
+import { AliasData } from "@alias/data/AliasData";
+import { EXAMPLE_ALIASES } from "@alias/data/sampleData";
+import { BrowserStorage } from "@alias/storage";
+import type Browser from "webextension-polyfill";
 
-type Alias = {
-  command: string,
-  url: string,
-  description: string,
+type Disposition = Browser.Omnibox.OnInputEnteredDisposition;
+
+const aliasData = new AliasData(BrowserStorage.local());
+aliasData.set(EXAMPLE_ALIASES);
+
+const getAliasMatch = (aliases: Map<string, Alias>, text: string): Alias | undefined => {
+  return aliases.get(text);
 }
 
-const ALIASES: Map<string, Alias> = new Map([
-  {
-    command: "arch",
-    url: "https://archlinux.org",
-    description: "Arch Linux",
-  },
-  {
-    command: "git",
-    url: "https://github.com/",
-    description: "GitHub",
-  },
-  {
-    command: "git alias",
-    url: "https://github.com/noahmpauls/alias",
-    description: "GitHub",
-  },
-  {
-    command: "git bouncer",
-    url: "https://github.com/noahmpauls/bouncer",
-    description: "GitHub",
-  },
-  {
-    command: "hn",
-    url: "https://news.ycombinator.com",
-    description: "HackerNews",
-  },
-  {
-    command: "mail",
-    url: "https://app.fastmail.com",
-    description: "Email"
-  },
-  {
-    command: "mdn",
-    url: "https://developer.mozilla.org",
-    description: "MDN",
-  },
-  {
-    command: "wiki",
-    url: "https://en.wikipedia.org",
-    description: "Wikipedia",
-  },
-].map(a => [a.command, a]));
-
-const getAliasMatch = (text: string): Alias | undefined => {
-  return ALIASES.get(text);
-}
-
-const getAliasCompletions = (text: string): Alias[] => {
-  return [...ALIASES.entries()]
-    .filter(([ command, _]) => command.startsWith(text))
+const getAliasCompletions = (aliases: Map<string, Alias>, text: string): Alias[] => {
+  return [...aliases.entries()]
+    .filter(([ code, _]) => code.startsWith(text))
     .map(([_, alias]) => alias);
 }
 
-const getBestAlias = (text: string): Alias | undefined => {
-  const match = getAliasMatch(text);
+const getBestAlias = (aliases: Map<string, Alias>, text: string): Alias | undefined => {
+  const match = getAliasMatch(aliases, text);
   if (match !== undefined) {
     return match;
   }
-  const completions = getAliasCompletions(text);
+  const completions = getAliasCompletions(aliases, text);
   if (completions.length === 1) {
     return completions[0];
   }
@@ -95,7 +55,7 @@ const navigateToDuplicateTab = async (url: string): Promise<void> => {
   browser.tabs.remove(oldId);
 }
 
-const navigate = (alias: Alias, disposition: Omnibox.OnInputEnteredDisposition, autoselected: boolean = false) => {
+const navigate = (alias: Alias, disposition: Disposition, autoselected: boolean = false) => {
   const { url } = alias;
   switch (disposition) {
     // click suggestion
@@ -118,6 +78,73 @@ const navigate = (alias: Alias, disposition: Omnibox.OnInputEnteredDisposition, 
   }
 }
 
+const manageAliases = async (command: string) => {
+  if (command.startsWith("set ")) {
+    const alias = parseAlias(command.substring("set ".length));
+    if (alias === undefined) {
+      return;
+    }
+    console.log(`creating alias: ${alias.code}, ${alias.url}, ${alias.description}`);
+    await setAlias(alias);
+    return;
+  }
+  if (command.startsWith("del ")) {
+    const code = parseCode(command.substring("del ".length));
+    if (code === undefined) {
+      return;
+    }
+    console.log(`found alias to remove: ${code}`);
+    await deleteAlias(code);
+    return;
+  }
+}
+
+const parseAlias = (params: string): Alias | undefined => {
+  const code = parseString(params);
+  const url = parseString(params.substring(`"${code ?? ""}" `.length));
+  const description = parseString(params.substring(`"${code}" "${url}" `.length));
+  if (code === undefined || url === undefined || description === undefined) {
+    return undefined;
+  }
+  return { code, url, description };
+}
+
+const parseCode = (params: string): string | undefined => {
+  return parseString(params);
+}
+
+const parseString = (text: string): string | undefined => {
+  const startQuote = text.indexOf("\"");
+  if (startQuote === -1) {
+    return undefined;
+  }
+  const endQuote = text.indexOf("\"", startQuote + 1);
+  if (endQuote === -1) {
+    return undefined;
+  }
+  return text.substring(startQuote + 1, endQuote);
+}
+
+const setAlias = async (alias: Alias) => {
+  const aliases = await aliasData.get();
+  const existingIndex = aliases.findIndex(a => a.code === alias.code);
+  if (existingIndex !== -1) {
+    aliases.splice(existingIndex, 1);
+  }
+  aliases.push(alias);
+  await aliasData.set(aliases);
+}
+
+const deleteAlias = async (code: string) => {
+  const aliases = await aliasData.get();
+  const removeIndex = aliases.findIndex(a => a.code === code);
+  if (removeIndex === -1) {
+    return;
+  }
+  aliases.splice(removeIndex, 1);
+  await aliasData.set(aliases);
+}
+
 // Enable automatic navigation to alias target when user input becomes
 // unambiguous.
 const AUTOSELECT_ENABLED: boolean = false;
@@ -125,26 +152,31 @@ const AUTOSELECT_ENABLED: boolean = false;
 // supported option currently; on Firefox, newForegroundTab will cause the
 // source tab to continuously spawn new tabs every time you navigate back
 // to it. newBackgroundTab doesn't clear the omnibox once an alias is selected.
-const AUTOSELECT_BEHAVIOR: Omnibox.OnInputEnteredDisposition = "currentTab";
+const AUTOSELECT_BEHAVIOR: Disposition = "currentTab";
 
-browser.omnibox.onInputChanged.addListener((text, suggest) => {
-  const completions = getAliasCompletions(text);
+browser.omnibox.onInputChanged.addListener(async (text, suggest) => {
+  const aliases = new Map((await aliasData.get()).map(a => [a.code, a]));
+  const completions = getAliasCompletions(aliases, text);
   if (AUTOSELECT_ENABLED && completions.length === 1) {
     const alias = completions[0];
-    console.log(`found an unambiguous alias: ${alias.command} (${alias.url})`)
+    console.log(`found an unambiguous alias: ${alias.code} (${alias.url})`)
     navigate(alias, AUTOSELECT_BEHAVIOR, true);
     return;
   }
   suggest(completions.map(a => ({
-    content: a.command,
+    content: a.code,
     description: a.description,
   })));
 });
 
-browser.omnibox.onInputEntered.addListener((text, disposition) => {
-  const alias = getBestAlias(text);
+browser.omnibox.onInputEntered.addListener(async (text, disposition) => {
+  if (text.startsWith("alias ")) {
+    await manageAliases(text.substring("alias ".length));
+  }
+  const aliases = new Map((await aliasData.get()).map(a => [a.code, a]));
+  const alias = getBestAlias(aliases, text);
   if (alias !== undefined) {
-    console.log(`found an unambiguous alias: ${alias.command} (${alias.url})`)
+    console.log(`found an unambiguous alias: ${alias.code} (${alias.url})`)
     navigate(alias, disposition);
   }
 });
