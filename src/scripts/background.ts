@@ -7,7 +7,7 @@ type Alias = {
   description: string,
 }
 
-const ALIASES: Alias[] = [
+const ALIASES: Map<string, Alias> = new Map([
   {
     command: "arch",
     url: "https://archlinux.org",
@@ -16,6 +16,16 @@ const ALIASES: Alias[] = [
   {
     command: "git",
     url: "https://github.com/",
+    description: "GitHub",
+  },
+  {
+    command: "git alias",
+    url: "https://github.com/noahmpauls/alias",
+    description: "GitHub",
+  },
+  {
+    command: "git bouncer",
+    url: "https://github.com/noahmpauls/bouncer",
     description: "GitHub",
   },
   {
@@ -38,11 +48,28 @@ const ALIASES: Alias[] = [
     url: "https://en.wikipedia.org",
     description: "Wikipedia",
   },
-];
+].map(a => [a.command, a]));
 
+const getAliasMatch = (text: string): Alias | undefined => {
+  return ALIASES.get(text);
+}
 
-const getAliases = (filter: string): Alias[] => {
-  return ALIASES.filter(({ command }) => command.startsWith(filter));
+const getAliasCompletions = (text: string): Alias[] => {
+  return [...ALIASES.entries()]
+    .filter(([ command, _]) => command.startsWith(text))
+    .map(([_, alias]) => alias);
+}
+
+const getBestAlias = (text: string): Alias | undefined => {
+  const match = getAliasMatch(text);
+  if (match !== undefined) {
+    return match;
+  }
+  const completions = getAliasCompletions(text);
+  if (completions.length === 1) {
+    return completions[0];
+  }
+  return undefined;
 }
 
 const getCurrentTabId = async (): Promise<number | undefined> => {
@@ -101,24 +128,23 @@ const AUTOSELECT_ENABLED: boolean = false;
 const AUTOSELECT_BEHAVIOR: Omnibox.OnInputEnteredDisposition = "currentTab";
 
 browser.omnibox.onInputChanged.addListener((text, suggest) => {
-  console.log(`input changed: ${text}`);
-  const aliases = getAliases(text);
-  if (AUTOSELECT_ENABLED && aliases.length === 1) {
-    console.log(`got an alias: ${aliases[0].description}`);
-    navigate(aliases[0], AUTOSELECT_BEHAVIOR, true);
+  const completions = getAliasCompletions(text);
+  if (AUTOSELECT_ENABLED && completions.length === 1) {
+    const alias = completions[0];
+    console.log(`found an unambiguous alias: ${alias.command} (${alias.url})`)
+    navigate(alias, AUTOSELECT_BEHAVIOR, true);
     return;
   }
-  suggest(aliases.map(a => ({
+  suggest(completions.map(a => ({
     content: a.command,
     description: a.description,
   })));
 });
 
 browser.omnibox.onInputEntered.addListener((text, disposition) => {
-  console.log(`alias not recognized: ${text}, ${disposition}`);
-  const aliases = getAliases(text);
-  if (aliases.length === 1) {
-    navigate(aliases[0], disposition);
-    return;
+  const alias = getBestAlias(text);
+  if (alias !== undefined) {
+    console.log(`found an unambiguous alias: ${alias.command} (${alias.url})`)
+    navigate(alias, disposition);
   }
 });
