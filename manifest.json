@@ -17,11 +17,26 @@
   "host_permissions": [
     "<all_urls>"
   ],
+
+  "action": {
+    "default_title": "Alias",
+    "default_icon": "assets/code.svg",
+    "default_popup": "ui/popup.html"
+  },
   
   "background": {
     "service_worker": "dist/scripts/background.js",
     "scripts": ["dist/scripts/background.js"]
   },
+
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "dist/ui/*"
+      ],
+      "matches": ["<all_urls>"]
+    }
+  ],
 
   "browser_specific_settings": {
     "gecko": {

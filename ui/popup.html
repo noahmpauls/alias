@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="../dist/ui/scripts/popup.js" defer></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Alias</h1>
+  </header>
+  <main>
+    <div class="alias">
+      <div class="input-container">
+        <div>
+          <label>Name:</label>
+          <input type="text">
+        </div>
+        <div>
+          <label>Alias:</label>
+          <input type="text">
+        </div>
+        <div>
+          <label>Link:</label>
+          <div>
+            <input type="text" id="new-link" value="https://">
+            <button id="current-page">Current Page</button>
+          </div>
+        </div>
+        <div>
+          <span></span>
+          <button>Create</button>
+        </div>
+      </div>
+    </div>
+    <hr>
+    <div>
+      <label for="search">Search:</label>
+      <input id="search" type="text" aria-label="search">
+    </div>
+    <ul id="aliases">
+      <li><i>You don't have any aliases yet. Try creating one!</i></li>
+    </ul>
+  </main>
+</body>
+</html>

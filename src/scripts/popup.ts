@@ -1,0 +1,120 @@
+import type { Alias } from "@alias/alias";
+import { browser } from "@alias/browser";
+import { AliasData } from "@alias/data/AliasData";
+import { BrowserStorage } from "@alias/storage";
+
+
+const currentPageButton = document.querySelector("#current-page") as HTMLButtonElement;
+const newAliasLinkInput = document.querySelector("#new-link") as HTMLInputElement;
+
+currentPageButton.addEventListener("click", () => {
+  browser.tabs.query({ currentWindow: true, active: true })
+    .then(tabs => {
+      newAliasLinkInput.value = tabs[0].url ?? "";
+    });
+})
+
+
+const aliasData = new AliasData(BrowserStorage.local());
+
+const aliasList = document.querySelector("#aliases");
+
+const search = document.querySelector("#search") as HTMLInputElement;
+
+aliasData.get()
+  .then(aliases => {
+    aliasList!.innerHTML = "";
+    for (const alias of aliases) {
+      aliasList?.appendChild(makeAliasEntry(alias));
+    }
+  })
+
+search.addEventListener("input", () => {
+  filterAliases(search.value);
+})
+
+const filterAliases = (filter: string = "") => {
+  for (const aliasChild of aliasList?.children ?? []) {
+    const aliasElement = aliasChild as HTMLElement;
+    const dataAlias = aliasElement.dataset.alias;
+    aliasElement.style.display = dataAlias?.startsWith(filter)
+      ? "block"
+      : "none";
+  }
+}
+
+const makeAliasEntry = (alias: Alias): HTMLElement => {
+  const nameInput = document.createElement("input");
+  nameInput.id = `name-${alias.code.replace(" ", "-")}`;
+  nameInput.type = "text";
+  nameInput.value = alias.description;
+  nameInput.ariaLabel = "Name";
+
+  const title = document.createElement("h2");
+  title.appendChild(nameInput);
+
+  const searchInput = document.createElement("input");
+  searchInput.id = "search"
+  searchInput.type = "text";
+
+  const searchLabel = document.createElement("label");
+  searchLabel.htmlFor = "searc";
+  searchLabel.innerText = "Search: ";
+
+  const searchClearButton = document.createElement("button");
+  searchClearButton.innerText = "Clear";
+
+  const search = document.createElement("div");
+  search.appendChild(searchLabel);
+  search.appendChild(searchInput);
+  search.appendChild(searchClearButton);
+
+  const codeInput = document.createElement("input");
+  codeInput.id = `alias-${alias.code.replace(" ", "-")}`;
+  codeInput.type = "text";
+  codeInput.value = alias.code;
+
+  const codeLabel = document.createElement("label");
+  codeLabel.htmlFor = `alias-${alias.code.replace(" ", "-")}`;
+  codeLabel.innerText = "Alias:";
+
+  const code = document.createElement("div");
+  code.appendChild(codeLabel);
+  code.appendChild(codeInput);
+
+  const linkInput = document.createElement("input");
+  linkInput.id = `link-${alias.code.replace(" ", "-")}`;
+  linkInput.type = "text";
+  linkInput.value = alias.url;
+
+  const linkLabel = document.createElement("label");
+  linkLabel.htmlFor = `link-${alias.code.replace(" ", "-")}`;
+  linkLabel.innerText = "Link:";
+
+  const link = document.createElement("div");
+  link.appendChild(linkLabel);
+  link.appendChild(linkInput);
+
+  const inputs = document.createElement("div");
+  inputs.classList.add("input-container");
+  inputs.appendChild(code);
+  inputs.appendChild(link);
+
+  const deleteButton = document.createElement("button");
+  deleteButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>`
+  deleteButton.classList.add("delete");
+
+  const header = document.createElement("header");
+  header.appendChild(title);
+  header.appendChild(deleteButton);
+
+  const footer = document.createElement("footer");
+
+  const container = document.createElement("li");
+  container.classList.add("alias");
+  container.appendChild(header);
+  container.appendChild(inputs);
+  container.appendChild(footer);
+  container.dataset.alias = alias.code;
+  return container;
+}

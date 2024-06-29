@@ -27,6 +27,11 @@ export const EXAMPLE_ALIASES: Alias[] = [
     description: "HackerNews",
   },
   {
+    code: "test",
+    url: "https://thisdomain.isfartoolong.andsomeoneshould.reallthinkabout.maybeshorteningitdown.com/anddontgetme/startedon/thepaths",
+    description: "HackerNews",
+  },
+  {
     code: "mail",
     url: "https://app.fastmail.com",
     description: "Email"

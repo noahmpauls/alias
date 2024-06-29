@@ -23,8 +23,8 @@ const extEntry = (file) => ({
 });
 
 const uiEntry = (file) => ({
-  in: `src/ui/_assets/scripts/${file}.ts`,
-  out: `ui/assets/scripts/${file}`,
+  in: `src/scripts/${file}.ts`,
+  out: `ui/scripts/${file}`,
 });
 
 const extFiles = [
@@ -32,7 +32,7 @@ const extFiles = [
 ].map(extEntry);
 
 const uiFiles = [
-  // nothing here yet...
+  "popup"
 ].map(uiEntry);
 
 const files = [
