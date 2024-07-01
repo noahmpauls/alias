@@ -36,10 +36,10 @@ const search = document.querySelector("#search") as HTMLInputElement;
 const refreshAliasList = () => {
   aliasData.fetch()
     .then(aliases => {
-      aliasList!.innerHTML = "";
-      for (const alias of aliases.get()) {
-        aliasList?.appendChild(makeAliasEntry(alias));
-      }
+      const newNodes = aliases.get().map(makeAliasEntry);
+      newNodes.length > 0
+        ? aliasList?.replaceChildren(...newNodes)
+        : aliasList?.replaceChildren(makeNoAliases());
     })
     .then(() => {
       filterAliases(search.value);
@@ -47,7 +47,6 @@ const refreshAliasList = () => {
 }
 
 refreshAliasList();
-
 
 search.addEventListener("input", () => {
   filterAliases(search.value);
@@ -57,10 +56,21 @@ const filterAliases = (filter: string = "") => {
   for (const aliasChild of aliasList?.children ?? []) {
     const aliasElement = aliasChild as HTMLElement;
     const dataAlias = aliasElement.dataset.alias;
+    if (dataAlias === undefined) {
+      return;
+    }
     aliasElement.style.display = dataAlias?.startsWith(filter)
       ? "block"
       : "none";
   }
+}
+
+const makeNoAliases = () : HTMLElement => {
+  const text = document.createElement("i");
+  text.innerText = "You don't have any aliases yet. Try creating one!";
+  const container = document.createElement("li");
+  container.appendChild(text);
+  return container;
 }
 
 const makeAliasEntry = (alias: Alias): HTMLElement => {
