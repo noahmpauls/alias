@@ -12,27 +12,27 @@
   </header>
   <main>
     <div class="alias">
-      <div class="input-container">
+      <form id="new-alias" class="input-container">
         <div>
-          <label>Name:</label>
-          <input type="text">
+          <label for="new-alais-name">Name:</label>
+          <input name="name" id="new-alias-name" type="text">
         </div>
         <div>
-          <label>Alias:</label>
-          <input type="text">
+          <label for="new-alias-code">Alias:</label>
+          <input name="code" id="new-alias-code" type="text">
         </div>
         <div>
-          <label>Link:</label>
+          <label for="new-alias-link">Link:</label>
           <div>
-            <input type="text" id="new-link" value="https://">
+            <input name="link" id="new-alias-link" type="text" value="https://">
             <button id="current-page">Current Page</button>
           </div>
         </div>
         <div>
           <span></span>
-          <button>Create</button>
+          <button type="submit">Create</button>
         </div>
-      </div>
+      </form>
     </div>
     <hr>
     <div>

@@ -1,7 +1,6 @@
 import type { Alias } from "@alias/alias";
 import { browser } from "@alias/browser";
 import { AliasContext } from "@alias/data/AliasContext";
-import { BrowserStorage } from "@alias/storage";
 
 
 const currentPageButton = document.querySelector("#current-page") as HTMLButtonElement;
@@ -14,6 +13,19 @@ currentPageButton.addEventListener("click", () => {
     });
 })
 
+const newAliasForm = document.querySelector("#new-alias") as HTMLFormElement;
+newAliasForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const data = new FormData(newAliasForm);
+  const newAlias: Alias = {
+    code: data.get("code")?.toString() ?? "",
+    link: data.get("link")?.toString() ?? "",
+    name: data.get("name")?.toString() ?? "",
+  }
+  aliasData.fetch()
+    .then(aliases => aliases.create(newAlias))
+    .then(() => refreshAliasList());
+});
 
 const aliasData = AliasContext.browser();
 
@@ -21,13 +33,21 @@ const aliasList = document.querySelector("#aliases");
 
 const search = document.querySelector("#search") as HTMLInputElement;
 
-aliasData.fetch()
-  .then(aliases => {
-    aliasList!.innerHTML = "";
-    for (const alias of aliases.get()) {
-      aliasList?.appendChild(makeAliasEntry(alias));
-    }
-  })
+const refreshAliasList = () => {
+  aliasData.fetch()
+    .then(aliases => {
+      aliasList!.innerHTML = "";
+      for (const alias of aliases.get()) {
+        aliasList?.appendChild(makeAliasEntry(alias));
+      }
+    })
+    .then(() => {
+      filterAliases(search.value);
+    })
+}
+
+refreshAliasList();
+
 
 search.addEventListener("input", () => {
   filterAliases(search.value);
