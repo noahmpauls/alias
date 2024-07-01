@@ -3,48 +3,48 @@ import type { Alias } from "@alias/alias";
 export const EXAMPLE_ALIASES: Alias[] = [
   {
     code: "arch",
-    url: "https://archlinux.org",
-    description: "Arch Linux",
+    link: "https://archlinux.org",
+    name: "Arch Linux",
   },
   {
     code: "git",
-    url: "https://github.com/",
-    description: "GitHub",
+    link: "https://github.com/",
+    name: "GitHub",
   },
   {
     code: "git alias",
-    url: "https://github.com/noahmpauls/alias",
-    description: "GitHub",
+    link: "https://github.com/noahmpauls/alias",
+    name: "GitHub",
   },
   {
     code: "git bouncer",
-    url: "https://github.com/noahmpauls/bouncer",
-    description: "GitHub",
+    link: "https://github.com/noahmpauls/bouncer",
+    name: "GitHub",
   },
   {
     code: "hn",
-    url: "https://news.ycombinator.com",
-    description: "HackerNews",
+    link: "https://news.ycombinator.com",
+    name: "HackerNews",
   },
   {
     code: "test",
-    url: "https://thisdomain.isfartoolong.andsomeoneshould.reallthinkabout.maybeshorteningitdown.com/anddontgetme/startedon/thepaths",
-    description: "HackerNews",
+    link: "https://thisdomain.isfartoolong.andsomeoneshould.reallthinkabout.maybeshorteningitdown.com/anddontgetme/startedon/thepaths",
+    name: "HackerNews",
   },
   {
     code: "mail",
-    url: "https://app.fastmail.com",
-    description: "Email"
+    link: "https://app.fastmail.com",
+    name: "Email"
   },
   {
     code: "mdn",
-    url: "https://developer.mozilla.org",
-    description: "MDN",
+    link: "https://developer.mozilla.org",
+    name: "MDN",
   },
   {
     code: "wiki",
-    url: "https://en.wikipedia.org",
-    description: "Wikipedia",
+    link: "https://en.wikipedia.org",
+    name: "Wikipedia",
   },
 ]
 

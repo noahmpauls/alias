@@ -1,5 +1,5 @@
 export type Alias = {
+  name: string,
   code: string,
-  url: string,
-  description: string,
+  link: string,
 }

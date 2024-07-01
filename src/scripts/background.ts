@@ -1,14 +1,19 @@
 import type { Alias } from "@alias/alias";
 import { browser } from "@alias/browser/index";
-import { AliasData } from "@alias/data/AliasData";
+import { AliasContext } from "@alias/data/AliasContext";
 import { EXAMPLE_ALIASES } from "@alias/data/sampleData";
-import { BrowserStorage } from "@alias/storage";
 import type Browser from "webextension-polyfill";
 
 type Disposition = Browser.Omnibox.OnInputEnteredDisposition;
 
-const aliasData = new AliasData(BrowserStorage.local());
-aliasData.set(EXAMPLE_ALIASES);
+const aliasData = AliasContext.browser();
+
+aliasData.fetch().then(async aliases => {
+  for (const alias of EXAMPLE_ALIASES) {
+    aliases.create(alias);
+  }
+  await aliasData.commit();
+});
 
 const getAliasMatch = (aliases: Map<string, Alias>, text: string): Alias | undefined => {
   return aliases.get(text);
@@ -56,12 +61,12 @@ const navigateToDuplicateTab = async (url: string): Promise<void> => {
 }
 
 const navigate = (alias: Alias, disposition: Disposition, autoselected: boolean = false) => {
-  const { url } = alias;
+  const { link: url } = alias;
   switch (disposition) {
     // click suggestion
     case "currentTab": {
       autoselected
-        ? navigateToDuplicateTab(alias.url)
+        ? navigateToDuplicateTab(alias.link)
         : browser.tabs.update({ url });
       break;
     }
@@ -84,7 +89,7 @@ const manageAliases = async (command: string) => {
     if (alias === undefined) {
       return;
     }
-    console.log(`creating alias: ${alias.code}, ${alias.url}, ${alias.description}`);
+    console.log(`creating alias: ${alias.code}, ${alias.link}, ${alias.name}`);
     await setAlias(alias);
     return;
   }
@@ -101,12 +106,12 @@ const manageAliases = async (command: string) => {
 
 const parseAlias = (params: string): Alias | undefined => {
   const code = parseString(params);
-  const url = parseString(params.substring(`"${code ?? ""}" `.length));
-  const description = parseString(params.substring(`"${code}" "${url}" `.length));
-  if (code === undefined || url === undefined || description === undefined) {
+  const link = parseString(params.substring(`"${code ?? ""}" `.length));
+  const name = parseString(params.substring(`"${code}" "${link}" `.length));
+  if (code === undefined || link === undefined || name === undefined) {
     return undefined;
   }
-  return { code, url, description };
+  return { code, link, name };
 }
 
 const parseCode = (params: string): string | undefined => {
@@ -126,23 +131,25 @@ const parseString = (text: string): string | undefined => {
 }
 
 const setAlias = async (alias: Alias) => {
-  const aliases = await aliasData.get();
-  const existingIndex = aliases.findIndex(a => a.code === alias.code);
-  if (existingIndex !== -1) {
-    aliases.splice(existingIndex, 1);
+  const aliases = await aliasData.fetch();
+  const existingAlias = aliases.get(a => a.code === alias.code)[0];
+  if (existingAlias !== undefined) {
+    existingAlias.name = alias.name;
+    existingAlias.code = alias.code;
+    existingAlias.link = alias.link;
+  } else {
+    aliases.create(alias);
   }
-  aliases.push(alias);
-  await aliasData.set(aliases);
+  await aliasData.commit();
 }
 
 const deleteAlias = async (code: string) => {
-  const aliases = await aliasData.get();
-  const removeIndex = aliases.findIndex(a => a.code === code);
-  if (removeIndex === -1) {
-    return;
+  const aliases = await aliasData.fetch();
+  const existingAlias = aliases.get(a => a.code === code)[0];
+  if (existingAlias !== undefined) {
+    aliases.delete(existingAlias);
   }
-  aliases.splice(removeIndex, 1);
-  await aliasData.set(aliases);
+  await aliasData.commit();
 }
 
 // Enable automatic navigation to alias target when user input becomes
@@ -155,17 +162,17 @@ const AUTOSELECT_ENABLED: boolean = false;
 const AUTOSELECT_BEHAVIOR: Disposition = "currentTab";
 
 browser.omnibox.onInputChanged.addListener(async (text, suggest) => {
-  const aliases = new Map((await aliasData.get()).map(a => [a.code, a]));
+  const aliases = new Map((await aliasData.fetch()).get().map(a => [a.code, a]));
   const completions = getAliasCompletions(aliases, text);
   if (AUTOSELECT_ENABLED && completions.length === 1) {
     const alias = completions[0];
-    console.log(`found an unambiguous alias: ${alias.code} (${alias.url})`)
+    console.log(`found an unambiguous alias: ${alias.code} (${alias.link})`)
     navigate(alias, AUTOSELECT_BEHAVIOR, true);
     return;
   }
   suggest(completions.map(a => ({
     content: a.code,
-    description: a.description,
+    description: a.name,
   })));
 });
 
@@ -173,10 +180,10 @@ browser.omnibox.onInputEntered.addListener(async (text, disposition) => {
   if (text.startsWith("alias ")) {
     await manageAliases(text.substring("alias ".length));
   }
-  const aliases = new Map((await aliasData.get()).map(a => [a.code, a]));
+  const aliases = new Map((await aliasData.fetch()).get().map(a => [a.code, a]));
   const alias = getBestAlias(aliases, text);
   if (alias !== undefined) {
-    console.log(`found an unambiguous alias: ${alias.code} (${alias.url})`)
+    console.log(`found an unambiguous alias: ${alias.code} (${alias.link})`)
     navigate(alias, disposition);
   }
 });

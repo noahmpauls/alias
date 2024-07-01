@@ -1,6 +1,6 @@
 import type { Alias } from "@alias/alias";
 import { browser } from "@alias/browser";
-import { AliasData } from "@alias/data/AliasData";
+import { AliasContext } from "@alias/data/AliasContext";
 import { BrowserStorage } from "@alias/storage";
 
 
@@ -15,16 +15,16 @@ currentPageButton.addEventListener("click", () => {
 })
 
 
-const aliasData = new AliasData(BrowserStorage.local());
+const aliasData = AliasContext.browser();
 
 const aliasList = document.querySelector("#aliases");
 
 const search = document.querySelector("#search") as HTMLInputElement;
 
-aliasData.get()
+aliasData.fetch()
   .then(aliases => {
     aliasList!.innerHTML = "";
-    for (const alias of aliases) {
+    for (const alias of aliases.get()) {
       aliasList?.appendChild(makeAliasEntry(alias));
     }
   })
@@ -47,7 +47,7 @@ const makeAliasEntry = (alias: Alias): HTMLElement => {
   const nameInput = document.createElement("input");
   nameInput.id = `name-${alias.code.replace(" ", "-")}`;
   nameInput.type = "text";
-  nameInput.value = alias.description;
+  nameInput.value = alias.name;
   nameInput.ariaLabel = "Name";
 
   const title = document.createElement("h2");
@@ -85,7 +85,7 @@ const makeAliasEntry = (alias: Alias): HTMLElement => {
   const linkInput = document.createElement("input");
   linkInput.id = `link-${alias.code.replace(" ", "-")}`;
   linkInput.type = "text";
-  linkInput.value = alias.url;
+  linkInput.value = alias.link;
 
   const linkLabel = document.createElement("label");
   linkLabel.htmlFor = `link-${alias.code.replace(" ", "-")}`;
