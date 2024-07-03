@@ -11,29 +11,27 @@
     <h1>Alias</h1>
   </header>
   <main>
-    <div class="alias">
-      <form id="create-alias" class="input-container">
-        <div>
-          <label for="create-alias-name">Name:</label>
-          <input name="name" id="create-alias-name" type="text">
+    <form id="create-alias" class="input-container">
+      <div>
+        <label for="create-alias-name">Name:</label>
+        <input name="name" id="create-alias-name" type="text">
+      </div>
+      <div>
+        <label for="create-alias-code">Alias:</label>
+        <input name="code" id="create-alias-code" type="text">
+      </div>
+      <div>
+        <label for="create-alias-link">Link:</label>
+        <div class="grow-first">
+          <input name="link" id="create-alias-link" type="text" value="https://">
+          <button id="current-page" type="button">Current Page</button>
         </div>
-        <div>
-          <label for="create-alias-code">Alias:</label>
-          <input name="code" id="create-alias-code" type="text">
-        </div>
-        <div>
-          <label for="create-alias-link">Link:</label>
-          <div>
-            <input name="link" id="create-alias-link" type="text" value="https://">
-            <button id="current-page" type="button">Current Page</button>
-          </div>
-        </div>
-        <div>
-          <span></span>
-          <button type="submit">Create</button>
-        </div>
-      </form>
-    </div>
+      </div>
+      <div>
+        <span></span>
+        <button type="submit">Create</button>
+      </div>
+    </form>
     <hr>
     <div>
       <label for="search">Search:</label>

@@ -17,8 +17,10 @@ messenger.addReceiver(message => {
 
 messenger.send({ type: ClientMessageType.ALIASES_GET, });
 
-const currentPageButton = document.querySelector("#current-page") as HTMLButtonElement;
+const createAliasNameInput = document.querySelector("#create-alias-name") as HTMLInputElement;
+const createAliasCodeInput = document.querySelector("#create-alias-code") as HTMLInputElement;
 const createAliasLinkInput = document.querySelector("#create-alias-link") as HTMLInputElement;
+const currentPageButton = document.querySelector("#current-page") as HTMLButtonElement;
 
 currentPageButton.addEventListener("click", () => {
   browser.tabs.query({ currentWindow: true, active: true })
@@ -30,16 +32,18 @@ currentPageButton.addEventListener("click", () => {
 const createAliasForm = document.querySelector("#create-alias") as HTMLFormElement;
 createAliasForm.addEventListener("submit", async (event) => {
   event.preventDefault();
-  const data = new FormData(createAliasForm);
   const newAlias: AliasCreate = {
-    code: data.get("code")?.toString().trim() ?? "",
-    link: data.get("link")?.toString().trim() ?? "",
-    name: data.get("name")?.toString().trim() ?? "",
+    name: createAliasNameInput.value.trim(),
+    code: createAliasCodeInput.value.trim(),
+    link: createAliasLinkInput.value.trim(),
   }
   messenger.send({
     type: ClientMessageType.ALIAS_CREATE,
     alias: newAlias,
   });
+  createAliasNameInput.value = "";
+  createAliasCodeInput.value = "";
+  createAliasLinkInput.value = "https://";
 });
 
 
@@ -217,13 +221,14 @@ const makeAliasEntry = (alias: Alias): HTMLElement => {
   });
 
   const header = document.createElement("header");
+  header.classList.add("grow-first");
   header.appendChild(title);
   header.appendChild(deleteButton);
 
   const footer = document.createElement("footer");
 
   const container = document.createElement("li");
-  container.classList.add("alias");
+  container.classList.add("alias-list-entry");
   container.appendChild(header);
   container.appendChild(inputs);
   container.appendChild(footer);

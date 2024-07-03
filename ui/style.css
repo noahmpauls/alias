@@ -1,3 +1,10 @@
+:root {
+  --red: hsl(5deg, 70%, 50%);
+  --red-dark: hsl(5deg, 70%, 40%);
+
+  --gray: hsl(0deg, 0%, 70%);
+}
+
 *,
 *::before,
 *::after {
@@ -10,28 +17,117 @@ html {
   min-inline-size: 30rem;
 }
 
+h1 {
+  font-size: 1.5rem;
+}
+
+h2 {
+  font-size: 1.2rem;
+  margin: 0;
+
+  input {
+    font-family: sans-serif;
+    font-size: 1.2rem;
+    inline-size: 100%;
+  }
+}
+
+input {
+  border: 1px solid var(--gray);
+  border-radius: 0.2rem;
+  font-family: monospace;
+  font-size: 0.9rem;
+  font-weight: inherit;
+  padding-block: 0.2rem;
+  padding-inline: 0.4rem;
+}
+
+label {
+  text-align: end;
+}
+
+svg.icon {
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
+  vertical-align: -.25rem;
+}
+
+button.delete {
+  border: none;
+  margin: 0;
+  padding: 0;
+  background: none;
+  visibility: hidden;
+  border-radius: 0.2rem;
+  padding-inline: 0.5rem;
+
+  * {
+    color: var(--red);
+  }
+
+  &:hover,
+  &:focus {
+    background-color: var(--red);
+    * {
+      color: white;
+    }
+  }
+
+  &:active {
+    background-color: var(--red-dark);
+    transform: scale(0.95);
+    * {
+      transform: scale(0.95);
+    }
+  }
+}
+
 hr {
   margin-block: 2rem;
 }
 
-.alias {
+ul {
+  padding: 0;
+  list-style: none;
+
   > * + * {
-    margin-block-start: 0.5rem;
+    margin-block-start: 1rem;
   }
-  
-  label {
-    text-align: end;
+}
+
+.input-container {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  column-gap: 0.2rem;
+
+  > div {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: subgrid;
+    align-items: center;
+  }
+}
+
+#create-alias.input-container > * + * {
+  margin-block-start: 0.2rem;
+}
+
+.grow-first {
+  display: flex;
+  flex-direction: row;
+
+  > :first-child {
+    flex-grow: 1;
   }
 
-  input {
-    font-size: 1rem;
-    border: 1px solid transparent;
+  > * + * {
+    margin-inline-start: 0.2rem;
+  }
+}
 
-    &:hover,
-    &:focus {
-      border: 1px solid gray;
-      border-radius: 3px;
-    }
+.alias-list-entry {
+  > * + * {
+    margin-block-start: 0.2rem;
   }
 
   &:hover,
@@ -41,83 +137,11 @@ hr {
     }
   }
 
-  header {
-    display: flex;
-    flex-direction: row;
-
-    h2 {
-      flex: 1 1 0;
-
-      input {
-        inline-size: 100%;
-        font-size: 1.2rem;
-        font-weight: bold;
-      }
-    }
-
-    > * + * {
-      margin-inline-start: 0.2rem;
-    }
-  }
-
-  button.delete {
-    border: none;
-    margin: 0;
-    padding: 0;
-    background: none;
-    visibility: hidden;
-    
-
-    svg {
-      inline-size: 1.25rem;
-      block-size: 1.25rem;
-      vertical-align: -.25rem;
-      margin-inline: 0.5rem;
-
-    }
-
-    &:hover,
-    &:focus {
-      svg {
-        color: hsl(5deg, 70%, 50%);
-      }
-    }
+  input:not(:hover, :focus) {
+    border: 1px solid transparent;
   }
 
   .input-container {
-    margin-inline-start: 0.5rem;
-    display: grid;
-    grid-template-columns: max-content 1fr;
-    column-gap: 0.2rem;
-
-    > * {
-      grid-column: 1 / -1;
-      display: grid;
-      grid-template-columns: subgrid;
-      align-items: center;
-    }
-
-    > * + * {
-      margin-block-start: 0.2rem;
-    }
-
-  }
-}
-
-h1 {
-  font-size: 1.5rem;
-}
-
-h2 {
-  font-size: 1.2rem;
-  margin: 0;
-}
-
-ul {
-  padding: 0;
-  list-style: none;
-
-  > * + * {
-    margin-block-start: 2rem;
+    padding-inline-start: 0.5rem;
   }
 }
