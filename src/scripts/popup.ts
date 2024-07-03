@@ -18,23 +18,23 @@ messenger.addReceiver(message => {
 messenger.send({ type: ClientMessageType.ALIASES_GET, });
 
 const currentPageButton = document.querySelector("#current-page") as HTMLButtonElement;
-const newAliasLinkInput = document.querySelector("#new-alias-link") as HTMLInputElement;
+const createAliasLinkInput = document.querySelector("#create-alias-link") as HTMLInputElement;
 
 currentPageButton.addEventListener("click", () => {
   browser.tabs.query({ currentWindow: true, active: true })
     .then(tabs => {
-      newAliasLinkInput.value = tabs[0].url ?? "";
+      createAliasLinkInput.value = tabs[0].url ?? "";
     });
 })
 
-const newAliasForm = document.querySelector("#new-alias") as HTMLFormElement;
-newAliasForm.addEventListener("submit", async (event) => {
+const createAliasForm = document.querySelector("#create-alias") as HTMLFormElement;
+createAliasForm.addEventListener("submit", async (event) => {
   event.preventDefault();
-  const data = new FormData(newAliasForm);
+  const data = new FormData(createAliasForm);
   const newAlias: AliasCreate = {
-    code: data.get("code")?.toString() ?? "",
-    link: data.get("link")?.toString() ?? "",
-    name: data.get("name")?.toString() ?? "",
+    code: data.get("code")?.toString().trim() ?? "",
+    link: data.get("link")?.toString().trim() ?? "",
+    name: data.get("name")?.toString().trim() ?? "",
   }
   messenger.send({
     type: ClientMessageType.ALIAS_CREATE,
