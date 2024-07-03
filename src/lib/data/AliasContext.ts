@@ -3,6 +3,7 @@ import { BrowserStorage, type IStorage } from "@alias/storage";
 import type { IContext, IContextSet } from "./types";
 import { SyncedCache } from "@alias/cache";
 import { ArrayContextSet } from "./ContextSet";
+import { EXAMPLE_ALIASES } from "./sampleData";
 
 const ALIAS_DATA_KEY = "aliases"
 
@@ -13,7 +14,8 @@ export class AliasContext implements IContext<IContextSet<Alias>> {
     private readonly storage: IStorage
   ) {
     this.cache = new SyncedCache(async () => {
-      const aliases = this.storage.get<Alias[]>(ALIAS_DATA_KEY, []);
+      // TODO: remove example aliases
+      const aliases = this.storage.get<Alias[]>(ALIAS_DATA_KEY, EXAMPLE_ALIASES);
       return aliases;
     });
   }

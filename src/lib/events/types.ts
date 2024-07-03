@@ -1,8 +1,10 @@
+import type { FrameMessage } from "@alias/message";
 import type { Omnibox } from "webextension-polyfill";
 
 export interface IWorkerEventEmitter {
   start(): void;
   stop(): void;
+  readonly onMessage: EventHook<FrameMessage>
   readonly onOmnibox: EventHook<OmniboxEvent>
 }
 

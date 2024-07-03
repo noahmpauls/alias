@@ -1,10 +1,24 @@
-import type { Alias } from "@alias/alias";
+import type { Alias, AliasCreate } from "@alias/alias";
 import { browser } from "@alias/browser";
-import { AliasContext } from "@alias/data/AliasContext";
+import { ClientMessageType, ControllerMessageType } from "@alias/message";
+import { BrowserClientMessenger } from "@alias/message/browser";
 
+const messenger = BrowserClientMessenger;
+
+messenger.addReceiver(message => {
+  console.log(message);
+  switch (message.type) {
+    case ControllerMessageType.ALIASES_GET: {
+      refreshAliasList(message.aliases.sort((a, b) => a.code.localeCompare(b.code)));
+      break;
+    }
+  }
+});
+
+messenger.send({ type: ClientMessageType.ALIASES_GET, });
 
 const currentPageButton = document.querySelector("#current-page") as HTMLButtonElement;
-const newAliasLinkInput = document.querySelector("#new-link") as HTMLInputElement;
+const newAliasLinkInput = document.querySelector("#new-alias-link") as HTMLInputElement;
 
 currentPageButton.addEventListener("click", () => {
   browser.tabs.query({ currentWindow: true, active: true })
@@ -14,39 +28,39 @@ currentPageButton.addEventListener("click", () => {
 })
 
 const newAliasForm = document.querySelector("#new-alias") as HTMLFormElement;
-newAliasForm.addEventListener("submit", (event) => {
+newAliasForm.addEventListener("submit", async (event) => {
   event.preventDefault();
   const data = new FormData(newAliasForm);
-  const newAlias: Alias = {
+  const newAlias: AliasCreate = {
     code: data.get("code")?.toString() ?? "",
     link: data.get("link")?.toString() ?? "",
     name: data.get("name")?.toString() ?? "",
   }
-  aliasData.fetch()
-    .then(aliases => aliases.create(newAlias))
-    .then(() => refreshAliasList());
+  messenger.send({
+    type: ClientMessageType.ALIAS_CREATE,
+    alias: newAlias,
+  });
 });
 
-const aliasData = AliasContext.browser();
 
 const aliasList = document.querySelector("#aliases");
+aliasList?.addEventListener("delete", async event => {
+  const deleteId = (event as unknown as CustomEvent).detail;
+  messenger.send({
+    type: ClientMessageType.ALIAS_DELETE,
+    alias: { id: deleteId },
+  });
+});
 
 const search = document.querySelector("#search") as HTMLInputElement;
 
-const refreshAliasList = () => {
-  aliasData.fetch()
-    .then(aliases => {
-      const newNodes = aliases.get().map(makeAliasEntry);
-      newNodes.length > 0
-        ? aliasList?.replaceChildren(...newNodes)
-        : aliasList?.replaceChildren(makeNoAliases());
-    })
-    .then(() => {
-      filterAliases(search.value);
-    })
+const refreshAliasList = (aliases: Alias[]) => {
+  const newNodes = aliases.map(makeAliasEntry);
+  newNodes.length > 0
+    ? aliasList?.replaceChildren(...newNodes)
+    : aliasList?.replaceChildren(makeNoAliases());
+  filterAliases(search.value);
 }
-
-refreshAliasList();
 
 search.addEventListener("input", () => {
   filterAliases(search.value);
@@ -75,7 +89,7 @@ const makeNoAliases = () : HTMLElement => {
 
 const makeAliasEntry = (alias: Alias): HTMLElement => {
   const nameInput = document.createElement("input");
-  nameInput.id = `name-${alias.code.replace(" ", "-")}`;
+  nameInput.id = `name-${alias.id}`;
   nameInput.type = "text";
   nameInput.value = alias.name;
   nameInput.ariaLabel = "Name";
@@ -100,7 +114,7 @@ const makeAliasEntry = (alias: Alias): HTMLElement => {
   search.appendChild(searchClearButton);
 
   const codeInput = document.createElement("input");
-  codeInput.id = `alias-${alias.code.replace(" ", "-")}`;
+  codeInput.id = `alias-${alias.id}`;
   codeInput.type = "text";
   codeInput.value = alias.code;
 
@@ -113,7 +127,7 @@ const makeAliasEntry = (alias: Alias): HTMLElement => {
   code.appendChild(codeInput);
 
   const linkInput = document.createElement("input");
-  linkInput.id = `link-${alias.code.replace(" ", "-")}`;
+  linkInput.id = `link-${alias.id}`;
   linkInput.type = "text";
   linkInput.value = alias.link;
 
@@ -133,6 +147,7 @@ const makeAliasEntry = (alias: Alias): HTMLElement => {
   const deleteButton = document.createElement("button");
   deleteButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>`
   deleteButton.classList.add("delete");
+  deleteButton.addEventListener("click", () => deleteButton.dispatchEvent(new CustomEvent("delete", { detail: alias.id, bubbles: true })));
 
   const header = document.createElement("header");
   header.appendChild(title);

@@ -46,5 +46,5 @@ export const EXAMPLE_ALIASES: Alias[] = [
     link: "https://en.wikipedia.org",
     name: "Wikipedia",
   },
-]
+].map((alias, index) => ({ ...alias, id: String(index) }));
 

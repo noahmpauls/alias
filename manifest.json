@@ -9,9 +9,7 @@
   },
 
   "permissions": [
-    "alarms",
-    "storage",
-    "webNavigation"
+    "storage"
   ],
   
   "host_permissions": [
@@ -23,7 +21,7 @@
     "default_icon": "assets/code.svg",
     "default_popup": "ui/popup.html"
   },
-  
+
   "background": {
     "service_worker": "dist/scripts/background.js",
     "scripts": ["dist/scripts/background.js"]

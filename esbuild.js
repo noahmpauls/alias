@@ -28,11 +28,11 @@ const uiEntry = (file) => ({
 });
 
 const extFiles = [
-  "background"
+  "background",
 ].map(extEntry);
 
 const uiFiles = [
-  "popup"
+  "popup",
 ].map(uiEntry);
 
 const files = [

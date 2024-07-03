@@ -1,18 +1,21 @@
-import type { Alias } from "@alias/alias";
+import type { Alias, AliasCreate } from "@alias/alias";
 import type { IContextSet } from "@alias/data";
 import { OmniboxEventType, type OmniboxChangeEvent, type OmniboxEnterEvent, type OmniboxEvent } from "@alias/events";
+import { ClientMessageType, ControllerMessageType, type ClientAliasCreateMessage, type ClientAliasDeleteMessage, type ClientAliasUpdateMessage, type ClientAliasesGetMessage, type FrameMessage, type FromFrame, type IControllerMessenger } from "@alias/message";
+import { BrowserControllerMessenger } from "@alias/message/browser";
 import { BrowserTabs, type ITabs } from "@alias/tabs";
 
 export class Controller {
   constructor(
     private readonly aliases: IContextSet<Alias>,
     private readonly tabs: ITabs,
+    private readonly messenger: IControllerMessenger,
   ) { }
 
   static browser = (
     aliases: IContextSet<Alias>,
   ): Controller => {
-    return new Controller(aliases, BrowserTabs);
+    return new Controller(aliases, BrowserTabs, BrowserControllerMessenger);
   }
 
   handleOmnibox = (event: OmniboxEvent) => {
@@ -31,6 +34,7 @@ export class Controller {
   private readonly handleOmniboxChange = (event: OmniboxChangeEvent) => {
     const { text, suggest } = event;
     const completions = this.getAliasCompletions(text);
+    completions.sort((a, b) => a.code.localeCompare(b.code));
     suggest(completions.map(a => ({
       content: a.code,
       description: a.name,
@@ -62,6 +66,89 @@ export class Controller {
     }
   }
 
+  handleMessage = (message: FrameMessage) => {
+    switch (message.type) {
+      case ClientMessageType.ALIASES_GET: {
+        this.handleAliasesGet(message);
+        break;
+      }
+      case ClientMessageType.ALIAS_CREATE: {
+        this.handleAliasCreate(message);
+        break;
+      }
+      case ClientMessageType.ALIAS_UPDATE: {
+        this.handleAliasUpdate(message);
+        break;
+      }
+      case ClientMessageType.ALIAS_DELETE: {
+        this.handleAliasDelete(message);
+        break;
+      }
+    }
+  }
+
+  private handleAliasesGet = (message: FromFrame<ClientAliasesGetMessage>) => {
+    const { tabId, frameId } = message;
+    const aliases = this.aliases.get();
+    this.messenger.send({
+      type: ControllerMessageType.ALIASES_GET,
+      aliases,
+    });
+  }
+
+  private handleAliasCreate = (message: FromFrame<ClientAliasCreateMessage>) => {
+    const { tabId, frameId, alias: createAlias } = message;
+    const newAlias = {
+      ...createAlias,
+      id: crypto.randomUUID(),
+    };
+    this.aliases.create(newAlias);
+    const aliases = this.aliases.get();
+    this.messenger.send({
+      type: ControllerMessageType.ALIASES_GET,
+      aliases,
+    });
+  }
+
+  private handleAliasUpdate = (message: FromFrame<ClientAliasUpdateMessage>) => {
+    const { tabId, frameId, alias: updateAlias } = message;
+    const existingAlias = this.aliases.get(a => a.id === updateAlias.id)[0];
+    if (existingAlias === undefined) {
+      console.warn(`attempting to update non-existent alias ${updateAlias.id}`);
+      return;
+    }
+    // TODO: yuck. This just looks bad, and there's no validation.
+    if (updateAlias.name !== undefined) {
+      existingAlias.name = updateAlias.name;
+    }
+    if (updateAlias.name !== undefined) {
+      existingAlias.name = updateAlias.name;
+    }
+    if (updateAlias.name !== undefined) {
+      existingAlias.name = updateAlias.name;
+    }
+    const aliases = this.aliases.get();
+    this.messenger.send({
+      type: ControllerMessageType.ALIASES_GET,
+      aliases,
+    });
+  }
+
+  private handleAliasDelete = (message: FromFrame<ClientAliasDeleteMessage>) => {
+    const { tabId, frameId, alias: deleteAlias } = message;
+    const existingAlias = this.aliases.get(a => a.id === deleteAlias.id)[0];
+    if (existingAlias === undefined) {
+      console.warn(`attempting to delete non-existent alias ${deleteAlias.id}`);
+      return;
+    }
+    this.aliases.delete(existingAlias);
+    const aliases = this.aliases.get();
+    this.messenger.send({
+      type: ControllerMessageType.ALIASES_GET,
+      aliases,
+    });
+  }
+
   private getAliasMatch = (code: string): Alias | undefined => {
     return this.aliases.get(a => a.code === code)[0];
   }
@@ -88,7 +175,7 @@ export class Controller {
       if (alias === undefined) {
         return;
       }
-      await this.setAlias(alias);
+      await this.setAlias({ ...alias, id: crypto.randomUUID() });
       return;
     }
     if (command.startsWith("del ")) {
@@ -120,7 +207,7 @@ export class Controller {
   }
 }
 
-const parseAlias = (params: string): Alias | undefined => {
+const parseAlias = (params: string): AliasCreate | undefined => {
   const code = parseString(params);
   const link = parseString(params.substring(`"${code ?? ""}" `.length));
   const name = parseString(params.substring(`"${code}" "${link}" `.length));
