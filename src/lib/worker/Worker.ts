@@ -2,7 +2,7 @@ import { SyncedCache } from "@alias/cache";
 import { Controller } from "@alias/controller";
 import { AliasContext } from "@alias/data";
 import { BrowserEvents, type IWorkerEventEmitter, type OmniboxEvent } from "@alias/events";
-import type { FrameMessage } from "@alias/message";
+import type { ClientMessage } from "@alias/message";
 
 export class Worker<TEvents extends IWorkerEventEmitter> {
   private readonly controller: SyncedCache<Controller>;
@@ -34,7 +34,7 @@ export class Worker<TEvents extends IWorkerEventEmitter> {
     await this.context.commit();
   }
 
-  private onMessage = async (message: FrameMessage) => {
+  private onMessage = async (message: ClientMessage) => {
     const controller = await this.controller.value();
     controller.handleMessage(message);
     await this.context.commit();

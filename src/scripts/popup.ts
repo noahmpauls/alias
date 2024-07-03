@@ -1,4 +1,4 @@
-import type { Alias, AliasCreate } from "@alias/alias";
+import type { Alias, AliasCreate, AliasUpdate } from "@alias/alias";
 import { browser } from "@alias/browser";
 import { ClientMessageType, ControllerMessageType } from "@alias/message";
 import { BrowserClientMessenger } from "@alias/message/browser";
@@ -52,6 +52,41 @@ aliasList?.addEventListener("delete", async event => {
   });
 });
 
+const updateDebouncers: Map<string, { timeout: NodeJS.Timeout, update: AliasUpdate }> = new Map();
+
+aliasList?.addEventListener("update", async event => {
+  const update = (event as unknown as CustomEvent).detail as AliasUpdate;
+  const id = update.id;
+  setUpdateTimeout(id, update);
+});
+
+const setUpdateTimeout = (id: string, update: AliasUpdate) => {
+  const existingDebounce = updateDebouncers.get(id);
+  if (existingDebounce === undefined) {
+    const timeout = setTimeout(updateTimeoutCallback(id), 1000);
+    updateDebouncers.set(id, { timeout, update });
+    return;
+  }
+  const { timeout: existingTimeout, update: existingUpdate } = existingDebounce;
+  clearTimeout(existingTimeout);
+  const newUpdate = { ...existingUpdate, ...update };
+  existingDebounce.update = newUpdate;
+  existingDebounce.timeout = setTimeout(updateTimeoutCallback(id), 1000);
+}
+
+const updateTimeoutCallback = (id: string) => () => {
+  const updateDebounce = updateDebouncers.get(id);
+  if (updateDebounce === undefined) {
+    return;
+  }
+  const { update } = updateDebounce;
+  updateDebouncers.delete(id);
+  messenger.send({
+    type: ClientMessageType.ALIAS_UPDATE,
+    alias: update,
+  });
+}
+
 const search = document.querySelector("#search") as HTMLInputElement;
 
 const refreshAliasList = (aliases: Alias[]) => {
@@ -93,6 +128,15 @@ const makeAliasEntry = (alias: Alias): HTMLElement => {
   nameInput.type = "text";
   nameInput.value = alias.name;
   nameInput.ariaLabel = "Name";
+  nameInput.addEventListener("input", () => {
+    nameInput.dispatchEvent(new CustomEvent("update", {
+      detail: {
+        id: alias.id,
+        name: nameInput.value,
+      },
+      bubbles: true,
+    }));
+  })
 
   const title = document.createElement("h2");
   title.appendChild(nameInput);
@@ -117,6 +161,15 @@ const makeAliasEntry = (alias: Alias): HTMLElement => {
   codeInput.id = `alias-${alias.id}`;
   codeInput.type = "text";
   codeInput.value = alias.code;
+  codeInput.addEventListener("input", () => {
+    codeInput.dispatchEvent(new CustomEvent("update", {
+      detail: {
+        id: alias.id,
+        code: codeInput.value,
+      },
+      bubbles: true,
+    }));
+  })
 
   const codeLabel = document.createElement("label");
   codeLabel.htmlFor = `alias-${alias.code.replace(" ", "-")}`;
@@ -130,6 +183,15 @@ const makeAliasEntry = (alias: Alias): HTMLElement => {
   linkInput.id = `link-${alias.id}`;
   linkInput.type = "text";
   linkInput.value = alias.link;
+  linkInput.addEventListener("input", () => {
+    linkInput.dispatchEvent(new CustomEvent("update", {
+      detail: {
+        id: alias.id,
+        link: linkInput.value,
+      },
+      bubbles: true,
+    }));
+  })
 
   const linkLabel = document.createElement("label");
   linkLabel.htmlFor = `link-${alias.code.replace(" ", "-")}`;
@@ -145,9 +207,14 @@ const makeAliasEntry = (alias: Alias): HTMLElement => {
   inputs.appendChild(link);
 
   const deleteButton = document.createElement("button");
-  deleteButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>`
+  deleteButton.innerHTML = `<svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>`
   deleteButton.classList.add("delete");
-  deleteButton.addEventListener("click", () => deleteButton.dispatchEvent(new CustomEvent("delete", { detail: alias.id, bubbles: true })));
+  deleteButton.addEventListener("click", () => {
+    deleteButton.dispatchEvent(new CustomEvent("delete", {
+      detail: alias.id,
+      bubbles: true,
+    }));
+  });
 
   const header = document.createElement("header");
   header.appendChild(title);

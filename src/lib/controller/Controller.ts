@@ -1,7 +1,7 @@
 import type { Alias, AliasCreate } from "@alias/alias";
 import type { IContextSet } from "@alias/data";
 import { OmniboxEventType, type OmniboxChangeEvent, type OmniboxEnterEvent, type OmniboxEvent } from "@alias/events";
-import { ClientMessageType, ControllerMessageType, type ClientAliasCreateMessage, type ClientAliasDeleteMessage, type ClientAliasUpdateMessage, type ClientAliasesGetMessage, type FrameMessage, type FromFrame, type IControllerMessenger } from "@alias/message";
+import { ClientMessageType, ControllerMessageType, type ClientAliasCreateMessage, type ClientAliasDeleteMessage, type ClientAliasUpdateMessage, type ClientAliasesGetMessage, type ClientMessage, type IControllerMessenger } from "@alias/message";
 import { BrowserControllerMessenger } from "@alias/message/browser";
 import { BrowserTabs, type ITabs } from "@alias/tabs";
 
@@ -66,7 +66,7 @@ export class Controller {
     }
   }
 
-  handleMessage = (message: FrameMessage) => {
+  handleMessage = (message: ClientMessage) => {
     switch (message.type) {
       case ClientMessageType.ALIASES_GET: {
         this.handleAliasesGet(message);
@@ -87,8 +87,7 @@ export class Controller {
     }
   }
 
-  private handleAliasesGet = (message: FromFrame<ClientAliasesGetMessage>) => {
-    const { tabId, frameId } = message;
+  private handleAliasesGet = (message: ClientAliasesGetMessage) => {
     const aliases = this.aliases.get();
     this.messenger.send({
       type: ControllerMessageType.ALIASES_GET,
@@ -96,8 +95,8 @@ export class Controller {
     });
   }
 
-  private handleAliasCreate = (message: FromFrame<ClientAliasCreateMessage>) => {
-    const { tabId, frameId, alias: createAlias } = message;
+  private handleAliasCreate = (message: ClientAliasCreateMessage) => {
+    const { alias: createAlias } = message;
     const newAlias = {
       ...createAlias,
       id: crypto.randomUUID(),
@@ -110,8 +109,8 @@ export class Controller {
     });
   }
 
-  private handleAliasUpdate = (message: FromFrame<ClientAliasUpdateMessage>) => {
-    const { tabId, frameId, alias: updateAlias } = message;
+  private handleAliasUpdate = (message: ClientAliasUpdateMessage) => {
+    const { alias: updateAlias } = message;
     const existingAlias = this.aliases.get(a => a.id === updateAlias.id)[0];
     if (existingAlias === undefined) {
       console.warn(`attempting to update non-existent alias ${updateAlias.id}`);
@@ -121,21 +120,21 @@ export class Controller {
     if (updateAlias.name !== undefined) {
       existingAlias.name = updateAlias.name;
     }
-    if (updateAlias.name !== undefined) {
-      existingAlias.name = updateAlias.name;
+    if (updateAlias.code !== undefined) {
+      existingAlias.code = updateAlias.code;
     }
-    if (updateAlias.name !== undefined) {
-      existingAlias.name = updateAlias.name;
+    if (updateAlias.link !== undefined) {
+      existingAlias.link = updateAlias.link;
     }
-    const aliases = this.aliases.get();
-    this.messenger.send({
-      type: ControllerMessageType.ALIASES_GET,
-      aliases,
-    });
+    // const aliases = this.aliases.get();
+    // this.messenger.send({
+    //   type: ControllerMessageType.ALIASES_GET,
+    //   aliases,
+    // });
   }
 
-  private handleAliasDelete = (message: FromFrame<ClientAliasDeleteMessage>) => {
-    const { tabId, frameId, alias: deleteAlias } = message;
+  private handleAliasDelete = (message: ClientAliasDeleteMessage) => {
+    const { alias: deleteAlias } = message;
     const existingAlias = this.aliases.get(a => a.id === deleteAlias.id)[0];
     if (existingAlias === undefined) {
       console.warn(`attempting to delete non-existent alias ${deleteAlias.id}`);

@@ -39,13 +39,6 @@ export type ClientAliasDeleteMessage = {
   alias: AliasDelete,
 }
 
-export type FromFrame<T> = T & {
-  tabId: number,
-  frameId: number,
-}
-
-export type FrameMessage = FromFrame<ClientMessage>
-
 
 export interface IControllerMessenger {
   send(message: ControllerMessage): void;

@@ -1,7 +1,7 @@
 import { browser } from "@alias/browser";
 import { OmniboxEventType, type EventHook, type EventListener, type IWorkerEventEmitter, type OmniboxEvent } from "./types";
 import type Browser from "webextension-polyfill";
-import type { ClientMessage, FrameMessage } from "@alias/message";
+import type { ClientMessage } from "@alias/message";
 
 type MessageSender = Pick<Browser.Runtime.MessageSender, "frameId"> & {
   tab?: Pick<Browser.Tabs.Tab, "id">
@@ -9,7 +9,7 @@ type MessageSender = Pick<Browser.Runtime.MessageSender, "frameId"> & {
 
 export class BrowserEvents implements IWorkerEventEmitter {
   private readonly listeners: {
-    message: EventListener<FrameMessage>[],
+    message: EventListener<ClientMessage>[],
     omnibox: EventListener<OmniboxEvent>[],
   } = {
     message: [],
@@ -22,7 +22,7 @@ export class BrowserEvents implements IWorkerEventEmitter {
     return new BrowserEvents();
   }
   
-  readonly onMessage: EventHook<FrameMessage> = this.createHook(this.listeners.message);
+  readonly onMessage: EventHook<ClientMessage> = this.createHook(this.listeners.message);
   readonly onOmnibox: EventHook<OmniboxEvent> = this.createHook(this.listeners.omnibox);
 
   start = () => {
