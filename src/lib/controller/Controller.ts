@@ -1,21 +1,19 @@
 import type { Alias, AliasCreate } from "@alias/alias";
 import type { IContextSet } from "@alias/data";
 import { OmniboxEventType, type OmniboxChangeEvent, type OmniboxEnterEvent, type OmniboxEvent } from "@alias/events";
-import { ClientMessageType, ControllerMessageType, type ClientAliasCreateMessage, type ClientAliasDeleteMessage, type ClientAliasUpdateMessage, type ClientAliasesGetMessage, type ClientMessage, type IControllerMessenger } from "@alias/message";
-import { BrowserControllerMessenger } from "@alias/message/browser";
+import { RequestType, ResponseType, type AliasCreateRequest, type AliasDeleteRequest, type AliasUpdateRequest, type AliasesGetRequest, type RequestMessage, type Respondable } from "@alias/message";
 import { BrowserTabs, type ITabs } from "@alias/tabs";
 
 export class Controller {
   constructor(
     private readonly aliases: IContextSet<Alias>,
     private readonly tabs: ITabs,
-    private readonly messenger: IControllerMessenger,
   ) { }
 
   static browser = (
     aliases: IContextSet<Alias>,
   ): Controller => {
-    return new Controller(aliases, BrowserTabs, BrowserControllerMessenger);
+    return new Controller(aliases, BrowserTabs);
   }
 
   handleOmnibox = (event: OmniboxEvent) => {
@@ -66,55 +64,68 @@ export class Controller {
     }
   }
 
-  handleMessage = (message: ClientMessage) => {
-    switch (message.type) {
-      case ClientMessageType.ALIASES_GET: {
-        this.handleAliasesGet(message);
+  handleRequest = (request: Respondable<RequestMessage>) => {
+    switch (request.type) {
+      case RequestType.ALIASES_GET: {
+        this.handleAliasesGet(request);
         break;
       }
-      case ClientMessageType.ALIAS_CREATE: {
-        this.handleAliasCreate(message);
+      case RequestType.ALIAS_CREATE: {
+        this.handleAliasCreate(request);
         break;
       }
-      case ClientMessageType.ALIAS_UPDATE: {
-        this.handleAliasUpdate(message);
+      case RequestType.ALIAS_UPDATE: {
+        this.handleAliasUpdate(request);
         break;
       }
-      case ClientMessageType.ALIAS_DELETE: {
-        this.handleAliasDelete(message);
+      case RequestType.ALIAS_DELETE: {
+        this.handleAliasDelete(request);
         break;
       }
     }
   }
 
-  private handleAliasesGet = (message: ClientAliasesGetMessage) => {
+  private handleAliasesGet = (message: Respondable<AliasesGetRequest>) => {
     const aliases = this.aliases.get();
-    this.messenger.send({
-      type: ControllerMessageType.ALIASES_GET,
-      aliases,
+    message.respond({
+      type: ResponseType.ALIASES_GET,
+      data: aliases,
     });
   }
 
-  private handleAliasCreate = (message: ClientAliasCreateMessage) => {
-    const { alias: createAlias } = message;
+  private handleAliasCreate = (message: Respondable<AliasCreateRequest>) => {
+    const createAlias = message.data;
+    const existing = this.aliases.get(a => a.code === createAlias.code);
+    if (existing.length > 0) {
+      message.respond({
+        type: ResponseType.ERROR,
+        data: {
+          message: `alias "${createAlias.code} already exists`
+        },
+      });
+      return;
+    }
     const newAlias = {
       ...createAlias,
       id: crypto.randomUUID(),
     };
     this.aliases.create(newAlias);
-    const aliases = this.aliases.get();
-    this.messenger.send({
-      type: ControllerMessageType.ALIASES_GET,
-      aliases,
+    message.respond({
+      type: ResponseType.ALIAS_CREATE,
+      data: newAlias,
     });
   }
 
-  private handleAliasUpdate = (message: ClientAliasUpdateMessage) => {
-    const { alias: updateAlias } = message;
+  private handleAliasUpdate = (message: Respondable<AliasUpdateRequest>) => {
+    const updateAlias = message.data;
     const existingAlias = this.aliases.get(a => a.id === updateAlias.id)[0];
     if (existingAlias === undefined) {
-      console.warn(`attempting to update non-existent alias ${updateAlias.id}`);
-      return;
+      return {
+        type: ResponseType.ERROR,
+        data: {
+          message: `Alias with ID ${updateAlias.id} does not exist.`,
+        }
+      }
     }
     // TODO: yuck. This just looks bad, and there's no validation.
     if (updateAlias.name !== undefined) {
@@ -126,25 +137,28 @@ export class Controller {
     if (updateAlias.link !== undefined) {
       existingAlias.link = updateAlias.link;
     }
-    // const aliases = this.aliases.get();
-    // this.messenger.send({
-    //   type: ControllerMessageType.ALIASES_GET,
-    //   aliases,
-    // });
+    message.respond({
+      type: ResponseType.ALIAS_UPDATE,
+      data: existingAlias,
+    });
   }
 
-  private handleAliasDelete = (message: ClientAliasDeleteMessage) => {
-    const { alias: deleteAlias } = message;
+  private handleAliasDelete = (message: Respondable<AliasDeleteRequest>) => {
+    const deleteAlias = message.data;
     const existingAlias = this.aliases.get(a => a.id === deleteAlias.id)[0];
     if (existingAlias === undefined) {
-      console.warn(`attempting to delete non-existent alias ${deleteAlias.id}`);
+      message.respond({
+        type: ResponseType.ERROR,
+        data: {
+          message: `Alias with ID ${deleteAlias.id} does not exist.`,
+        }
+      });
       return;
     }
     this.aliases.delete(existingAlias);
-    const aliases = this.aliases.get();
-    this.messenger.send({
-      type: ControllerMessageType.ALIASES_GET,
-      aliases,
+    message.respond({
+      type: ResponseType.ALIAS_DELETE,
+      data: existingAlias,
     });
   }
 

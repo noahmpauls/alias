@@ -1,8 +1,11 @@
 :root {
+  --red-light: hsl(5deg, 50%, 97%);
   --red: hsl(5deg, 70%, 50%);
   --red-dark: hsl(5deg, 70%, 40%);
 
+  --gray-light: hsl(0deg, 0%, 99%);
   --gray: hsl(0deg, 0%, 70%);
+  --gray-dark: hsl(0deg, 0%, 50%);
 }
 
 *,
@@ -18,21 +21,23 @@ html {
 }
 
 h1 {
-  font-size: 1.5rem;
+  font-size: 1.2rem;
+  text-align: center;
 }
 
 h2 {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   margin: 0;
 
   input {
     font-family: sans-serif;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     inline-size: 100%;
   }
 }
 
 input {
+  background-color: var(--gray-light);
   border: 1px solid var(--gray);
   border-radius: 0.2rem;
   font-family: monospace;
@@ -40,10 +45,11 @@ input {
   font-weight: inherit;
   padding-block: 0.2rem;
   padding-inline: 0.4rem;
-}
 
-label {
-  text-align: end;
+  &:invalid {
+    border-color: var(--red);
+    background-color: var(--red-light);
+  }
 }
 
 svg.icon {
@@ -95,6 +101,14 @@ ul {
   }
 }
 
+.align-end {
+  display: flex;
+  flex-direction: row;
+  justify-content: end;
+  align-items: center;
+  column-gap: 0.2rem;
+}
+
 .input-container {
   display: grid;
   grid-template-columns: max-content 1fr;
@@ -105,6 +119,11 @@ ul {
     display: grid;
     grid-template-columns: subgrid;
     align-items: center;
+  }
+
+  label {
+    text-align: end;
+    color: var(--gray-dark);
   }
 }
 
@@ -138,10 +157,15 @@ ul {
   }
 
   input:not(:hover, :focus) {
+    background-color: unset;
     border: 1px solid transparent;
   }
 
   .input-container {
     padding-inline-start: 0.5rem;
+    
+    > * + * {
+      margin-block-start: 0.1rem;
+    }
   }
 }

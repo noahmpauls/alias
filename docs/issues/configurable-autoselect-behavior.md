@@ -1,1 +1,0 @@
-Add configuration options for user to set how auto-select behaves.

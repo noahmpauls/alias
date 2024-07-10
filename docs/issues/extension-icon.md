@@ -1,1 +1,0 @@
-Add a 16x16 icon (would an SVG work?) to populate the extension suggestion icon.

@@ -1,26 +1,63 @@
 import type { Alias, AliasCreate, AliasUpdate } from "@alias/alias";
 import { browser } from "@alias/browser";
-import { ClientMessageType, ControllerMessageType } from "@alias/message";
+import { RequestType, ResponseType } from "@alias/message";
 import { BrowserClientMessenger } from "@alias/message/browser";
 
 const messenger = BrowserClientMessenger;
-
-messenger.addReceiver(message => {
-  console.log(message);
-  switch (message.type) {
-    case ControllerMessageType.ALIASES_GET: {
-      refreshAliasList(message.aliases.sort((a, b) => a.code.localeCompare(b.code)));
-      break;
-    }
-  }
-});
-
-messenger.send({ type: ClientMessageType.ALIASES_GET, });
 
 const createAliasNameInput = document.querySelector("#create-alias-name") as HTMLInputElement;
 const createAliasCodeInput = document.querySelector("#create-alias-code") as HTMLInputElement;
 const createAliasLinkInput = document.querySelector("#create-alias-link") as HTMLInputElement;
 const currentPageButton = document.querySelector("#current-page") as HTMLButtonElement;
+
+type ValidationIssue = {
+  level: "warning" | "error",
+  message: string,
+}
+
+const validateAliasName = (name: string): ValidationIssue[] => {
+  const issues: ValidationIssue[] = [];
+  if (name === "") {
+    issues.push({ level: "error", message: "You must enter a name."});
+  }
+  return issues;
+}
+
+const validateAliasCode = (code: string): ValidationIssue[] => {
+  const issues: ValidationIssue[] = [];
+  if (code === "") {
+    issues.push({ level: "error", message: "You must enter a code."});
+  }
+  // TODO: uniqueness constraint
+  return issues;
+}
+
+const validateAliasLink = (link: string): ValidationIssue[] => {
+  const issues: ValidationIssue[] = [];
+  if (link === "") {
+    issues.push({ level: "error", message: "You must enter a link."});
+  }
+  // TODO: uniqueness constraint
+  return issues;
+}
+
+createAliasNameInput.addEventListener("input", () => {
+  const value = createAliasNameInput.value;
+  if (value === "") {
+    createAliasNameInput.setCustomValidity("Name cannot be empty.");
+  } else {
+    createAliasNameInput.setCustomValidity("");
+  }
+});
+
+createAliasCodeInput.addEventListener("input", () => {
+  const value = createAliasCodeInput.value;
+  if (value === "") {
+    createAliasCodeInput.setCustomValidity("Code cannot be empty.");
+  } else {
+    createAliasCodeInput.setCustomValidity("");
+  }
+});
 
 currentPageButton.addEventListener("click", () => {
   browser.tabs.query({ currentWindow: true, active: true })
@@ -37,22 +74,28 @@ createAliasForm.addEventListener("submit", async (event) => {
     code: createAliasCodeInput.value.trim(),
     link: createAliasLinkInput.value.trim(),
   }
-  messenger.send({
-    type: ClientMessageType.ALIAS_CREATE,
-    alias: newAlias,
+  const response = await messenger.send({
+    type: RequestType.ALIAS_CREATE,
+    data: newAlias,
   });
+  if (response.type === ResponseType.ERROR) {
+    console.error("error creating alias: " + response.data.message);
+    return;
+  }
   createAliasNameInput.value = "";
   createAliasCodeInput.value = "";
   createAliasLinkInput.value = "https://";
+  refreshAliasList();
 });
 
 
 const aliasList = document.querySelector("#aliases");
+
 aliasList?.addEventListener("delete", async event => {
   const deleteId = (event as unknown as CustomEvent).detail;
   messenger.send({
-    type: ClientMessageType.ALIAS_DELETE,
-    alias: { id: deleteId },
+    type: RequestType.ALIAS_DELETE,
+    data: { id: deleteId },
   });
 });
 
@@ -86,20 +129,27 @@ const updateTimeoutCallback = (id: string) => () => {
   const { update } = updateDebounce;
   updateDebouncers.delete(id);
   messenger.send({
-    type: ClientMessageType.ALIAS_UPDATE,
-    alias: update,
+    type: RequestType.ALIAS_UPDATE,
+    data: update,
   });
 }
 
 const search = document.querySelector("#search") as HTMLInputElement;
 
-const refreshAliasList = (aliases: Alias[]) => {
+const refreshAliasList = async () => {
+  const aliasesResponse = await messenger.send({ type: RequestType.ALIASES_GET });
+  if (aliasesResponse.type !== ResponseType.ALIASES_GET) {
+    return;
+  }
+  const aliases = aliasesResponse.data;
   const newNodes = aliases.map(makeAliasEntry);
   newNodes.length > 0
     ? aliasList?.replaceChildren(...newNodes)
     : aliasList?.replaceChildren(makeNoAliases());
   filterAliases(search.value);
 }
+
+refreshAliasList();
 
 search.addEventListener("input", () => {
   filterAliases(search.value);
@@ -233,5 +283,6 @@ const makeAliasEntry = (alias: Alias): HTMLElement => {
   container.appendChild(inputs);
   container.appendChild(footer);
   container.dataset.alias = alias.code;
+  container.dataset.id = alias.id;
   return container;
 }

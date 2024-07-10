@@ -2,7 +2,7 @@ import { SyncedCache } from "@alias/cache";
 import { Controller } from "@alias/controller";
 import { AliasContext } from "@alias/data";
 import { BrowserEvents, type IWorkerEventEmitter, type OmniboxEvent } from "@alias/events";
-import type { ClientMessage } from "@alias/message";
+import type { RequestMessage, Respondable } from "@alias/message";
 
 export class Worker<TEvents extends IWorkerEventEmitter> {
   private readonly controller: SyncedCache<Controller>;
@@ -34,22 +34,22 @@ export class Worker<TEvents extends IWorkerEventEmitter> {
     await this.context.commit();
   }
 
-  private onMessage = async (message: ClientMessage) => {
-    const controller = await this.controller.value();
-    controller.handleMessage(message);
-    await this.context.commit();
+  private onRequest = async (request: Respondable<RequestMessage>) => {
+    this.controller.value()
+      .then(controller => controller.handleRequest(request))
+      .then(() => this.context.commit());
   }
 
   start = () => {
-    this.events.onOmnibox.addListener(this.onOmnibox);
-    this.events.onMessage.addListener(this.onMessage);
+    this.events.onOmnibox.set(this.onOmnibox);
+    this.events.onRequest.set(this.onRequest);
     this.events.start();
   }
 
   stop = () => {
     this.events.stop();
-    this.events.onMessage.removeListener(this.onMessage);
-    this.events.onOmnibox.removeListener(this.onOmnibox);
+    this.events.onRequest.clear();
+    this.events.onOmnibox.clear();
   }
 
   clear = async () => {

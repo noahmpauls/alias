@@ -1,58 +1,87 @@
 import type { Alias, AliasCreate, AliasDelete, AliasUpdate } from "@alias/alias";
 
-export interface IClientMessenger {
-  send(message: ClientMessage): void;
-  addReceiver(listener: (message: ControllerMessage) => void): void;
-  removeReceiver(listener: (message: ControllerMessage) => void): void;
+export type IClientMessenger = {
+  send: (message: RequestMessage) => Promise<ResponseMessage>,
 }
 
-export enum ClientMessageType {
-  ALIASES_GET = "client:aliases:get",
-  ALIAS_CREATE = "client:alias:create",
-  ALIAS_UPDATE = "client:alias:update",
-  ALIAS_DELETE = "client:alias:delete",
+export enum RequestType {
+  ALIASES_GET,
+  ALIAS_CREATE,
+  ALIAS_UPDATE,
+  ALIAS_DELETE,
 }
 
-export type ClientMessage =
-    ClientAliasesGetMessage
-  | ClientAliasCreateMessage
-  | ClientAliasUpdateMessage
-  | ClientAliasDeleteMessage
+export type Respondable<R> = R & {
+  respond: (response: ResponseMessage) => void,
+}
+
+export type RequestMessage =
+  | AliasesGetRequest
+  | AliasCreateRequest
+  | AliasUpdateRequest
+  | AliasDeleteRequest
   ;
 
-export type ClientAliasesGetMessage = {
-  type: ClientMessageType.ALIASES_GET,
+export type AliasesGetRequest = {
+  type: RequestType.ALIASES_GET,
+  data?: never,
 }
 
-export type ClientAliasCreateMessage = {
-  type: ClientMessageType.ALIAS_CREATE,
-  alias: AliasCreate,
+export type AliasCreateRequest = {
+  type: RequestType.ALIAS_CREATE,
+  data: AliasCreate,
 }
 
-export type ClientAliasUpdateMessage = {
-  type: ClientMessageType.ALIAS_UPDATE
-  alias: AliasUpdate,
+export type AliasUpdateRequest = {
+  type: RequestType.ALIAS_UPDATE,
+  data: AliasUpdate,
 }
 
-export type ClientAliasDeleteMessage = {
-  type: ClientMessageType.ALIAS_DELETE
-  alias: AliasDelete,
+export type AliasDeleteRequest = {
+  type: RequestType.ALIAS_DELETE,
+  data: AliasDelete,
 }
 
 
-export interface IControllerMessenger {
-  send(message: ControllerMessage): void;
+export enum ResponseType {
+  ERROR,
+  ALIASES_GET,
+  ALIAS_CREATE,
+  ALIAS_UPDATE,
+  ALIAS_DELETE,
 }
 
-export enum ControllerMessageType {
-  ALIASES_GET = "controller:aliases:get"
-}
-
-export type ControllerMessage =
-    ControllerAliasesGetMessage
+export type ResponseMessage =
+  | ErrorResponse
+  | AliasesGetResponse
+  | AliasCreateResponse
+  | AliasUpdateResponse
+  | AliasDeleteResponse
   ;
 
-export type ControllerAliasesGetMessage = {
-  type: ControllerMessageType.ALIASES_GET,
-  aliases: Alias[],
+export type ErrorResponse = {
+  type: ResponseType.ERROR,
+  data: {
+    message: string,
+  }
+}
+
+export type AliasesGetResponse = {
+  type: ResponseType.ALIASES_GET,
+  data: Alias[],
+}
+
+export type AliasCreateResponse = {
+  type: ResponseType.ALIAS_CREATE,
+  data: Alias,
+}
+
+export type AliasUpdateResponse = {
+  type: ResponseType.ALIAS_UPDATE,
+  data: Alias,
+}
+
+export type AliasDeleteResponse = {
+  type: ResponseType.ALIAS_DELETE,
+  data: Alias,
 }

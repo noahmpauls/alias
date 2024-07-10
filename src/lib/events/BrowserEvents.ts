@@ -1,7 +1,7 @@
 import { browser } from "@alias/browser";
-import { OmniboxEventType, type EventHook, type EventListener, type IWorkerEventEmitter, type OmniboxEvent } from "./types";
+import { OmniboxEventType, type EventListener, type IWorkerEventEmitter, type OmniboxEvent } from "./types";
 import type Browser from "webextension-polyfill";
-import type { ClientMessage } from "@alias/message";
+import type { RequestMessage, Respondable } from "@alias/message";
 
 type MessageSender = Pick<Browser.Runtime.MessageSender, "frameId"> & {
   tab?: Pick<Browser.Tabs.Tab, "id">
@@ -9,11 +9,11 @@ type MessageSender = Pick<Browser.Runtime.MessageSender, "frameId"> & {
 
 export class BrowserEvents implements IWorkerEventEmitter {
   private readonly listeners: {
-    message: EventListener<ClientMessage>[],
-    omnibox: EventListener<OmniboxEvent>[],
+    request: EventListener<Respondable<RequestMessage>> | undefined,
+    omnibox: EventListener<OmniboxEvent> | undefined,
   } = {
-    message: [],
-    omnibox: [],
+    request: undefined,
+    omnibox: undefined,
   }
 
   constructor() { }
@@ -21,9 +21,16 @@ export class BrowserEvents implements IWorkerEventEmitter {
   static browser = () => {
     return new BrowserEvents();
   }
-  
-  readonly onMessage: EventHook<ClientMessage> = this.createHook(this.listeners.message);
-  readonly onOmnibox: EventHook<OmniboxEvent> = this.createHook(this.listeners.omnibox);
+
+  readonly onRequest = {
+    set: (listener: EventListener<Respondable<RequestMessage>>) => { this.listeners.request = listener },
+    clear: () => this.listeners.request = undefined,
+  }
+
+  readonly onOmnibox = {
+    set: (listener: EventListener<OmniboxEvent>) => { this.listeners.omnibox = listener },
+    clear: () => this.listeners.omnibox = undefined,
+  }
 
   start = () => {
     browser.omnibox.onInputChanged.addListener(this.handleOmniboxChange);
@@ -38,7 +45,10 @@ export class BrowserEvents implements IWorkerEventEmitter {
   }
 
   private handleOmniboxChange = async (text: string, suggest: (suggestions: Browser.Omnibox.SuggestResult[]) => void) => {
-    this.triggerListeners(this.listeners.omnibox, {
+    if (this.listeners.omnibox === undefined) {
+      return;
+    }
+    this.listeners.omnibox({
       type: OmniboxEventType.CHANGE,
       text,
       suggest,
@@ -46,45 +56,26 @@ export class BrowserEvents implements IWorkerEventEmitter {
   }
 
   private handleOmniboxEnter = async (text: string, disposition: Browser.Omnibox.OnInputEnteredDisposition) => {
-    this.triggerListeners(this.listeners.omnibox, {
+    if (this.listeners.omnibox === undefined) {
+      return;
+    }
+    this.listeners.omnibox({
       type: OmniboxEventType.ENTER,
       text,
       disposition,
     });
   }
 
-  private handleMessage = async (message: ClientMessage, sender: MessageSender) => {
-    console.log(message)
-    if (sender.tab?.id === undefined || sender.frameId === undefined) {
-      console.warn(`message from tab ${sender.tab?.id}, frame ${sender.frameId}`);
-      // return;
+  private handleMessage = (message: RequestMessage, sender: MessageSender, sendResponse: (response: any) => void) => {
+    if (this.listeners.request === undefined) {
+      // TODO: anything special needed here?
+      return;
     }
-    await this.triggerListeners(this.listeners.message, {
+    const request: Respondable<RequestMessage> = {
       ...message,
-      tabId: -1, //sender.tab.id,
-      frameId: -1, //sender.frameId,
-    });
-  }
-
-  private createHook<E>(listeners: EventListener<E>[]): EventHook<E> {
-    return {
-      addListener: (listener: EventListener<E>) => this.addEventListener(listeners, listener),
-      removeListener: (listener: EventListener<E>) => this.removeEventListener(listeners, listener),
+      respond: sendResponse,
     }
-  }
-
-  private addEventListener<E>(listeners: EventListener<E>[], listener: EventListener<E>) {
-    listeners.push(listener);
-  }
-
-  private removeEventListener<E>(listeners: EventListener<E>[], listener: EventListener<E>) {
-    const existing = listeners.indexOf(listener);
-    if (existing !== -1) {
-      listeners.splice(existing, 1);
-    }
-  }
-
-  private async triggerListeners<E>(listeners: EventListener<E>[], event: E) {
-    await Promise.all(listeners.map(l => l(event)));
+    this.listeners.request(request);
+    return true;
   }
 }
