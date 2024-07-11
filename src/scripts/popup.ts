@@ -5,10 +5,10 @@ import { BrowserClientMessenger } from "@alias/message/browser";
 
 const messenger = BrowserClientMessenger;
 
-const createAliasNameInput = document.querySelector("#create-alias-name") as HTMLInputElement;
 const createAliasCodeInput = document.querySelector("#create-alias-code") as HTMLInputElement;
 const createAliasLinkInput = document.querySelector("#create-alias-link") as HTMLInputElement;
 const currentPageButton = document.querySelector("#current-page") as HTMLButtonElement;
+const createAliasNameInput = document.querySelector("#create-alias-notes") as HTMLInputElement;
 
 type ValidationIssue = {
   level: "warning" | "error",
@@ -177,42 +177,9 @@ const makeNoAliases = () : HTMLElement => {
 }
 
 const makeAliasEntry = (alias: Alias): HTMLElement => {
-  const nameInput = document.createElement("input");
-  nameInput.id = `name-${alias.id}`;
-  nameInput.type = "text";
-  nameInput.value = alias.name;
-  nameInput.ariaLabel = "Name";
-  nameInput.addEventListener("input", () => {
-    nameInput.dispatchEvent(new CustomEvent("update", {
-      detail: {
-        id: alias.id,
-        name: nameInput.value,
-      },
-      bubbles: true,
-    }));
-  })
-
-  const title = document.createElement("h2");
-  title.appendChild(nameInput);
-
-  const searchInput = document.createElement("input");
-  searchInput.id = "search"
-  searchInput.type = "text";
-
-  const searchLabel = document.createElement("label");
-  searchLabel.htmlFor = "searc";
-  searchLabel.innerText = "Search: ";
-
-  const searchClearButton = document.createElement("button");
-  searchClearButton.innerText = "Clear";
-
-  const search = document.createElement("div");
-  search.appendChild(searchLabel);
-  search.appendChild(searchInput);
-  search.appendChild(searchClearButton);
-
   const codeInput = document.createElement("input");
   codeInput.id = `alias-${alias.id}`;
+  codeInput.ariaLabel = "Alias";
   codeInput.type = "text";
   codeInput.value = alias.code;
   codeInput.addEventListener("input", () => {
@@ -225,13 +192,8 @@ const makeAliasEntry = (alias: Alias): HTMLElement => {
     }));
   })
 
-  const codeLabel = document.createElement("label");
-  codeLabel.htmlFor = `alias-${alias.code.replace(" ", "-")}`;
-  codeLabel.innerText = "Alias:";
-
-  const code = document.createElement("div");
-  code.appendChild(codeLabel);
-  code.appendChild(codeInput);
+  const title = document.createElement("h2");
+  title.appendChild(codeInput);
 
   const linkInput = document.createElement("input");
   linkInput.id = `link-${alias.id}`;
@@ -248,17 +210,40 @@ const makeAliasEntry = (alias: Alias): HTMLElement => {
   })
 
   const linkLabel = document.createElement("label");
-  linkLabel.htmlFor = `link-${alias.code.replace(" ", "-")}`;
+  linkLabel.htmlFor = `link-${alias.id}`;
   linkLabel.innerText = "Link:";
 
   const link = document.createElement("div");
   link.appendChild(linkLabel);
   link.appendChild(linkInput);
 
+  const notesLabel = document.createElement("label");
+  notesLabel.htmlFor = `notes-${alias.id}`;
+  notesLabel.innerText = "Notes:";
+
+  const notesInput = document.createElement("input");
+  notesInput.id = `notes-${alias.id}`;
+  notesInput.type = "text";
+  notesInput.value = alias.name;
+  notesInput.ariaLabel = "Notes";
+  notesInput.addEventListener("input", () => {
+    notesInput.dispatchEvent(new CustomEvent("update", {
+      detail: {
+        id: alias.id,
+        name: notesInput.value,
+      },
+      bubbles: true,
+    }));
+  })
+
+  const notes = document.createElement("div");
+  notes.appendChild(notesLabel);
+  notes.appendChild(notesInput);
+
   const inputs = document.createElement("div");
   inputs.classList.add("input-container");
-  inputs.appendChild(code);
   inputs.appendChild(link);
+  inputs.appendChild(notes);
 
   const deleteButton = document.createElement("button");
   deleteButton.innerHTML = `<svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>`
