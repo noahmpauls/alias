@@ -34,29 +34,18 @@ export class AliasCreatorElement extends HTMLElement {
     this.noteInput = this.querySelector("#alias-creator-note") as HTMLInputElement;    
     this.linkCurrentButton = this.querySelector("#alias-creator-link-current") as HTMLButtonElement;
 
-    this.form?.addEventListener("submit", this.handleSubmit);
-
     this.setupCodeInput();
     this.setupLinkInput();
+    this.setupForm();
   }
 
   //////////////////////////////////////////////////////////
   // Code Input Validation
   //////////////////////////////////////////////////////////
 
-  private validateCode = () => {
-    return this.codeInput?.value.trim() ?? "" !== "";    
-  }
-
-  private setCodeValidity = (message?: string) => {
-    const validation = this.querySelector("#alias-creator-code-validation") as HTMLElement
-    if (message) {
-      this.codeInput?.setCustomValidity(message);
-      validation.innerHTML = message;
-    } else {
-      this.codeInput?.setCustomValidity("");
-      validation.innerHTML = "";
-    }
+  private setupCodeInput = () => {
+    this.codeInput?.addEventListener("input", this.codeOnChange);
+    this.codeInput?.addEventListener("blur", this.codeOnBlur);
   }
 
   private codeOnChange = () => {
@@ -79,14 +68,50 @@ export class AliasCreatorElement extends HTMLElement {
     this.setCodeValidity("Must provide an alias.");
   }
 
-  private setupCodeInput = () => {
-    this.codeInput?.addEventListener("input", this.codeOnChange);
-    this.codeInput?.addEventListener("blur", this.codeOnBlur);
+  private validateCode = () => {
+    return this.codeInput?.value.trim() ?? "" !== "";    
+  }
+
+  private setCodeValidity = (message?: string) => {
+    const validation = this.querySelector("#alias-creator-code-validation") as HTMLElement
+    if (message) {
+      this.codeInput?.setCustomValidity(message);
+      validation.innerHTML = message;
+    } else {
+      this.codeInput?.setCustomValidity("");
+      validation.innerHTML = "";
+    }
   }
 
   //////////////////////////////////////////////////////////
   // Link Input Validation
   //////////////////////////////////////////////////////////
+
+  private setupLinkInput = () => {
+    this.linkInput?.addEventListener("input", this.linkOnChange);
+    this.linkInput?.addEventListener("blur", this.linkOnBlur);
+    this.linkCurrentButton?.addEventListener("click", this.setLinkToCurrent);
+  }
+
+  private linkOnChange = () => {
+
+    if (this.validateLink()) {
+      this.setLinkValidity();
+      return;
+    }
+    this.setLinkValidity("Must provide a valid link.");
+  }
+
+  private linkOnBlur = () => {
+    if (this.validateLink()) {
+      this.setLinkValidity();
+      return;
+    }
+    if ((this.linkInput?.value.trim() ?? "") === "") {
+      this.linkInput!.value = "https://";
+    }
+    this.setLinkValidity("Must provide a valid link.");
+  }
 
   private validateLink = () => {
     const link = this.linkInput?.value.trim() ?? "";
@@ -112,25 +137,6 @@ export class AliasCreatorElement extends HTMLElement {
     }
   }
 
-  private linkOnChange = () => {
-    if (this.validateLink()) {
-      this.setLinkValidity();
-      return;
-    }
-    this.setLinkValidity("Must provide a valid link.");
-  }
-
-  private linkOnBlur = () => {
-    if (this.validateLink()) {
-      this.setLinkValidity();
-      return;
-    }
-    if ((this.linkInput?.value.trim() ?? "") === "") {
-      this.linkInput!.value = "https://";
-    }
-    this.setLinkValidity("Must provide a valid link.");
-  }
-
   private setLinkToCurrent = () => {
     browser.tabs.query({ currentWindow: true, active: true })
       .then(tabs => {
@@ -142,27 +148,12 @@ export class AliasCreatorElement extends HTMLElement {
       });
   }
 
-  private setupLinkInput = () => {
-    this.linkInput?.addEventListener("input", this.linkOnChange);
-    this.linkInput?.addEventListener("blur", this.linkOnBlur);
-    this.linkCurrentButton?.addEventListener("click", this.setLinkToCurrent);
-  }
-
   //////////////////////////////////////////////////////////
   // Submission Handling
   //////////////////////////////////////////////////////////
 
-  private validateAlias = () => {
-    return this.validateCode() && this.validateLink();
-  }
-
-  private setSubmitValidity = (message?: string) => {
-    const validation = this.querySelector("#alias-creator-submit-validation") as HTMLElement
-    if (message) {
-      validation.innerHTML = message;
-    } else {
-      validation.innerHTML = "";
-    }
+  private setupForm = () => {
+    this.form?.addEventListener("submit", this.handleSubmit);
   }
 
   private handleSubmit = async (event: SubmitEvent) => {
@@ -173,7 +164,7 @@ export class AliasCreatorElement extends HTMLElement {
       return;
     }
     const alias = this.createAlias();
-    const result = await this.requestAliasCreation(alias);
+    const result = await this.requestCreate(alias);
     if (result.type === ResponseType.ERROR) {
       this.setSubmitValidity(`Error: ${result.data.message}`);
       console.error(result.data.message);
@@ -183,11 +174,8 @@ export class AliasCreatorElement extends HTMLElement {
     this.dispatchCreate(alias);
   }
 
-  private dispatchCreate = (aliasCreate: AliasCreate) => {
-    this.dispatchEvent(new CustomEvent("createalias", {
-      detail: aliasCreate,
-      bubbles: true,
-    }));
+  private validateAlias = () => {
+    return this.validateCode() && this.validateLink();
   }
 
   private createAlias = (): AliasCreate => {
@@ -198,11 +186,20 @@ export class AliasCreatorElement extends HTMLElement {
     };
   }
 
-  private requestAliasCreation = async (alias: AliasCreate): Promise<ResponseMessage> => {
+  private requestCreate = async (alias: AliasCreate): Promise<ResponseMessage> => {
     return await this.messenger.send({
       type: RequestType.ALIAS_CREATE,
       data: alias,
     });
+  }
+
+  private setSubmitValidity = (message?: string) => {
+    const validation = this.querySelector("#alias-creator-submit-validation") as HTMLElement
+    if (message) {
+      validation.innerHTML = message;
+    } else {
+      validation.innerHTML = "";
+    }
   }
 
   private resetInputs = () => {
@@ -215,5 +212,12 @@ export class AliasCreatorElement extends HTMLElement {
     this.setCodeValidity();
     this.setLinkValidity();
     this.setSubmitValidity();
+  }
+
+  private dispatchCreate = (aliasCreate: AliasCreate) => {
+    this.dispatchEvent(new CustomEvent("createalias", {
+      detail: aliasCreate,
+      bubbles: true,
+    }));
   }
 }
