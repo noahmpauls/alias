@@ -176,7 +176,7 @@ alias-manager {
     }
   }
 
-  input:not(:hover, :focus) {
+  input:not(:hover, :focus, :invalid) {
     background-color: unset;
     border: 1px solid transparent;
   }

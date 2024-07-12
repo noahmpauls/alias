@@ -127,6 +127,16 @@ export class Controller {
         }
       }
     }
+    const existing = this.aliases.get(a => a.id !== updateAlias.id && a.code === updateAlias.code);
+    if (existing.length > 0) {
+      message.respond({
+        type: ResponseType.ERROR,
+        data: {
+          message: `Alias "${updateAlias.code}" already exists.`
+        },
+      });
+      return;
+    }
     // TODO: yuck. This just looks bad, and there's no validation.
     if (updateAlias.name !== undefined) {
       existingAlias.name = updateAlias.name;

@@ -70,7 +70,7 @@ document.addEventListener("deletealias", () => {
 });
 
 document.addEventListener("updatealias", () => {
-  // pass
+  refreshAliasList();
 });
 
 refreshAliasList();

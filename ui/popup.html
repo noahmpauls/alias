@@ -45,7 +45,7 @@
   </main>
 
   <template id="alias-manager">
-    <div class="input-container">
+    <form id="alias-manager-id" class="input-container">
       <div>
         <label for="alias-id" title="Alias">
           <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-terminal">
@@ -67,6 +67,7 @@
             </svg>
           </button>
         </div>
+        <span id="code-id-validation" class="offset validation-error"></span>
       </div>
       <div>
         <label for="link-id" title="Link" class="subdued">
@@ -76,6 +77,7 @@
           </svg>
         </label>
         <input id="link-id" aria-label="Link" type="text">
+        <span id="link-id-validation" class="offset validation-error"></span>
       </div>
       <div>
         <label for="note-id" title="Note" class="subdued">
@@ -85,9 +87,11 @@
         </label>
         <input id="note-id" aria-label="Note" type="text">
       </div>
-    </div>
-    <footer>
-    </footer>
+      <div>
+        <button id="submit-id" type="submit" class="offset" style="display: none;">Save</button>
+        <span id="submit-id-validation" class="offset validation-error"></span>
+      </div>
+    </form>
   </template>
 
   <template id="no-aliases">
