@@ -100,7 +100,7 @@ export class Controller {
       message.respond({
         type: ResponseType.ERROR,
         data: {
-          message: `alias "${createAlias.code} already exists`
+          message: `Alias "${createAlias.code}" already exists.`
         },
       });
       return;

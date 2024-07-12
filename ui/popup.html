@@ -16,6 +16,7 @@
         <div>
           <label for="alias-creator-code">Alias:</label>
           <input name="code" id="alias-creator-code" type="text">
+          <span id="alias-creator-code-validation" class="offset validation-error"></span>
         </div>
         <div>
           <label for="alias-creator-link">Link:</label>
@@ -23,14 +24,15 @@
             <input name="link" id="alias-creator-link" type="text" value="https://">
             <button id="alias-creator-link-current" type="button">Current Page</button>
           </div>
+          <span id="alias-creator-link-validation" class="offset validation-error"></span>
         </div>
         <div>
           <label for="alias-creator-note">Note:</label>
           <input name="notes" id="alias-creator-note" type="text">
         </div>
         <div>
-          <span></span>
-          <button type="submit">Create</button>
+          <button id="alias-creator-submit" class="offset" type="submit">Create</button>
+          <span id="alias-creator-submit-validation" class="offset validation-error"></span>
         </div>
       </form>
     </alias-creator>

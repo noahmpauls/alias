@@ -108,6 +108,16 @@ ul {
   }
 }
 
+.validation-error {
+  font-size: 0.8rem;
+  color: var(--red-dark);
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+}
+
 .align-end {
   display: flex;
   flex-direction: row;
@@ -128,13 +138,17 @@ ul {
     align-items: center;
   }
 
+  .offset {
+    grid-column: 2 / -1;
+  }
+
   label {
     text-align: end;
   }
 }
 
 alias-creator .input-container > * + * {
-  margin-block-start: 0.2rem;
+  margin-block-start: 0.4rem;
 }
 
 .grow-first {

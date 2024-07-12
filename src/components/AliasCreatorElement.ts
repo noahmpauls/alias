@@ -35,14 +35,144 @@ export class AliasCreatorElement extends HTMLElement {
     this.linkCurrentButton = this.querySelector("#alias-creator-link-current") as HTMLButtonElement;
 
     this.form?.addEventListener("submit", this.handleSubmit);
+
+    this.setupCodeInput();
+    this.setupLinkInput();
+  }
+
+  //////////////////////////////////////////////////////////
+  // Code Input Validation
+  //////////////////////////////////////////////////////////
+
+  private validateCode = () => {
+    return this.codeInput?.value.trim() ?? "" !== "";    
+  }
+
+  private setCodeValidity = (message?: string) => {
+    if (message) {
+      this.codeInput?.setCustomValidity(message);
+      this.querySelector("#alias-creator-code-validation")!.innerHTML = message;
+    } else {
+      this.codeInput?.setCustomValidity("");
+      this.querySelector("#alias-creator-code-validation")!.innerHTML = "";
+    }
+  }
+
+  private codeOnChange = () => {
+    if (this.validateCode()) {
+      this.setCodeValidity();
+      return;
+    }
+    const value = this.codeInput?.value ?? "";
+    if (value === "") {
+      this.setCodeValidity("Must provide an alias.");
+    }
+  }
+
+  private codeOnBlur = () => {
+    if (this.validateCode()) {
+      this.setCodeValidity();
+      return;
+    }
+    this.codeInput!.value = "";
+    this.setCodeValidity("Must provide an alias.");
+  }
+
+  private setupCodeInput = () => {
+    this.codeInput?.addEventListener("input", this.codeOnChange);
+    this.codeInput?.addEventListener("blur", this.codeOnBlur);
+  }
+
+  //////////////////////////////////////////////////////////
+  // Link Input Validation
+  //////////////////////////////////////////////////////////
+
+  private validateLink = () => {
+    const link = this.linkInput?.value.trim() ?? "";
+    return this.tryCreateUrl(link) !== undefined;
+  }
+
+  private tryCreateUrl(link: string): URL | undefined {
+    try {
+      return new URL(link);
+    } catch {
+      return undefined;
+    }
+  }
+
+  private setLinkValidity = (message?: string) => {
+    if (message) {
+      this.linkInput?.setCustomValidity(message);
+      this.querySelector("#alias-creator-link-validation")!.innerHTML = message;
+    } else {
+      this.linkInput?.setCustomValidity("");
+      this.querySelector("#alias-creator-link-validation")!.innerHTML = "";
+    }
+  }
+
+  private linkOnChange = () => {
+    if (this.validateLink()) {
+      this.setLinkValidity();
+      return;
+    }
+    this.setLinkValidity("Must provide a valid link.");
+  }
+
+  private linkOnBlur = () => {
+    if (this.validateLink()) {
+      this.setLinkValidity();
+      return;
+    }
+    if ((this.linkInput?.value.trim() ?? "") === "") {
+      this.linkInput!.value = "https://";
+    }
+    this.setLinkValidity("Must provide a valid link.");
+  }
+
+  private setLinkToCurrent = () => {
+    browser.tabs.query({ currentWindow: true, active: true })
+      .then(tabs => {
+        if (this.linkInput === undefined) {
+          return;
+        }
+        this.linkInput.value = tabs[0].url ?? "";
+        this.linkOnBlur();
+      });
+  }
+
+  private setupLinkInput = () => {
+    this.linkInput?.addEventListener("input", this.linkOnChange);
+    this.linkInput?.addEventListener("blur", this.linkOnBlur);
     this.linkCurrentButton?.addEventListener("click", this.setLinkToCurrent);
+  }
+
+  //////////////////////////////////////////////////////////
+  // Submission Handling
+  //////////////////////////////////////////////////////////
+
+  private validateAlias = () => {
+    return this.validateCode() && this.validateLink();
+  }
+
+  private setSubmitValidity = (message?: string) => {
+    if (message) {
+      this.querySelector("#alias-creator-submit-validation")!.innerHTML = message;
+    } else {
+      this.querySelector("#alias-creator-submit-validation")!.innerHTML = "";
+    }
   }
 
   private handleSubmit = async (event: SubmitEvent) => {
     event.preventDefault();
+    if (!this.validateAlias()) {
+      this.codeOnBlur();
+      this.linkOnBlur();
+      return;
+    }
     const alias = this.createAlias();
     const result = await this.requestAliasCreation(alias);
     if (result.type === ResponseType.ERROR) {
+      this.setSubmitValidity(`Error: ${result.data.message}`);
       console.error(result.data.message);
       return;
     }
@@ -79,15 +209,8 @@ export class AliasCreatorElement extends HTMLElement {
     this.codeInput.value = "";
     this.linkInput.value = "https://";
     this.noteInput.value = "";
-  }
-
-  private setLinkToCurrent = () => {
-    browser.tabs.query({ currentWindow: true, active: true })
-      .then(tabs => {
-        if (this.linkInput === undefined) {
-          return;
-        }
-        this.linkInput.value = tabs[0].url ?? "";
-      });
+    this.setCodeValidity();
+    this.setLinkValidity();
+    this.setSubmitValidity();
   }
 }
