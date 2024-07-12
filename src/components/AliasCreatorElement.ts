@@ -49,12 +49,13 @@ export class AliasCreatorElement extends HTMLElement {
   }
 
   private setCodeValidity = (message?: string) => {
+    const validation = this.querySelector("#alias-creator-code-validation") as HTMLElement
     if (message) {
       this.codeInput?.setCustomValidity(message);
-      this.querySelector("#alias-creator-code-validation")!.innerHTML = message;
+      validation.innerHTML = message;
     } else {
       this.codeInput?.setCustomValidity("");
-      this.querySelector("#alias-creator-code-validation")!.innerHTML = "";
+      validation.innerHTML = "";
     }
   }
 
@@ -101,12 +102,13 @@ export class AliasCreatorElement extends HTMLElement {
   }
 
   private setLinkValidity = (message?: string) => {
+    const validation = this.querySelector("#alias-creator-link-validation") as HTMLElement
     if (message) {
       this.linkInput?.setCustomValidity(message);
-      this.querySelector("#alias-creator-link-validation")!.innerHTML = message;
+      validation.innerHTML = message;
     } else {
       this.linkInput?.setCustomValidity("");
-      this.querySelector("#alias-creator-link-validation")!.innerHTML = "";
+      validation.innerHTML = "";
     }
   }
 
@@ -155,10 +157,11 @@ export class AliasCreatorElement extends HTMLElement {
   }
 
   private setSubmitValidity = (message?: string) => {
+    const validation = this.querySelector("#alias-creator-submit-validation") as HTMLElement
     if (message) {
-      this.querySelector("#alias-creator-submit-validation")!.innerHTML = message;
+      validation.innerHTML = message;
     } else {
-      this.querySelector("#alias-creator-submit-validation")!.innerHTML = "";
+      validation.innerHTML = "";
     }
   }
 
