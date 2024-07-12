@@ -6,6 +6,7 @@
   --gray-light: hsl(0deg, 0%, 99%);
   --gray: hsl(0deg, 0%, 70%);
   --gray-dark: hsl(0deg, 0%, 50%);
+  --gray-darker: hsl(0deg, 0%, 30%);
 }
 
 *,
@@ -30,17 +31,18 @@ h2 {
   margin: 0;
 
   input {
-    font-family: sans-serif;
-    font-size: 1.1rem;
+    color: black;
+    font-family: monospace;
+    font-size: 1.2rem;
     inline-size: 100%;
   }
 }
 
 input {
+  color: var(--gray-darker);
   background-color: var(--gray-light);
   border: 1px solid var(--gray);
   border-radius: 0.2rem;
-  font-family: monospace;
   font-size: 0.9rem;
   font-weight: inherit;
   padding-block: 0.2rem;
@@ -56,6 +58,11 @@ svg.icon {
   inline-size: 1.25rem;
   block-size: 1.25rem;
   vertical-align: -.25rem;
+
+  &.small {
+    inline-size: 1rem;
+    block-size: 1rem;
+  }
 }
 
 button.delete {
@@ -112,9 +119,9 @@ ul {
 .input-container {
   display: grid;
   grid-template-columns: max-content 1fr;
-  column-gap: 0.2rem;
+  column-gap: 0.3rem;
 
-  > div {
+  > * {
     grid-column: 1 / -1;
     display: grid;
     grid-template-columns: subgrid;
@@ -123,11 +130,10 @@ ul {
 
   label {
     text-align: end;
-    color: var(--gray-dark);
   }
 }
 
-#create-alias.input-container > * + * {
+alias-creator .input-container > * + * {
   margin-block-start: 0.2rem;
 }
 
@@ -144,7 +150,7 @@ ul {
   }
 }
 
-.alias-list-entry {
+alias-manager {
   > * + * {
     margin-block-start: 0.2rem;
   }
@@ -166,6 +172,18 @@ ul {
     
     > * + * {
       margin-block-start: 0.1rem;
+    }
+  }
+
+  label.subdued {
+    visibility: hidden;
+    color: var(--gray);
+  }
+
+  :hover,
+  :focus-within {
+    label.subdued {
+      visibility: visible;
     }
   }
 }

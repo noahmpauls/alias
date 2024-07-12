@@ -3,43 +3,93 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="../dist/ui/scripts/popup.js" defer></script>
   <link rel="stylesheet" href="style.css">
+  <script src="../dist/ui/scripts/popup.js" defer></script>
 </head>
 <body>
   <header>
     <h1>Alias</h1>
   </header>
   <main>
-    <form id="create-alias" class="input-container">
-      <div>
-        <label for="create-alias-code">Alias:</label>
-        <input name="code" id="create-alias-code" type="text">
-      </div>
-      <div>
-        <label for="create-alias-link">Link:</label>
-        <div class="grow-first">
-          <input name="link" id="create-alias-link" type="text" value="https://">
-          <button id="current-page" type="button">Current Page</button>
+    <alias-creator>
+      <form id="alias-creator-form" class="input-container">
+        <div>
+          <label for="alias-creator-code">Alias:</label>
+          <input name="code" id="alias-creator-code" type="text">
         </div>
-      </div>
-      <div>
-        <label for="create-alias-notes">Notes:</label>
-        <input name="notes" id="create-alias-notes" type="text">
-      </div>
-      <div>
-        <span></span>
-        <button type="submit">Create</button>
-      </div>
-    </form>
+        <div>
+          <label for="alias-creator-link">Link:</label>
+          <div class="grow-first">
+            <input name="link" id="alias-creator-link" type="text" value="https://">
+            <button id="alias-creator-link-current" type="button">Current Page</button>
+          </div>
+        </div>
+        <div>
+          <label for="alias-creator-note">Note:</label>
+          <input name="notes" id="alias-creator-note" type="text">
+        </div>
+        <div>
+          <span></span>
+          <button type="submit">Create</button>
+        </div>
+      </form>
+    </alias-creator>
     <hr>
     <div class="align-end">
       <label for="search">Search:</label>
       <input id="search" type="text" aria-label="search">
     </div>
-    <ul id="aliases">
-      <li><i>You don't have any aliases yet. Try creating one!</i></li>
-    </ul>
+    <ul id="aliases"></ul>
   </main>
+
+  <template id="alias-manager">
+    <div class="input-container">
+      <div>
+        <label for="alias-id" title="Alias">
+          <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-terminal">
+            <polyline points="4 17 10 11 4 5"></polyline>
+            <line x1="12" y1="19" x2="20" y2="19"></line>
+          </svg> 
+        </label>
+        <div class="grow-first">
+          <h2>
+            <input id="alias-id" aria-label="Alias" type="text">
+          </h2>
+          <button id="delete-id" class="delete">
+            <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="3 6 5 6 21 6"></polyline>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+              <line x1="10" y1="11" x2="10" y2="17"></line>
+              <line x1="14" y1="11" x2="14" y2="17"></line>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div>
+        <label for="link-id" title="Link" class="subdued">
+          <svg class="icon small" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-link">
+            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+          </svg>
+        </label>
+        <input id="link-id" aria-label="Link" type="text">
+      </div>
+      <div>
+        <label for="note-id" title="Note" class="subdued">
+          <svg class="icon small" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2">
+            <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+          </svg>
+        </label>
+        <input id="note-id" aria-label="Note" type="text">
+      </div>
+    </div>
+    <footer>
+    </footer>
+  </template>
+
+  <template id="no-aliases">
+    <i>You don't have any aliases yet. Try creating one!</i>
+  </template>
 </body>
 </html>
