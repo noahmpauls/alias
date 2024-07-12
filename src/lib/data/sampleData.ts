@@ -4,47 +4,47 @@ export const EXAMPLE_ALIASES: Alias[] = [
   {
     code: "arch",
     link: "https://archlinux.org",
-    name: "Arch Linux",
+    note: "Arch Linux",
   },
   {
     code: "git",
     link: "https://github.com/",
-    name: "GitHub",
+    note: "GitHub",
   },
   {
     code: "git alias",
     link: "https://github.com/noahmpauls/alias",
-    name: "GitHub",
+    note: "GitHub",
   },
   {
     code: "git bouncer",
     link: "https://github.com/noahmpauls/bouncer",
-    name: "GitHub",
+    note: "GitHub",
   },
   {
     code: "hn",
     link: "https://news.ycombinator.com",
-    name: "HackerNews",
+    note: "HackerNews",
   },
   {
     code: "test",
     link: "https://thisdomain.isfartoolong.andsomeoneshould.reallthinkabout.maybeshorteningitdown.com/anddontgetme/startedon/thepaths",
-    name: "HackerNews",
+    note: "HackerNews",
   },
   {
     code: "mail",
     link: "https://app.fastmail.com",
-    name: "Email"
+    note: "Email"
   },
   {
     code: "mdn",
     link: "https://developer.mozilla.org",
-    name: "MDN",
+    note: "MDN",
   },
   {
     code: "wiki",
     link: "https://en.wikipedia.org",
-    name: "Wikipedia",
+    note: "Wikipedia",
   },
 ].map((alias, index) => ({ ...alias, id: String(index) }));
 

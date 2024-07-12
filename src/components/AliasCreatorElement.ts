@@ -182,7 +182,7 @@ export class AliasCreatorElement extends HTMLElement {
     return {
       code: this.codeInput?.value.trim() ?? "",
       link: this.linkInput?.value.trim() ?? "",
-      name: this.noteInput?.value.trim() ?? "",
+      note: this.noteInput?.value.trim() ?? "",
     };
   }
 

@@ -1,8 +1,8 @@
 export type Alias = {
   id: string,
-  name: string,
   code: string,
   link: string,
+  note: string,
 }
 
 export type AliasCreate = Omit<Alias, "id">

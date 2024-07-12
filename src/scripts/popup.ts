@@ -51,7 +51,7 @@ const createAliasListing = (alias: Alias): HTMLElement => {
   listing.dataset.id = alias.id;
   listing.dataset.alias = alias.code;
   listing.dataset.link = alias.link;
-  listing.dataset.note = alias.name;
+  listing.dataset.note = alias.note;
   const container = document.createElement("li");
   container.appendChild(listing);
   return container;

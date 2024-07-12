@@ -35,12 +35,12 @@ export class AliasManagerElement extends HTMLElement {
     }
 
     this.form = this.querySelector(`#alias-manager-${this.alias.id}`) as HTMLFormElement;
-    this.codeInput = this.querySelector(`#alias-${this.alias.id}`) as HTMLInputElement;
+    this.codeInput = this.querySelector(`#code-${this.alias.id}`) as HTMLInputElement;
     this.codeInput.value = this.alias.code;
     this.linkInput = this.querySelector(`#link-${this.alias.id}`) as HTMLInputElement;
     this.linkInput.value = this.alias.link;
     this.noteInput = this.querySelector(`#note-${this.alias.id}`) as HTMLInputElement;
-    this.noteInput.value = this.alias.name;
+    this.noteInput.value = this.alias.note;
     this.deleteButton = this.querySelector(`#delete-${this.alias.id}`) as HTMLButtonElement;
     this.submitButton = this.querySelector(`#submit-${this.alias.id}`) as HTMLButtonElement;
 
@@ -58,7 +58,7 @@ export class AliasManagerElement extends HTMLElement {
     if (id === undefined || code === undefined || link === undefined || note === undefined) {
       return undefined;
     }
-    return { id, code, link, name: note };
+    return { id, code, link, note: note };
   }
 
   //////////////////////////////////////////////////////////
@@ -222,7 +222,7 @@ export class AliasManagerElement extends HTMLElement {
       id: this.alias?.id ?? "",
       code: this.codeInput?.value.trim() ?? "",
       link: this.linkInput?.value.trim() ?? "",
-      name: this.noteInput?.value.trim() ?? "",
+      note: this.noteInput?.value.trim() ?? "",
     }
   }
 
@@ -258,7 +258,7 @@ export class AliasManagerElement extends HTMLElement {
   private aliasCanUpdate = (): boolean => {
     const codeUpdated = this.codeInput?.value !== this.alias?.code;
     const linkUpdated = this.linkInput?.value !== this.alias?.link;
-    const noteUpdated = this.noteInput?.value !== this.alias?.name;
+    const noteUpdated = this.noteInput?.value !== this.alias?.note;
     return codeUpdated || linkUpdated || noteUpdated;
   }
 
@@ -271,7 +271,7 @@ export class AliasManagerElement extends HTMLElement {
     const template = templateElement.content.cloneNode(true) as HTMLElement;
     const form = template.querySelector("#alias-manager-id") as HTMLFormElement;
     form.id = `alias-manager-${alias.id}`;
-    for (const field of ["alias", "link", "note"]) {
+    for (const field of ["code", "link", "note"]) {
       const input = template.querySelector(`#${field}-id`) as HTMLInputElement;
       const label = template.querySelector(`[for="${field}-id"`) as HTMLLabelElement | null;
       input.id = `${field}-${alias.id}`;
