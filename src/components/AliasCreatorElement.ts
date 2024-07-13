@@ -164,14 +164,19 @@ export class AliasCreatorElement extends HTMLElement {
       return;
     }
     const alias = this.createAlias();
-    const result = await this.requestCreate(alias);
-    if (result.type === ResponseType.ERROR) {
-      this.setSubmitValidity(`Error: ${result.data.message}`);
-      console.error(result.data.message);
+    const response = await this.requestCreate(alias);
+    if (response.type === ResponseType.ERROR) {
+      this.setSubmitValidity(`Error: ${response.data.message}`);
+      console.error(response.data.message);
       return;
     }
     this.resetInputs();
-    this.dispatchCreate(alias);
+    // TODO: this feels wrong; should be able to narrow down to either error or
+    // alias_create via types
+    if (response.type === ResponseType.ALIAS_CREATE) {
+      const newAlias = response.data;
+      this.dispatchCreate(newAlias);
+    }
   }
 
   private validateAlias = () => {

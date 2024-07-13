@@ -52,7 +52,7 @@ export class AliasManagerElement extends HTMLElement {
 
   private getAliasData = (): Alias | undefined => {
     const id = this.dataset.id;
-    const code = this.dataset.alias;
+    const code = this.dataset.code;
     const link = this.dataset.link;
     const note = this.dataset.note;
     if (id === undefined || code === undefined || link === undefined || note === undefined) {
@@ -66,23 +66,26 @@ export class AliasManagerElement extends HTMLElement {
   //////////////////////////////////////////////////////////
 
   private setupDeleteButton = () => {
-    this.deleteButton?.addEventListener("click", () => {
+    this.deleteButton?.addEventListener("click", async () => {
       const aliasDelete = { id: this.alias!.id };
-      this.requestDelete(aliasDelete);
-      this.dispatchDelete(aliasDelete);
+      const response = await this.requestDelete(aliasDelete);
+      if (response.type === ResponseType.ALIAS_DELETE) {
+        const deletedAlias = response.data;
+        this.dispatchDelete(deletedAlias);
+      }
     })
   }
 
-  private requestDelete = (aliasDelete: AliasDelete) => {
-    this.messenger.send({
+  private requestDelete = async (aliasDelete: AliasDelete): Promise<ResponseMessage> => {
+    return await this.messenger.send({
       type: RequestType.ALIAS_DELETE,
       data: aliasDelete,
     });
   }
 
-  private dispatchDelete = (aliasDelete: AliasDelete) => {
+  private dispatchDelete = (deletedAlias: Alias) => {
     this.dispatchEvent(new CustomEvent("deletealias", {
-      detail: aliasDelete,
+      detail: deletedAlias,
       bubbles: true,
     }));
   }
@@ -204,13 +207,16 @@ export class AliasManagerElement extends HTMLElement {
       return;
     }
     const aliasUpdate = this.createAliasUpdate();
-    const result = await this.requestUpdate(aliasUpdate);
-    if (result.type === ResponseType.ERROR) {
-      this.setSubmitValidity(`Error: ${result.data.message}`);
-      console.error(result.data.message);
+    const response = await this.requestUpdate(aliasUpdate);
+    if (response.type === ResponseType.ERROR) {
+      this.setSubmitValidity(`Error: ${response.data.message}`);
+      console.error(response.data.message);
       return;
     }
-    this.dispatchUpdate(aliasUpdate);
+    if (response.type === ResponseType.ALIAS_UPDATE) {
+      const updatedAlias = response.data;
+      this.dispatchUpdate(updatedAlias);
+    }
   }
 
   private validateAlias = () => {
@@ -233,9 +239,9 @@ export class AliasManagerElement extends HTMLElement {
     });
   }
 
-  private dispatchUpdate = (aliasUpdate: AliasUpdate) => {
+  private dispatchUpdate = (updatedAlias: Alias) => {
     this.dispatchEvent(new CustomEvent("updatealias", {
-      detail: aliasUpdate,
+      detail: updatedAlias,
       bubbles: true,
     }));
   }
