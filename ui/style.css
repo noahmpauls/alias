@@ -166,19 +166,15 @@ alias-creator .input-container > * + * {
 
 alias-manager {
   > * + * {
-    margin-block-start: 0.2rem;
+    margin-block-start: 0.3rem;
   }
+
 
   &:hover,
   &:focus-within {
     button.delete {
       visibility: visible;
     }
-  }
-
-  input:not(:hover, :focus, :invalid) {
-    background-color: unset;
-    border: 1px solid transparent;
   }
 
   .input-container {
@@ -190,14 +186,22 @@ alias-manager {
   }
 
   label.subdued {
-    visibility: hidden;
+    visibility: visible;
     color: var(--gray);
   }
 
-  :hover,
-  :focus-within {
+  &:not(
+    :hover,
+    :focus-within,
+    .changed
+  ) {
     label.subdued {
-      visibility: visible;
+      visibility: hidden;
+    }
+
+    input:not(:invalid) {
+      background-color: unset;
+      border: 1px solid transparent;
     }
   }
 }

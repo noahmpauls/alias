@@ -192,7 +192,7 @@ export class AliasManagerElement extends HTMLElement {
 
   private setupForm = () => {
     this.form?.addEventListener("submit", this.handleSubmit);
-    const updateListener = () => this.setSubmitVisibility(this.aliasCanUpdate());
+    const updateListener = () => this.setChangeVisibility(this.aliasCanUpdate());
     for (const input of [this.codeInput, this.linkInput, this.noteInput]) {
       input?.addEventListener("input", updateListener);
       input?.addEventListener("blur", updateListener);
@@ -255,10 +255,14 @@ export class AliasManagerElement extends HTMLElement {
     }
   }
 
-  private setSubmitVisibility = (visible: boolean) => {
-    visible
-      ? this.submitButton!.style.display = "block"
-      : this.submitButton!.style.display = "none";
+  private setChangeVisibility = (visible: boolean) => {
+    if (visible) {
+      this.submitButton!.style.display = "block";
+      this.classList.add("changed");
+    } else {
+      this.submitButton!.style.display = "none";
+      this.classList.remove("changed");
+    }
   }
 
   private aliasCanUpdate = (): boolean => {
