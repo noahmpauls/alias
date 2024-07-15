@@ -143,8 +143,12 @@ export class AliasCreatorElement extends HTMLElement {
         if (this.linkInput === undefined) {
           return;
         }
-        this.linkInput.value = tabs[0].url ?? "";
-        this.linkOnBlur();
+        const url = tabs[0].url ?? "";
+        const isValid = this.tryCreateUrl(url) !== undefined;
+        if (isValid) {
+          this.linkInput.value = url;
+          this.linkOnBlur();
+        }
       });
   }
 
@@ -154,6 +158,7 @@ export class AliasCreatorElement extends HTMLElement {
 
   private setupForm = () => {
     this.form?.addEventListener("submit", this.handleSubmit);
+    this.setLinkToCurrent();
   }
 
   private handleSubmit = async (event: SubmitEvent) => {
