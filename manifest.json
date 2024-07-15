@@ -5,10 +5,10 @@
   "description": "Browser extension for creating omnibox shortcuts.",
 
   "icons": {
-    "16": "assets/icons/icon_16.png",
-    "32": "assets/icons/icon_32.png",
-    "48": "assets/icons/icon_48.png",
-    "128": "assets/icons/icon_128.png"
+    "16": "assets/icons/icon_simple_16.png",
+    "32": "assets/icons/icon_simple_32.png",
+    "48": "assets/icons/icon_simple_48.png",
+    "128": "assets/icons/icon_simple_128.png"
   },
 
   "omnibox": {
@@ -25,7 +25,7 @@
 
   "action": {
     "default_title": "Alias",
-    "default_icon": "assets/icons/icon_128.png",
+    "default_icon": "assets/icons/icon_simple_128.png",
     "default_popup": "ui/popup.html"
   },
 
