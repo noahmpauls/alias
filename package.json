@@ -1,6 +1,6 @@
 {
   "name": "alias",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "description": "Browser extension for creating omnibox shortcuts.",
   "main": "manifest.json",
@@ -16,7 +16,7 @@
     "package:webext": "web-ext build"
   },
   "author": "Noah Pauls <noah@noahpauls.com>",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "@jest/globals": "^29.4.3",
     "@types/webextension-polyfill": "^0.10.0",
