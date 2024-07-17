@@ -44,9 +44,12 @@
       </header>
       <main id="main">
         <alias-list>
-          <div class="align-end">
-            <label for="search">Search:</label>
-            <input id="search" type="text" aria-label="search">
+          <div class="h-stack split">
+            <div>
+              <label for="search">Search:</label>
+              <input id="search" type="text" aria-label="search">
+            </div>
+            <span id="result-count">0 aliases</span>
           </div>
           <ul id="aliases"></ul>
         </alias-list>
@@ -198,7 +201,10 @@
   </template>
 
   <template id="no-aliases">
-    <i>You don't have any aliases yet. Try creating one!</i>
+    <!-- <p style="text-align: center;"> -->
+    <p>
+      <i>You don't have any aliases yet.</i>
+    </p>
   </template>
 </body>
 </html>

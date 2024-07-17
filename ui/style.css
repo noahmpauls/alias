@@ -177,13 +177,20 @@ svg.icon {
   }
 }
 
-alias-list > ul {
-  margin-block-start: 1rem;
-  padding: 0;
-  list-style: none;
+alias-list {
+  & > ul {
+    margin-block-start: 1rem;
+    padding: 0;
+    list-style: none;
 
-  > * + * {
-    margin-block-start: 0.4rem;
+    > * + * {
+      margin-block-start: 0.4rem;
+    }
+  }
+
+  #result-count {
+    color: var(--gray-dark);
+    font-style: italic;
   }
 }
 
@@ -196,6 +203,7 @@ alias-list > ul {
   display: flex;
   flex-direction: row;
   gap: 0.5rem;
+  align-items: center;
 
   &.split {
     justify-content: space-between;

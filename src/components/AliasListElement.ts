@@ -17,6 +17,7 @@ export class AliasListElement extends HTMLElement {
 
   private messenger: IClientMessenger;
   private searchInput: HTMLInputElement | undefined;
+  private resultCount: HTMLSpanElement | undefined;
   private aliasList: HTMLUListElement | undefined;
 
   constructor() {
@@ -26,6 +27,7 @@ export class AliasListElement extends HTMLElement {
 
   connectedCallback() {
     this.searchInput = this.querySelector("#search") as HTMLInputElement;
+    this.resultCount = this.querySelector("#result-count") as HTMLInputElement;
     this.aliasList = this.querySelector("#aliases") as HTMLUListElement;
 
     this.setupSearch();
@@ -67,6 +69,7 @@ export class AliasListElement extends HTMLElement {
       const visible = filterFn(alias)
       aliasListing.style.display = visible ? "" : "none";
     }
+    this.refreshResultCount();
   }
 
   private createAliasFilter = (filter: string) => {
@@ -109,6 +112,11 @@ export class AliasListElement extends HTMLElement {
   //////////////////////////////////////////////////////////
 
   createAlias = (alias: Alias) => {
+    this.addAliasListing(alias);
+    this.refreshResultCount();
+  }
+
+  private addAliasListing = (alias: Alias) => {
     const newListing = this.createListing(alias);
     if (this.listingsCount() === 0) {
       this.aliasList?.replaceChildren(newListing);      
@@ -129,6 +137,7 @@ export class AliasListElement extends HTMLElement {
   updateAlias = (alias: Alias) => {
     const updatedListing = this.aliasList?.querySelector(`li[data-id="${alias.id}"`);
     updatedListing?.replaceWith(this.createListing(alias));
+    this.refreshResultCount();
   }
 
   deleteAlias = (alias: Alias) => {
@@ -137,6 +146,7 @@ export class AliasListElement extends HTMLElement {
     if (this.listingsCount() === 0) {
       this.aliasList?.replaceChildren(this.createNoAliases());
     }
+    this.refreshResultCount();
   }
 
   private listingsCount = (): number => {
@@ -168,5 +178,32 @@ export class AliasListElement extends HTMLElement {
     manager.dataset.link = alias.link;
     manager.dataset.note = alias.note;
     return manager;
+  }
+
+  //////////////////////////////////////////////////////////
+  // Result Counter
+  //////////////////////////////////////////////////////////
+
+  private refreshResultCount = () => {
+    if (this.resultCount === undefined) {
+      return;
+    }
+    const total = this.getTotalAliases();
+    const visible = this.getVisibleAliases();
+    const isSearching = (this.searchInput?.value.length ?? 0) !== 0;
+    const countText = isSearching
+      ? `${visible}\xa0/\xa0${total}`
+      : `${total}`;
+    this.resultCount.innerText = `${countText} result${total !== 1 ? "s" : "\xa0"}`
+  }
+
+  private getTotalAliases = (): number => {
+    return this.aliasList?.querySelectorAll("alias-manager").length ?? 0;
+  }
+
+  private getVisibleAliases = (): number => {
+    return [...this.aliasList?.querySelectorAll("alias-manager") ?? []]
+      .filter((a: HTMLElement) => a.style.display !== "none")
+      .length ?? 0;
   }
 }
