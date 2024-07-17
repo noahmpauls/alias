@@ -2,6 +2,7 @@ import type { AliasCreate } from "@alias/alias";
 import { browser } from "@alias/browser";
 import { RequestType, ResponseType, type IClientMessenger, type ResponseMessage } from "@alias/message";
 import { BrowserClientMessenger } from "@alias/message/browser";
+import type { PageName } from "./AliasPagesElement";
 
 const ALIAS_CREATOR_NAME = "alias-creator";
 
@@ -178,6 +179,7 @@ export class AliasCreatorElement extends HTMLElement {
     if (response.type === ResponseType.ALIAS_CREATE) {
       const newAlias = response.data;
       this.dispatchCreate(newAlias);
+      this.dispatchSetPage("manage");
     }
   }
 
@@ -224,6 +226,13 @@ export class AliasCreatorElement extends HTMLElement {
   private dispatchCreate = (aliasCreate: AliasCreate) => {
     this.dispatchEvent(new CustomEvent("createalias", {
       detail: aliasCreate,
+      bubbles: true,
+    }));
+  }
+
+  private dispatchSetPage = (page: PageName) => {
+    this.dispatchEvent(new CustomEvent("setpage", {
+      detail: page,
       bubbles: true,
     }));
   }
