@@ -56,23 +56,7 @@ export class AliasListElement extends HTMLElement {
   }
 
   private filterList = (filter: string = "") => {
-    let filterFn = (alias: Alias) => (
-      alias.code.includes(filter) ||
-      alias.link.includes(filter) ||
-      alias.note.includes(filter)
-    );
-    if (filter.startsWith("c:")) {
-      const aliasFilter = filter.substring("c:".length);
-      filterFn = (alias: Alias) => alias.code.includes(aliasFilter);
-    }
-    if (filter.startsWith("l:")) {
-      const linkFilter = filter.substring("l:".length);
-      filterFn = (alias: Alias) => alias.link.includes(linkFilter);
-    }
-    if (filter.startsWith("n:")) {
-      const noteFilter = filter.substring("n:".length);
-      filterFn = (alias: Alias) => alias.note.toLocaleLowerCase().includes(noteFilter);      
-    }
+    let filterFn = this.createAliasFilter(filter);
     for (const aliasListing of this.aliasList?.querySelectorAll("alias-manager") ?? []) {
       const alias: Alias = {
         id: aliasListing.dataset.id ?? "",
@@ -82,6 +66,41 @@ export class AliasListElement extends HTMLElement {
       }
       const visible = filterFn(alias)
       aliasListing.style.display = visible ? "" : "none";
+    }
+  }
+
+  private createAliasFilter = (filter: string) => {
+    const lowerFilter = filter.toLocaleLowerCase();
+    return (alias: Alias) => {
+      const fullMatch = (
+        alias.code.includes(filter) ||
+        alias.link.toLocaleLowerCase().includes(lowerFilter) ||
+        alias.note.toLocaleLowerCase().includes(lowerFilter)
+      );
+      if (fullMatch) {
+        return true;
+      }
+      
+      if (
+        filter.startsWith("c:") &&
+        alias.code.includes(filter.substring(2))
+      ) {
+        return true;
+      }
+
+      if (
+        filter.startsWith("l:") &&
+        alias.link.toLocaleLowerCase().includes(lowerFilter.substring(2))
+      ) {
+        return true;
+      }
+
+      if (
+        filter.startsWith("n:") &&
+        alias.note.toLocaleLowerCase().includes(lowerFilter.substring(2))
+      ) {
+        return true;
+      }
     }
   }
 
