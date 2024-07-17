@@ -127,10 +127,10 @@ export class AliasManagerElement extends HTMLElement {
     const validation = this.querySelector(`#code-${this.alias?.id}-validation`) as HTMLElement
     if (message) {
       this.codeInput?.setCustomValidity(message);
-      validation.innerHTML = message;
+      validation.innerText = message;
     } else {
       this.codeInput?.setCustomValidity("");
-      validation.innerHTML = "";
+      validation.innerText = "";
     }
   }
 
@@ -179,10 +179,10 @@ export class AliasManagerElement extends HTMLElement {
     const validation = this.querySelector(`#link-${this.alias?.id}-validation`) as HTMLElement
     if (message) {
       this.linkInput?.setCustomValidity(message);
-      validation.innerHTML = message;
+      validation.innerText = message;
     } else {
       this.linkInput?.setCustomValidity("");
-      validation.innerHTML = "";
+      validation.innerText = "";
     }
   }
 
@@ -249,9 +249,9 @@ export class AliasManagerElement extends HTMLElement {
   private setSubmitValidity = (message?: string) => {
     const validation = this.querySelector(`#submit-${this.alias?.id}-validation`) as HTMLElement
     if (message) {
-      validation.innerHTML = message;
+      validation.innerText = message;
     } else {
-      validation.innerHTML = "";
+      validation.innerText = "";
     }
   }
 

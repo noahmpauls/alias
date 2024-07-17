@@ -75,10 +75,10 @@ export class AliasCreatorElement extends HTMLElement {
     const validation = this.querySelector("#alias-creator-code-validation") as HTMLElement
     if (message) {
       this.codeInput?.setCustomValidity(message);
-      validation.innerHTML = message;
+      validation.innerText = message;
     } else {
       this.codeInput?.setCustomValidity("");
-      validation.innerHTML = "";
+      validation.innerText = "";
     }
   }
 
@@ -128,10 +128,10 @@ export class AliasCreatorElement extends HTMLElement {
     const validation = this.querySelector("#alias-creator-link-validation") as HTMLElement
     if (message) {
       this.linkInput?.setCustomValidity(message);
-      validation.innerHTML = message;
+      validation.innerText = message;
     } else {
       this.linkInput?.setCustomValidity("");
-      validation.innerHTML = "";
+      validation.innerText = "";
     }
   }
 
@@ -205,9 +205,9 @@ export class AliasCreatorElement extends HTMLElement {
   private setSubmitValidity = (message?: string) => {
     const validation = this.querySelector("#alias-creator-submit-validation") as HTMLElement
     if (message) {
-      validation.innerHTML = message;
+      validation.innerText = message;
     } else {
-      validation.innerHTML = "";
+      validation.innerText = "";
     }
   }
 
