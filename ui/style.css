@@ -1,9 +1,18 @@
 :root {
-  --red-light: hsl(5deg, 50%, 97%);
-  --red: hsl(5deg, 70%, 50%);
-  --red-dark: hsl(5deg, 70%, 40%);
+  --positive-light: hsl(110, 49%, 50%);
+  --positive: hsl(110, 49%, 43%);
+  --positive-dark: hsl(110, 49%, 35%);
 
-  --gray-light: hsl(0deg, 0%, 99%);
+  --neutral-light: hsl(221, 51%, 57%);
+  --neutral: hsl(221, 51%, 50%);
+  --neutral-dark: hsl(221, 51%, 37%);
+
+  --negative-light: hsl(5deg, 50%, 97%);
+  --negative: hsl(5deg, 70%, 50%);
+  --negative-dark: hsl(5deg, 70%, 40%);
+
+  --gray-lighter: hsl(0deg, 0%, 99%);
+  --gray-light: hsl(0deg, 0%, 90%);
   --gray: hsl(0deg, 0%, 70%);
   --gray-dark: hsl(0deg, 0%, 50%);
   --gray-darker: hsl(0deg, 0%, 30%);
@@ -13,17 +22,27 @@
 *::before,
 *::after {
   box-sizing: border-box;
+  margin: 0;
 }
 
 html {
   font-family: sans-serif;
   font-size: 0.9rem;
-  min-inline-size: 30rem;
 }
 
-h1 {
-  font-size: 1.2rem;
-  text-align: center;
+body {
+  inline-size: 28rem;
+}
+
+header {
+  padding-block-start: 0.5rem;
+  padding-block-end: 1rem;
+  padding-inline: 0.5rem;
+}
+
+main {
+  padding-block-end: 0.5rem;
+  padding-inline: 0.5rem;
 }
 
 h2 {
@@ -38,68 +57,118 @@ h2 {
   }
 }
 
+button {
+  display: block;
+  font-family: sans-serif;
+  border: none;
+  border-radius: 0.2rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: center;
+  font-size: 1.1rem;
+  padding-inline-start: 0.3rem;
+  padding-inline-end: 0.7rem;
+  padding-block: 0.3rem;
+
+  &.positive {
+    --button-bg-primary: var(--positive);
+    --button-bg-active: var(--positive-dark);
+    --button-bg-hover: var(--positive-light);
+  }
+
+  &.neutral {
+    --button-bg-primary: var(--neutral);
+    --button-bg-active: var(--neutral-dark);
+    --button-bg-hover: var(--neutral-light);
+  }
+
+  &.negative {
+    --button-bg-primary: var(--negative);
+    --button-bg-active: var(--negative-dark);
+    --button-bg-hover: var(--negative-light);
+  }
+
+  &.muted {
+    --button-bg-primary: var(--gray-dark);
+    --button-bg-active: var(--gray-darker);
+    --button-bg-hover: var(--gray-light);
+  }
+}
+
+button.icon {
+  padding-inline: 0.3rem;
+  padding-block: 0.3rem;
+}
+
+button.filled {
+  background-color: var(--button-bg-primary);
+  color: white;
+
+  &:hover,
+  &:focus {
+    background-color: var(--button-bg-hover);
+  }
+
+  &:active {
+    background-color: var(--button-bg-active);
+  }
+}
+
+button.subtle {
+  background-color: transparent;
+
+  color: var(--gray-darker);
+
+  &:hover,
+  &:focus {
+    color: white;
+    background-color: var(--button-bg-primary);
+  }
+
+  &:active {
+    background-color: var(--button-bg-active);
+  }
+}
+
 input {
   color: var(--gray-darker);
-  background-color: var(--gray-light);
+  background-color: var(--gray-lighter);
   border: 1px solid var(--gray);
   border-radius: 0.2rem;
+  font-family: sans-serif;
   font-size: 0.9rem;
   font-weight: inherit;
   padding-block: 0.2rem;
   padding-inline: 0.4rem;
 
   &:invalid {
-    border-color: var(--red);
-    background-color: var(--red-light);
+    border-color: var(--negative);
+    background-color: var(--negative-light);
   }
 }
 
 svg.icon {
+  color: inherit;
+  display: block;
   inline-size: 1.25rem;
   block-size: 1.25rem;
-  vertical-align: -.25rem;
 
   &.small {
     inline-size: 1rem;
     block-size: 1rem;
   }
-}
 
-button.delete {
-  border: none;
-  margin: 0;
-  padding: 0;
-  background: none;
-  visibility: hidden;
-  border-radius: 0.2rem;
-  padding-inline: 0.5rem;
-
-  * {
-    color: var(--red);
-  }
-
-  &:hover,
-  &:focus {
-    background-color: var(--red);
-    * {
-      color: white;
-    }
-  }
-
-  &:active {
-    background-color: var(--red-dark);
-    transform: scale(0.95);
-    * {
-      transform: scale(0.95);
-    }
+  &.large {
+    inline-size: 1.5rem;
+    block-size: 1.5rem;
+    vertical-align: -.5rem;
   }
 }
 
-hr {
-  margin-block: 2rem;
-}
-
-ul {
+alias-list > ul {
+  margin-block-start: 1rem;
   padding: 0;
   list-style: none;
 
@@ -110,12 +179,17 @@ ul {
 
 .validation-error {
   font-size: 0.8rem;
-  color: var(--red-dark);
+  color: var(--negative-dark);
 }
 
-.stack {
+.h-stack {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  gap: 0.5rem;
+
+  &.split {
+    justify-content: space-between;
+  }
 }
 
 .align-end {
@@ -169,10 +243,14 @@ alias-manager {
     margin-block-start: 0.3rem;
   }
 
+  button {
+    visibility: hidden;
+  }
 
   &:hover,
-  &:focus-within {
-    button.delete {
+  &:focus-within,
+  &.changed {
+    button {
       visibility: visible;
     }
   }

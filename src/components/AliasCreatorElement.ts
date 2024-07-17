@@ -19,7 +19,6 @@ export class AliasCreatorElement extends HTMLElement {
   private form: HTMLFormElement | undefined;
   private codeInput: HTMLInputElement | undefined;
   private linkInput: HTMLInputElement | undefined;
-  private linkCurrentButton: HTMLButtonElement | undefined;
   private noteInput: HTMLInputElement | undefined;
 
   constructor() {
@@ -32,7 +31,6 @@ export class AliasCreatorElement extends HTMLElement {
     this.codeInput = this.querySelector("#alias-creator-code") as HTMLInputElement;
     this.linkInput = this.querySelector("#alias-creator-link") as HTMLInputElement;
     this.noteInput = this.querySelector("#alias-creator-note") as HTMLInputElement;    
-    this.linkCurrentButton = this.querySelector("#alias-creator-link-current") as HTMLButtonElement;
 
     this.setupCodeInput();
     this.setupLinkInput();
@@ -90,7 +88,6 @@ export class AliasCreatorElement extends HTMLElement {
   private setupLinkInput = () => {
     this.linkInput?.addEventListener("input", this.linkOnChange);
     this.linkInput?.addEventListener("blur", this.linkOnBlur);
-    this.linkCurrentButton?.addEventListener("click", this.setLinkToCurrent);
   }
 
   private linkOnChange = () => {

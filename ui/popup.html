@@ -7,50 +7,126 @@
   <script src="../dist/ui/scripts/popup.js" defer></script>
 </head>
 <body>
-  <header>
-    <h1>Alias</h1>
-  </header>
-  <main>
-    <alias-creator>
-      <form id="alias-creator-form" class="input-container">
-        <div>
-          <label for="alias-creator-code">Alias:</label>
-          <input name="code" id="alias-creator-code" type="text">
-          <span id="alias-creator-code-validation" class="offset validation-error"></span>
-        </div>
-        <div>
-          <label for="alias-creator-link">Link:</label>
-          <div class="grow-first">
-            <input name="link" id="alias-creator-link" type="text" value="https://">
-            <button id="alias-creator-link-current" type="button">Current Page</button>
+  <alias-pages>
+
+    <div data-page="manage">
+      <header>
+        <nav class="h-stack split">
+          <alias-pager page="create">
+            <button class="filled positive" title="Create Alias" aria-label="Create Alias">
+              <svg class="icon large" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              New
+            </button>
+          </alias-pager>
+          <div class="h-stack">
+            <alias-pager page="help">
+              <button class="icon subtle muted" title="Help" aria-label="Help">
+                <svg class="icon large" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                  <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
+              </button>
+            </alias-pager>
+            <alias-pager page="tools">
+            <button class="icon subtle muted" title="Tools" aria-label="Tools">
+              <svg class="icon large" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z">
+                </path>
+              </svg>
+            </button>
+            </alias-pager>
           </div>
-          <span id="alias-creator-link-validation" class="offset validation-error"></span>
-        </div>
-        <div>
-          <label for="alias-creator-note">Note:</label>
-          <input name="notes" id="alias-creator-note" type="text">
-        </div>
-        <div>
-          <button id="alias-creator-submit" class="offset" type="submit">Create</button>
-          <span id="alias-creator-submit-validation" class="offset validation-error"></span>
-        </div>
-      </form>
-    </alias-creator>
-    <hr>
-    <alias-list>
-      <div class="align-end">
-        <label for="search">Search:</label>
-        <input id="search" type="text" aria-label="search">
-      </div>
-      <ul id="aliases"></ul>
-    </alias-list>
-  </main>
+        </nav>
+      </header>
+      <main id="main">
+        <alias-list data-page="manage">
+          <div class="align-end">
+            <label for="search">Search:</label>
+            <input id="search" type="text" aria-label="search">
+          </div>
+          <ul id="aliases"></ul>
+        </alias-list>
+      </main>
+    </div>
+
+    <div data-page="create">
+      <header>
+        <nav class="h-stack split">
+          <alias-pager page="manage">
+            <button class="icon subtle muted" title="Back" aria-label="Back">
+              <svg class="icon large" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+              </svg>
+            </button>
+          </alias-pager>
+        </nav>
+      </header>
+      <main>
+        <alias-creator>
+          <form id="alias-creator-form" class="input-container">
+            <div>
+              <label for="alias-creator-code">Alias:</label>
+              <input name="code" id="alias-creator-code" type="text">
+              <span id="alias-creator-code-validation" class="offset validation-error"></span>
+            </div>
+            <div>
+              <label for="alias-creator-link">Link:</label>
+              <input name="link" id="alias-creator-link" type="text" value="https://">
+              <span id="alias-creator-link-validation" class="offset validation-error"></span>
+            </div>
+            <div>
+              <label for="alias-creator-note">Note:</label>
+              <input name="notes" id="alias-creator-note" type="text">
+            </div>
+            <div>
+              <button id="alias-creator-submit" class="offset filled positive" type="submit">
+                <svg class="icon large" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                Create
+              </button>
+              <span id="alias-creator-submit-validation" class="offset validation-error"></span>
+            </div>
+          </form>
+        </alias-creator>
+      </main>
+    </div>
+
+    <div data-page="tools">
+      <header>
+        <nav class="h-stack split">
+          <alias-pager page="manage">
+            <button class="icon subtle muted" title="Back" aria-label="Back">
+              <svg class="icon large" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+              </svg>
+            </button>
+          </alias-pager>
+        </nav>
+      </header>
+      <main>
+        <p>
+          This is where a user would be able to export their shortcuts.
+        </p>
+      </main>
+    </div>
+
+  </alias-pages>
+
+  <!-- TEMPLATES -->
 
   <template id="alias-manager">
     <form id="alias-manager-id" class="input-container">
       <div>
         <label for="code-id" title="Alias">
-          <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-terminal">
+          <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="4 17 10 11 4 5"></polyline>
             <line x1="12" y1="19" x2="20" y2="19"></line>
           </svg> 
@@ -59,7 +135,7 @@
           <h2>
             <input id="code-id" aria-label="Alias" type="text">
           </h2>
-          <button id="delete-id" class="delete">
+          <button id="delete-id" class="icon subtle negative">
             <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <polyline points="3 6 5 6 21 6"></polyline>
@@ -73,7 +149,7 @@
       </div>
       <div>
         <label for="link-id" title="Link" class="subdued">
-          <svg class="icon small" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-link">
+          <svg class="icon small" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
             <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
           </svg>
@@ -83,14 +159,21 @@
       </div>
       <div>
         <label for="note-id" title="Note" class="subdued">
-          <svg class="icon small" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2">
+          <svg class="icon small" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
           </svg>
         </label>
         <input id="note-id" aria-label="Note" type="text">
       </div>
       <div>
-        <button id="submit-id" type="submit" class="offset" style="display: none;">Save</button>
+        <button id="submit-id" type="submit" class="offset icon filled neutral" style="display: none;">
+          <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+            <polyline points="17 21 17 13 7 13 7 21"></polyline>
+            <polyline points="7 3 7 8 15 8"></polyline>
+          </svg>
+          Save
+        </button>
         <span id="submit-id-validation" class="offset validation-error"></span>
       </div>
     </form>

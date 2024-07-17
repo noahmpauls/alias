@@ -257,7 +257,7 @@ export class AliasManagerElement extends HTMLElement {
 
   private setChangeVisibility = (visible: boolean) => {
     if (visible) {
-      this.submitButton!.style.display = "block";
+      this.submitButton!.style.display = "";
       this.classList.add("changed");
     } else {
       this.submitButton!.style.display = "none";

@@ -1,10 +1,14 @@
 import { AliasCreatorElement } from "components/AliasCreatorElement";
 import { AliasListElement } from "components/AliasListElement";
 import { AliasManagerElement } from "components/AliasManagerElement";
+import { AliasPagerElement } from "components/AliasPagerElement";
+import { AliasPagesElement } from "components/AliasPagesElement";
 
 AliasCreatorElement.register();
 AliasListElement.register();
 AliasManagerElement.register();
+AliasPagerElement.register();
+AliasPagesElement.register();
 
 const aliasList = document.querySelector("alias-list") as AliasListElement;
 
