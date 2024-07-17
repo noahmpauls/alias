@@ -14,7 +14,7 @@
         <nav class="h-stack split">
           <alias-pager page="create">
             <button class="filled positive" title="Create Alias" aria-label="Create Alias">
-              <svg class="icon large" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="12" y1="5" x2="12" y2="19"></line>
                 <line x1="5" y1="12" x2="19" y2="12"></line>
               </svg>
@@ -73,8 +73,8 @@
         <alias-creator>
           <form id="alias-creator-form" class="input-container">
             <div>
-              <label for="alias-creator-code">Alias:</label>
-              <input name="code" id="alias-creator-code" type="text">
+              <label for="alias-creator-code">Code:</label>
+              <input name="code" id="alias-creator-code" type="text" style="font-weight: bold; font-family: monospace;">
               <span id="alias-creator-code-validation" class="offset validation-error"></span>
             </div>
             <div>
@@ -146,7 +146,7 @@
   <template id="alias-manager">
     <form id="alias-manager-id" class="input-container">
       <div>
-        <label for="code-id" title="Alias">
+        <label for="code-id" title="Code">
           <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="4 17 10 11 4 5"></polyline>
             <line x1="12" y1="19" x2="20" y2="19"></line>
@@ -201,8 +201,7 @@
   </template>
 
   <template id="no-aliases">
-    <!-- <p style="text-align: center;"> -->
-    <p>
+    <p style="text-align: center; margin-block: 2rem;">
       <i>You don't have any aliases yet.</i>
     </p>
   </template>
