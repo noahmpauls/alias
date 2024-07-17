@@ -1,7 +1,7 @@
 :root {
-  --positive-light: hsl(110, 49%, 50%);
-  --positive: hsl(110, 49%, 43%);
-  --positive-dark: hsl(110, 49%, 35%);
+  --positive-light: hsl(105, 49%, 52%);
+  --positive: hsl(105, 49%, 48%);
+  --positive-dark: hsl(105, 49%, 45%);
 
   --neutral-lighter: hsl(221, 51%, 97%);
   --neutral-light: hsl(221, 51%, 57%);
@@ -69,8 +69,7 @@ button {
   gap: 0.5rem;
   justify-content: center;
   font-size: 1.1rem;
-  padding-inline-start: 0.3rem;
-  padding-inline-end: 0.7rem;
+  padding-inline: 0.7rem;
   padding-block: 0.3rem;
 
   &.positive {
