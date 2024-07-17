@@ -3,6 +3,7 @@
   --positive: hsl(110, 49%, 43%);
   --positive-dark: hsl(110, 49%, 35%);
 
+  --neutral-lighter: hsl(221, 51%, 97%);
   --neutral-light: hsl(221, 51%, 57%);
   --neutral: hsl(221, 51%, 50%);
   --neutral-dark: hsl(221, 51%, 37%);
@@ -91,8 +92,8 @@ button {
   }
 
   &.muted {
-    --button-bg-primary: var(--gray-dark);
-    --button-bg-active: var(--gray-darker);
+    --button-bg-primary: var(--gray-darker);
+    --button-bg-active: var(--gray-dark);
     --button-bg-hover: var(--gray-light);
   }
 }
@@ -143,10 +144,20 @@ input {
   padding-block: 0.2rem;
   padding-inline: 0.4rem;
 
+  &.subtle {
+    border-inline-color: transparent;
+    border-block-start-color: transparent;
+    border-block-end-color: var(--gray);
+    background-color: transparent;
+    border-radius: 0;
+  }
+
   &:invalid {
+    border-radius: 0.2rem;
     border-color: var(--negative);
     background-color: var(--negative-light);
   }
+
 }
 
 svg.icon {
@@ -163,7 +174,6 @@ svg.icon {
   &.large {
     inline-size: 1.5rem;
     block-size: 1.5rem;
-    vertical-align: -.5rem;
   }
 }
 
@@ -173,7 +183,7 @@ alias-list > ul {
   list-style: none;
 
   > * + * {
-    margin-block-start: 1rem;
+    margin-block-start: 0.4rem;
   }
 }
 
@@ -234,11 +244,18 @@ alias-creator .input-container > * + * {
   }
 
   > * + * {
-    margin-inline-start: 0.2rem;
+    margin-inline-start: 0.5rem;
   }
 }
 
 alias-manager {
+  display: block;
+  border: 1px solid transparent;
+  border-radius: 0.4rem;
+  padding-block: 0.2rem;
+  padding-inline-start: 0;
+  padding-inline-end: 0.4rem;
+
   > * + * {
     margin-block-start: 0.3rem;
   }
@@ -247,19 +264,31 @@ alias-manager {
     visibility: hidden;
   }
 
+  button[type="submit"] {
+    margin-block-start: 0.2rem;
+  }
+
   &:hover,
   &:focus-within,
   &.changed {
     button {
       visibility: visible;
     }
+
+    background-color: var(--gray-lighter);
+    border-color: var(--gray);
+  }
+
+  &.changed {
+    background-color: var(--neutral-lighter);
+    border-color: var(--neutral);
   }
 
   .input-container {
     padding-inline-start: 0.5rem;
     
     > * + * {
-      margin-block-start: 0.1rem;
+      margin-block-start: 0.2rem;
     }
   }
 
@@ -279,7 +308,7 @@ alias-manager {
 
     input:not(:invalid) {
       background-color: unset;
-      border: 1px solid transparent;
+      border-color: transparent;
     }
   }
 }

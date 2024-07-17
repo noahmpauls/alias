@@ -62,7 +62,7 @@ export class AliasListElement extends HTMLElement {
         return;
       }
       aliasListing.style.display = code?.startsWith(filter)
-        ? "block"
+        ? ""
         : "none";
     }
   }
