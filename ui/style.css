@@ -200,6 +200,10 @@ alias-list > ul {
   &.split {
     justify-content: space-between;
   }
+
+  &.center {
+    justify-content: center;
+  }
 }
 
 .align-end {
@@ -276,7 +280,7 @@ alias-manager {
     }
 
     background-color: var(--gray-lighter);
-    border-color: var(--gray);
+    border-color: var(--gray-light);
   }
 
   &.changed {
@@ -310,5 +314,16 @@ alias-manager {
       background-color: unset;
       border-color: transparent;
     }
+  }
+}
+
+alias-data {
+  display: block;
+  margin-block-end: 3rem;
+
+  #import,
+  #export {
+    padding-inline: 1rem;
+    block-size: 3rem;
   }
 }

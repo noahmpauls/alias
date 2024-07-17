@@ -1,10 +1,12 @@
 import { AliasCreatorElement } from "components/AliasCreatorElement";
+import { AliasDataElement } from "components/AliasDataElement";
 import { AliasListElement } from "components/AliasListElement";
 import { AliasManagerElement } from "components/AliasManagerElement";
 import { AliasPagerElement } from "components/AliasPagerElement";
 import { AliasPagesElement } from "components/AliasPagesElement";
 
 AliasCreatorElement.register();
+AliasDataElement.register();
 AliasListElement.register();
 AliasManagerElement.register();
 AliasPagerElement.register();

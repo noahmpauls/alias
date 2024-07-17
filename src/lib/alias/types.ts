@@ -10,3 +10,9 @@ export type AliasCreate = Omit<Alias, "id">
 export type AliasUpdate = Pick<Alias, "id"> & Partial<Alias>
 
 export type AliasDelete = Pick<Alias, "id">
+
+export type AliasExternal = {
+  code: string,
+  link: string,
+  note?: string,
+}
