@@ -56,14 +56,32 @@ export class AliasListElement extends HTMLElement {
   }
 
   private filterList = (filter: string = "") => {
-    for (const aliasListing of this.aliasList?.querySelectorAll("li") ?? []) {
-      const code = aliasListing.dataset.code;
-      if (code === undefined) {
-        return;
+    let filterFn = (alias: Alias) => (
+      alias.code.includes(filter) ||
+      alias.link.includes(filter) ||
+      alias.note.includes(filter)
+    );
+    if (filter.startsWith("c:")) {
+      const aliasFilter = filter.substring("c:".length);
+      filterFn = (alias: Alias) => alias.code.includes(aliasFilter);
+    }
+    if (filter.startsWith("l:")) {
+      const linkFilter = filter.substring("l:".length);
+      filterFn = (alias: Alias) => alias.link.includes(linkFilter);
+    }
+    if (filter.startsWith("n:")) {
+      const noteFilter = filter.substring("n:".length);
+      filterFn = (alias: Alias) => alias.note.toLocaleLowerCase().includes(noteFilter);      
+    }
+    for (const aliasListing of this.aliasList?.querySelectorAll("alias-manager") ?? []) {
+      const alias: Alias = {
+        id: aliasListing.dataset.id ?? "",
+        code: aliasListing.dataset.code ?? "",
+        link: aliasListing.dataset.link ?? "",
+        note: aliasListing.dataset.note ?? "",
       }
-      aliasListing.style.display = code?.startsWith(filter)
-        ? ""
-        : "none";
+      const visible = filterFn(alias)
+      aliasListing.style.display = visible ? "" : "none";
     }
   }
 
