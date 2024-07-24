@@ -3,20 +3,38 @@
   "version": "1.0.0",
   "type": "module",
   "description": "Browser extension for creating omnibox shortcuts.",
+  "author": "Noah Pauls <noah@noahpauls.com>",
+  "license": "MIT",
   "main": "manifest.json",
+  "webExt": {
+    "ignoreFiles": [
+      "src",
+      "archives",
+      "esbuild.js",
+      "manifest.js",
+      "package.json",
+      "package-lock.json",
+      "tsconfig.json"
+    ]
+  },
   "scripts": {
-    "dev": "run-p -rl dev:*",
+    "dev": "npm-run-all -l build:firefox:manifest --parallel -rl dev:scripts dev:types dev:webext",
     "dev:scripts": "node esbuild.js --watch",
     "dev:types": "tsc --watch",
     "dev:webext": "web-ext run --devtools --start-url about:addons",
-    "build": "run-s -l build:types build:scripts",
+    
+    "build:firefox": "run-s -l build:firefox:manifest build:types build:scripts",
+    "build:chromium": "run-s -l build:chromium:manifest build:types build:scripts",
+    "build:firefox:manifest": "node manifest.js firefox",
+    "build:chromium:manifest": "node manifest.js chromium",
     "build:scripts": "node esbuild.js",
     "build:types": "tsc",
-    "package": "run-s build:types build:scripts package:webext",
-    "package:webext": "web-ext build"
+
+    "package:firefox": "run-s build:firefox:manifest build:types build:scripts package:firefox:archive",
+    "package:chromium": "run-s build:chromium:manifest build:types build:scripts package:chromium:archive",
+    "package:firefox:archive": "web-ext build --filename {name}-{version}-firefox.zip --artifacts-dir archives/firefox",
+    "package:chromium:archive": "web-ext build --filename {name}-{version}-chromium.zip --artifacts-dir archives/chromium"
   },
-  "author": "Noah Pauls <noah@noahpauls.com>",
-  "license": "MIT",
   "devDependencies": {
     "@jest/globals": "^29.4.3",
     "@types/webextension-polyfill": "^0.10.0",

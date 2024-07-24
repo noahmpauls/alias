@@ -22,5 +22,8 @@
     "paths": {
       "@alias/*": ["lib/*"]
     }
-  }
+  },
+  "include": [
+    "src/**/*"
+  ]
 }

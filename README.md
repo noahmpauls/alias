@@ -15,6 +15,7 @@ To set up the development environment:
 
 From there:
 
-- Use `npm run build` to perform a build of the extension.
+- Use `npm run build:<target>` to perform a build of the extension. `<target>` can be either `firefox` or `chromium`.
 - Use `npm run dev` to concurrently run and develop the extension. _You must have Firefox installed for this to work._
-- Use `npm run package` to build and package the extension for distribution.
+- Use `npm run package:<target>` to build and package the extension for distribution. `<target>` can be either `firefox` or `chromium`.
+

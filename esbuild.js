@@ -1,4 +1,5 @@
-import * as esbuild from 'esbuild';
+import path from "path";
+import * as esbuild from "esbuild";
 
 const plugin = {
   name: "plugin",
@@ -18,8 +19,8 @@ const plugin = {
 }
 
 const scriptEntry = (file) => ({
-  in: `src/scripts/${file}.ts`,
-  out: `${file}`,
+  in: path.resolve("src", "scripts", `${file}.ts`),
+  out: file,
 });
 
 const files = [
@@ -32,7 +33,7 @@ const config = {
   bundle: true,
   format: "esm",
   ignoreAnnotations: true,
-  outdir: "scripts",
+  outdir: path.resolve("scripts"),
   plugins: [plugin],
   color: true,
 };
@@ -47,4 +48,3 @@ if (watch) {
 } else {
   await esbuild.build(config);
 }
-
