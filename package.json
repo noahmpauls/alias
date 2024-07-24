@@ -10,8 +10,8 @@
     "ignoreFiles": [
       "src",
       "archives",
-      "esbuild.js",
-      "manifest.js",
+      "scripts",
+      "README.md",
       "package.json",
       "package-lock.json",
       "tsconfig.json"
@@ -19,15 +19,15 @@
   },
   "scripts": {
     "dev": "npm-run-all -l build:firefox:manifest --parallel -rl dev:scripts dev:types dev:webext",
-    "dev:scripts": "node esbuild.js --watch",
+    "dev:scripts": "node scripts/esbuild.js --watch",
     "dev:types": "tsc --watch",
     "dev:webext": "web-ext run --devtools --start-url about:addons",
     
     "build:firefox": "run-s -l build:firefox:manifest build:types build:scripts",
     "build:chromium": "run-s -l build:chromium:manifest build:types build:scripts",
-    "build:firefox:manifest": "node manifest.js firefox",
-    "build:chromium:manifest": "node manifest.js chromium",
-    "build:scripts": "node esbuild.js",
+    "build:firefox:manifest": "node scripts/manifest.js firefox",
+    "build:chromium:manifest": "node scripts/manifest.js chromium",
+    "build:scripts": "node scripts/esbuild.js",
     "build:types": "tsc",
 
     "package:firefox": "run-s build:firefox:manifest build:types build:scripts package:firefox:archive",

@@ -34,7 +34,7 @@ const firefoxManifest = {
   ...sharedManifest,
 
   background: {
-    scripts: ["scripts/background.js"],
+    scripts: ["bin/background.js"],
   },
 
   browser_specific_settings: {
@@ -50,7 +50,7 @@ const chromiumManifest = {
   manifest_version: 3,
 
   background: {
-    service_worker: "scripts/background.js",
+    service_worker: "bin/background.js",
   },
 }
 

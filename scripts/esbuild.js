@@ -33,7 +33,7 @@ const config = {
   bundle: true,
   format: "esm",
   ignoreAnnotations: true,
-  outdir: path.resolve("scripts"),
+  outdir: path.resolve("bin"),
   plugins: [plugin],
   color: true,
 };

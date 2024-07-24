@@ -1,6 +1,6 @@
 node_modules
 archives
-scripts
+bin
 manifest.json
 .vscode
 .local
