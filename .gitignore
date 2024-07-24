@@ -1,5 +1,5 @@
 node_modules
-dist
 web-ext-artifacts
+scripts
 .vscode
 .local

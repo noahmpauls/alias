@@ -17,35 +17,22 @@ const plugin = {
   }
 }
 
-const extEntry = (file) => ({
+const scriptEntry = (file) => ({
   in: `src/scripts/${file}.ts`,
-  out: `scripts/${file}`,
+  out: `${file}`,
 });
-
-const uiEntry = (file) => ({
-  in: `src/scripts/${file}.ts`,
-  out: `ui/scripts/${file}`,
-});
-
-const extFiles = [
-  "background",
-].map(extEntry);
-
-const uiFiles = [
-  "popup",
-].map(uiEntry);
 
 const files = [
-  ...extFiles,
-  ...uiFiles,
-];
+  "background",
+  "popup",
+].map(scriptEntry);
 
 const config = {
   entryPoints: files,
   bundle: true,
   format: "esm",
   ignoreAnnotations: true,
-  outdir: "dist",
+  outdir: "scripts",
   plugins: [plugin],
   color: true,
 };
