@@ -20,6 +20,7 @@ const sharedManifest = {
   },
 
   permissions: [
+    "activeTab",
     "storage",
   ],
   
