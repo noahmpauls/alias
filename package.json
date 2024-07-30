@@ -1,6 +1,6 @@
 {
   "name": "alias",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "module",
   "description": "Browser extension for creating omnibox shortcuts.",
   "author": "Noah Pauls <noah@noahpauls.com>",
