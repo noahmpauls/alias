@@ -18,22 +18,26 @@
     ]
   },
   "scripts": {
-    "dev": "npm-run-all -l build:firefox:manifest --parallel -rl dev:scripts dev:types dev:webext",
-    "dev:scripts": "node scripts/esbuild.js --watch",
-    "dev:types": "tsc --watch",
-    "dev:webext": "web-ext run --devtools --start-url about:addons",
-    
-    "build:firefox": "run-s -l build:firefox:manifest build:types build:scripts",
-    "build:chromium": "run-s -l build:chromium:manifest build:types build:scripts",
-    "build:firefox:manifest": "node scripts/manifest.js firefox",
-    "build:chromium:manifest": "node scripts/manifest.js chromium",
-    "build:scripts": "node scripts/esbuild.js",
-    "build:types": "tsc",
+    "start:firefox": "npm-run-all -l _build:firefox:manifest --parallel -rl _watch:scripts _watch:types _watch:webext",
+    "start:chromium": "npm-run-all -l _build:chromium:manifest --parallel -rl _watch:scripts _watch:types",
 
-    "package:firefox": "run-s build:firefox:manifest build:types build:scripts package:firefox:archive",
-    "package:chromium": "run-s build:chromium:manifest build:types build:scripts package:chromium:archive",
-    "package:firefox:archive": "web-ext build --filename {name}-{version}-firefox.zip --artifacts-dir archives/firefox",
-    "package:chromium:archive": "web-ext build --filename {name}-{version}-chromium.zip --artifacts-dir archives/chromium"
+    "build:firefox": "run-s -l _build:firefox:manifest _build:types _build:scripts",
+    "build:chromium": "run-s -l _build:chromium:manifest _build:types _build:scripts",
+
+    "package:firefox": "run-s _build:firefox:manifest _build:types _build:scripts _package:firefox:archive",
+    "package:chromium": "run-s _build:chromium:manifest _build:types _build:scripts _package:chromium:archive",
+
+    "_watch:scripts": "node scripts/esbuild.js --watch",
+    "_watch:types": "tsc --watch",
+    "_watch:webext": "web-ext run --devtools --start-url about:addons",
+    
+    "_build:firefox:manifest": "node scripts/manifest.js firefox",
+    "_build:chromium:manifest": "node scripts/manifest.js chromium",
+    "_build:scripts": "node scripts/esbuild.js",
+    "_build:types": "tsc",
+
+    "_package:firefox:archive": "web-ext build --filename {name}-{version}-firefox.zip --artifacts-dir archives/firefox",
+    "_package:chromium:archive": "web-ext build --filename {name}-{version}-chromium.zip --artifacts-dir archives/chromium"
   },
   "devDependencies": {
     "@jest/globals": "^29.4.3",
