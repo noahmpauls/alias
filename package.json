@@ -24,6 +24,7 @@
     "build:firefox": "run-s -l _build:firefox:manifest _build:types _build:scripts",
     "build:chromium": "run-s -l _build:chromium:manifest _build:types _build:scripts",
 
+    "package:all": "run-s package:firefox package:chromium",
     "package:firefox": "run-s _build:firefox:manifest _build:types _build:scripts _package:firefox:archive",
     "package:chromium": "run-s _build:chromium:manifest _build:types _build:scripts _package:chromium:archive",
 

@@ -19,4 +19,4 @@ From there, you can use the provided scripts to run, build, and package the exte
 - Use `npm run start:<target>` to concurrently run and develop the extension.
     - `<target>` = `firefox`: You must have Firefox installed.
 - Use `npm run package:<target>` to build and package the extension for distribution.
-
+    - `<target>` = `all`: Creates packages for all targets.
