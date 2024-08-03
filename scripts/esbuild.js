@@ -25,6 +25,7 @@ const scriptEntry = (file) => ({
 
 const files = [
   "background",
+  "import",
   "popup",
 ].map(scriptEntry);
 

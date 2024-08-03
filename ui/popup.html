@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="/ui/style.css">
+  <link rel="stylesheet" href="/ui/css/style.css">
+  <link rel="stylesheet" href="/ui/css/popup.css">
   <script src="/bin/popup.js" defer></script>
 </head>
 <body>
@@ -118,22 +119,21 @@
       <main>
         <alias-data>
           <div class="h-stack center">
-            <!-- Imports are complicated. Going to skip this for now. -->
-            <!-- <input id="import" type="file" class="filled neutral">
+            <button id="export" class="filled neutral">
               <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                 <polyline points="17 8 12 3 7 8"></polyline>
                 <line x1="12" y1="3" x2="12" y2="15"></line>
               </svg>
-              Import
-            </button> -->
-            <button id="export" class="filled neutral">
+              Export Aliases
+            </button>
+            <button id="import" class="filled neutral">
               <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                 <polyline points="7 10 12 15 17 10"></polyline>
                 <line x1="12" y1="15" x2="12" y2="3"></line>
               </svg>
-              Export Aliases
+              Import Aliases
             </button>
           </div>
         </alias-data>

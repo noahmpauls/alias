@@ -32,7 +32,7 @@ html {
 }
 
 body {
-  inline-size: 28rem;
+  min-height: 100vh;
 }
 
 header {
@@ -58,7 +58,8 @@ h2 {
   }
 }
 
-button {
+button,
+.button {
   display: block;
   font-family: sans-serif;
   border: none;
@@ -97,38 +98,41 @@ button {
   }
 }
 
-button.icon {
-  padding-inline: 0.3rem;
-  padding-block: 0.3rem;
-}
-
-button.filled {
-  background-color: var(--button-bg-primary);
-  color: white;
-
-  &:hover,
-  &:focus {
-    background-color: var(--button-bg-hover);
+button,
+.button {
+  &.icon {
+    padding-inline: 0.3rem;
+    padding-block: 0.3rem;
   }
 
-  &:active {
-    background-color: var(--button-bg-active);
-  }
-}
-
-button.subtle {
-  background-color: transparent;
-
-  color: var(--gray-darker);
-
-  &:hover,
-  &:focus {
-    color: white;
+  &.filled {
     background-color: var(--button-bg-primary);
+    color: white;
+
+    &:hover,
+    &:focus {
+      background-color: var(--button-bg-hover);
+    }
+
+    &:active {
+      background-color: var(--button-bg-active);
+    }
   }
 
-  &:active {
-    background-color: var(--button-bg-active);
+  &.subtle {
+    background-color: transparent;
+
+    color: var(--gray-darker);
+
+    &:hover,
+    &:focus {
+      color: white;
+      background-color: var(--button-bg-primary);
+    }
+
+    &:active {
+      background-color: var(--button-bg-active);
+    }
   }
 }
 
@@ -213,12 +217,28 @@ alias-list {
   }
 }
 
+.flex-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--g, 0.5rem);
+
+  &.center {
+    align-items: center;
+  }
+}
+
 .align-end {
   display: flex;
   flex-direction: row;
   justify-content: end;
   align-items: center;
   column-gap: 0.2rem;
+}
+
+.center-col {
+  margin-inline: auto;
+  max-inline-size: var(--c, 28rem);
+  padding-inline: 0.2rem;
 }
 
 .input-container {

@@ -1,4 +1,5 @@
-import type { Alias, AliasExternal } from "@alias/alias";
+import type { AliasExternal } from "@alias/alias";
+import { browser } from "@alias/browser";
 import { RequestType, ResponseType, type ErrorResponse, type IClientMessenger } from "@alias/message";
 import { BrowserClientMessenger } from "@alias/message/browser";
 
@@ -15,7 +16,8 @@ export class AliasDataElement extends HTMLElement {
   }
 
   private messenger: IClientMessenger;
-  private exportButton: HTMLAnchorElement | undefined;
+  private exportButton: HTMLButtonElement | undefined;
+  private importButton: HTMLButtonElement | undefined;
 
   constructor() {
     super();
@@ -23,10 +25,16 @@ export class AliasDataElement extends HTMLElement {
   }
 
   connectedCallback() {
-    this.exportButton = this.querySelector("#export") as HTMLAnchorElement;
+    this.exportButton = this.querySelector("#export") as HTMLButtonElement;
+    this.importButton = this.querySelector("#import") as HTMLButtonElement;
 
     this.setupExportButton();
+    this.setupImportButton();
   }
+
+  //////////////////////////////////////////////////////////
+  // Export Button
+  //////////////////////////////////////////////////////////
 
   private setupExportButton = () => {
     this.exportButton?.addEventListener("click", this.exportAliasData)
@@ -66,5 +74,22 @@ export class AliasDataElement extends HTMLElement {
   private toDataString = (aliases: AliasExternal[]): string => {
     const json = JSON.stringify(aliases, null, 2);
     return `data:text/json;charset=utf-8,${encodeURIComponent(json)}`
+  }
+
+  //////////////////////////////////////////////////////////
+  // Import Button
+  //////////////////////////////////////////////////////////
+
+  private setupImportButton = () => {
+    this.importButton?.addEventListener("click", this.openImportWindow);
+  }
+
+  private openImportWindow = () => {
+    browser.windows.create({
+      url: "/ui/import.html",
+      type: "panel",
+      width: 480,
+      height: 540,
+    });
   }
 }

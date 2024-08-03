@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/ui/css/style.css">
+  <link rel="stylesheet" href="/ui/css/import.css">
+  <script src="/bin/import.js" defer></script>
+  <title>Import Aliases</title>
+</head>
+<body>
+  <alias-pages>
+    <alias-file-importer data-page="file">
+      <div class="center-col flex-stack" style="--g: 2rem;">
+        <div class="flex-stack center" style="--g: 0.5rem;">
+          <label id="file-button" class="button neutral filled" for="file-input">
+            <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="12" y1="18" x2="12" y2="12"></line>
+              <line x1="9" y1="15" x2="15" y2="15"></line>
+            </svg>
+            Select File
+          </label>
+          <input id="file-input" type="file" style="display: none;">
+          <!-- TODO: enable drag and drop -->
+          <!--<p style="text-align: center;">Or drag and drop a file anywhere.</p>-->
+        </div>
+        <div id="file-error" class="flex-stack center" style="--g: 0.5rem; display: none;">
+          <p id="file-error-main"></p>
+          <p id="file-error-detail"></p>
+        </div>
+      </div>
+    </alias-file-importer>
+    <div data-page="data">
+      <p>TODO: import aliases from data!</p>
+    </div>
+  </alias-pages>
+
+  <!-- TEMPLATES -->
+
+</body>
+</html>
+

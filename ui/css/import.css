@@ -1,0 +1,36 @@
+alias-pages {
+  display: block;
+  height: 100vh;
+}
+
+alias-file-importer {
+  display: block;
+  block-size: 100%;
+  inline-size: 100%;
+  padding-block-start: 5rem;
+
+  #file-button {
+    inline-size: fit-content;
+    padding-inline: 1rem;
+    block-size: 3rem;
+  }
+
+  #file-error {
+    color: var(--negative);
+    border: 1px solid var(--negative-dark);
+    background-color: var(--negative-light);
+    border-radius: 0.2rem;
+    padding-inline: 0.7rem;
+    padding-block: 1rem;
+  }
+
+  #file-error-main {
+    font-weight: bold;
+    text-align: center;
+  }
+
+  #file-error-detail {
+    font-family: monospace;
+  }
+}
+
