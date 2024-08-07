@@ -34,3 +34,46 @@ alias-file-importer {
   }
 }
 
+alias-data-importer {
+  display: block;
+  padding: 0.5rem;
+
+  #import-button {
+    padding-inline: 1rem;
+    block-size: 3rem;
+  }
+
+  ul {
+    margin-block-start: 0.5rem;
+    padding: 0;
+    list-style: none;
+
+    > * + * {
+      margin-block-start: 0.4rem;
+    }
+  }
+
+  details {
+    padding-block: 0.2rem;
+    padding-inline: 0.8rem;
+    border-radius: 0.4rem;
+    border: 1px solid transparent;
+
+    &.negative {
+      background-color: var(--negative-light);
+    }
+
+    &.neutral {
+      background-color: var(--neutral-lighter);
+    }
+  }
+
+  summary {
+    font-size: 1.1rem;
+    font-style: italic;
+  }
+}
+
+#import-complete {
+  padding-block-start: 5rem;
+}

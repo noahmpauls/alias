@@ -16,12 +16,12 @@ export class AliasManagerElement extends HTMLElement {
 
   private messenger: IClientMessenger;
   private alias: Alias | undefined;
-  private form : HTMLFormElement | undefined;
-  private codeInput: HTMLInputElement | undefined;
-  private linkInput: HTMLInputElement | undefined;
-  private noteInput: HTMLInputElement | undefined;
-  private deleteButton: HTMLButtonElement | undefined;
-  private submitButton: HTMLButtonElement | undefined;
+  private form : HTMLFormElement | null = null;
+  private codeInput: HTMLInputElement | null = null;
+  private linkInput: HTMLInputElement | null = null;
+  private noteInput: HTMLInputElement | null = null;
+  private deleteButton: HTMLButtonElement | null = null;
+  private submitButton: HTMLButtonElement | null = null;
 
   constructor() {
     super();
@@ -34,20 +34,32 @@ export class AliasManagerElement extends HTMLElement {
       return;
     }
 
-    this.form = this.querySelector(`#alias-manager-${this.alias.id}`) as HTMLFormElement;
-    this.codeInput = this.querySelector(`#code-${this.alias.id}`) as HTMLInputElement;
-    this.codeInput.value = this.alias.code;
-    this.linkInput = this.querySelector(`#link-${this.alias.id}`) as HTMLInputElement;
-    this.linkInput.value = this.alias.link;
-    this.noteInput = this.querySelector(`#note-${this.alias.id}`) as HTMLInputElement;
-    this.noteInput.value = this.alias.note;
-    this.deleteButton = this.querySelector(`#delete-${this.alias.id}`) as HTMLButtonElement;
-    this.submitButton = this.querySelector(`#submit-${this.alias.id}`) as HTMLButtonElement;
+    this.form = this.querySelector(`#alias-manager-${this.alias.id}`);
+    this.codeInput = this.querySelector(`#code-${this.alias.id}`);
+    if (this.codeInput !== null) {
+      this.codeInput.value = this.alias.code;
+    }
+    this.linkInput = this.querySelector(`#link-${this.alias.id}`);
+    if (this.linkInput !== null) {
+      this.linkInput.value = this.alias.link;
+    }
+    this.noteInput = this.querySelector(`#note-${this.alias.id}`);
+    if (this.noteInput !== null) {
+      this.noteInput.value = this.alias.note;
+    }
+    this.deleteButton = this.querySelector(`#delete-${this.alias.id}`);
+    this.submitButton = this.querySelector(`#submit-${this.alias.id}`);
 
-    this.setupDeleteButton();
-    this.setupCodeInput();
-    this.setupLinkInput();
-    this.setupForm();
+    if (!this.isReadonly()) {
+      this.setupDeleteButton();
+      this.setupCodeInput();
+      this.setupLinkInput();
+      this.setupForm();
+    } else {
+      this.removeDeleteButton();
+      this.disableForm();      
+      this.setInputsReadonly();
+    }
   }
 
   private getAliasData = (): Alias | undefined => {
@@ -59,6 +71,14 @@ export class AliasManagerElement extends HTMLElement {
       return undefined;
     }
     return { id, code, link, note: note };
+  }
+
+  private isReadonly = (): boolean => {
+    return this.getAttribute("readonly") === "true";
+  }
+
+  private readonlyCodeValidity = (): string | null => {
+    return this.getAttribute("readonly-code-validity");
   }
 
   //////////////////////////////////////////////////////////
@@ -88,6 +108,10 @@ export class AliasManagerElement extends HTMLElement {
       detail: deletedAlias,
       bubbles: true,
     }));
+  }
+
+  private removeDeleteButton = () => {
+    this.deleteButton?.remove();
   }
 
   //////////////////////////////////////////////////////////
@@ -126,9 +150,11 @@ export class AliasManagerElement extends HTMLElement {
   private setCodeValidity = (message?: string) => {
     const validation = this.querySelector(`#code-${this.alias?.id}-validation`) as HTMLElement
     if (message) {
+      this.codeInput?.classList.add("invalid");
       this.codeInput?.setCustomValidity(message);
       validation.innerText = message;
     } else {
+      this.codeInput?.classList.remove("invalid");
       this.codeInput?.setCustomValidity("");
       validation.innerText = "";
     }
@@ -178,9 +204,11 @@ export class AliasManagerElement extends HTMLElement {
   private setLinkValidity = (message?: string) => {
     const validation = this.querySelector(`#link-${this.alias?.id}-validation`) as HTMLElement
     if (message) {
+      this.linkInput?.classList.add("invalid");
       this.linkInput?.setCustomValidity(message);
       validation.innerText = message;
     } else {
+      this.linkInput?.classList.remove("invalid");
       this.linkInput?.setCustomValidity("");
       validation.innerText = "";
     }
@@ -270,6 +298,30 @@ export class AliasManagerElement extends HTMLElement {
     const linkUpdated = this.linkInput?.value !== this.alias?.link;
     const noteUpdated = this.noteInput?.value !== this.alias?.note;
     return codeUpdated || linkUpdated || noteUpdated;
+  }
+
+  private disableForm = () => {
+    this.form?.addEventListener("submit", (event: SubmitEvent) => {
+      event.preventDefault();
+    });
+  }
+
+  private setInputsReadonly = () => {
+    if (this.codeInput !== null) {
+      this.codeOnChange();
+      const customValidity = this.readonlyCodeValidity();
+      if (customValidity) {
+        this.setCodeValidity(customValidity);
+      }
+      this.codeInput.disabled = true;
+    }
+    if (this.linkInput !== null) {
+      this.linkOnChange();
+      this.linkInput.disabled = true;
+    }
+    if (this.noteInput !== null) {
+      this.noteInput.disabled = true;
+    }
   }
 
   //////////////////////////////////////////////////////////

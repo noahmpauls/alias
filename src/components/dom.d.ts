@@ -6,11 +6,13 @@ import type { AliasManagerElement } from "./AliasManagerElement";
 import type { AliasPagerElement } from "./AliasPagerElement";
 import type { AliasPagesElement, PageName } from "./AliasPagesElement";
 import type { AliasFileImporterElement } from "./AliasFileImporterElement";
+import type { AliasDataImporterElement } from "./AliasDataImporterElement";
 
 declare global {
   interface Window {
     AliasCreatorElement: typeof AliasCreatorElement
     AliasDataElement: typeof AliasDataElement
+    AliasDataImporterElement: typeof AliasDataImporterElement
     AliasFileImporterElement: typeof AliasFileImporterElement
     AliasListElement: typeof AliasListElement
     AliasManagerElement: typeof AliasManagerElement
@@ -20,6 +22,7 @@ declare global {
   interface HTMLElementTagNameMap {
     [AliasCreatorElement.ELEMENT_NAME]: AliasCreatorElement;
     [AliasDataElement.ELEMENT_NAME]: AliasDataElement;
+    [AliasDataImporterElement.ELEMENT_NAME]: AliasDataImporterElement;
     [AliasFileImporterElement.ELEMENT_NAME]: AliasFileImporterElement;
     [AliasListElement.ELEMENT_NAME]: AliasListElement;
     [AliasManagerElement.ELEMENT_NAME]: AliasManagerElement;
@@ -31,6 +34,6 @@ declare global {
     "updatealias": CustomEvent<Alias>;
     "deletealias": CustomEvent<Alias>;
     "setpage": CustomEvent<PageName>;
-    "extractaliasdata": CustomEvent<Alias[]>;
+    "extractaliasdata": CustomEvent<{ filename: string, aliases: Alias[] }>;
   }
 }

@@ -1,4 +1,5 @@
 :root {
+  --positive-lighter: hsl(105, 49%, 80%);
   --positive-light: hsl(105, 49%, 52%);
   --positive: hsl(105, 49%, 48%);
   --positive-dark: hsl(105, 49%, 45%);
@@ -77,6 +78,12 @@ button,
     --button-bg-primary: var(--positive);
     --button-bg-active: var(--positive-dark);
     --button-bg-hover: var(--positive-light);
+
+    &:disabled {
+      --button-bg-primary: var(--positive-lighter);
+      --button-bg-active: var(--positive-lighter);
+      --button-bg-hover: var(--positive-lighter);
+    }
   }
 
   &.neutral {
@@ -155,7 +162,8 @@ input {
     border-radius: 0;
   }
 
-  &:invalid {
+  &:invalid,
+  &.invalid {
     border-radius: 0.2rem;
     border-color: var(--negative);
     background-color: var(--negative-light);
@@ -337,9 +345,27 @@ alias-manager {
       visibility: hidden;
     }
 
-    input:not(:invalid) {
+    input:not(:invalid, .invalid) {
       background-color: unset;
       border-color: transparent;
+    }
+  }
+
+  &[readonly] {
+    background-color: transparent;
+    input:not(:invalid, .invalid) {
+      background-color: unset;
+      border-color: transparent;
+    }
+
+    &:hover {
+      &.neutral {
+        border-color: var(--neutral);
+      }
+
+      &.negative {
+        border-color: var(--negative-dark);
+      }
     }
   }
 }

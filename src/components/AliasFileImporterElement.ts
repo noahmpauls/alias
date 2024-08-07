@@ -43,7 +43,7 @@ export class AliasFileImporterElement extends HTMLElement {
       if (aliases === undefined) {
         return;
       }
-      this.dispatchExtractAliases(aliases);
+      this.dispatchExtractAliases(file.name, aliases);
       this.dispatchSetPage("data");
     });
     reader.readAsText(file);
@@ -157,9 +157,9 @@ export class AliasFileImporterElement extends HTMLElement {
   // Events
   //////////////////////////////////////////////////////////
 
-  private dispatchExtractAliases = (aliases: Alias[]) => {
+  private dispatchExtractAliases = (filename: string, aliases: Alias[]) => {
     this.dispatchEvent(new CustomEvent("extractaliasdata", {
-      detail: aliases,
+      detail: { filename, aliases },
       bubbles: true,
     }));
   }
