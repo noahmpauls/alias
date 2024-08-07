@@ -2,10 +2,18 @@ import fs from "fs/promises";
 import path from "path";
 import process from "process";
 
+const packageVersion = process.env.npm_package_version;
+
+if (packageVersion === undefined) {
+  throw Error("[manifest] Unable to generate manifest: could not get package version.");
+} else {
+  console.log(`[manifest] version is ${packageVersion}`);
+}
+
 const sharedManifest = {
   manifest_version: 3,
   name: "Alias",
-  version: "1.0.1",
+  version: packageVersion,
   description: "Browser extension for creating omnibox shortcuts.",
 
   icons: {
