@@ -1,10 +1,22 @@
 import type { AliasCreate } from "@alias/alias";
 import { browser } from "@alias/browser";
-import { RequestType, ResponseType, type IClientMessenger, type ResponseMessage } from "@alias/message";
+import {
+  type IClientMessenger,
+  RequestType,
+  type ResponseMessage,
+  ResponseType,
+} from "@alias/message";
 import { BrowserClientMessenger } from "@alias/message/browser";
 import type { PageName } from "./AliasPagesElement";
 
 const ALIAS_CREATOR_NAME = "alias-creator";
+
+type ConnectedState = {
+  form: HTMLFormElement;
+  codeInput: HTMLInputElement;
+  linkInput: HTMLInputElement;
+  noteInput: HTMLInputElement;
+};
 
 export class AliasCreatorElement extends HTMLElement {
   static readonly ELEMENT_NAME = ALIAS_CREATOR_NAME;
@@ -14,13 +26,10 @@ export class AliasCreatorElement extends HTMLElement {
       window.AliasCreatorElement = AliasCreatorElement;
       window.customElements.define(ALIAS_CREATOR_NAME, AliasCreatorElement);
     }
-  }
+  };
 
   private messenger: IClientMessenger;
-  private form: HTMLFormElement | undefined;
-  private codeInput: HTMLInputElement | undefined;
-  private linkInput: HTMLInputElement | undefined;
-  private noteInput: HTMLInputElement | undefined;
+  private state: ConnectedState | undefined = undefined;
 
   constructor() {
     super();
@@ -28,10 +37,22 @@ export class AliasCreatorElement extends HTMLElement {
   }
 
   connectedCallback() {
-    this.form = this.querySelector("#alias-creator-form") as HTMLFormElement;
-    this.codeInput = this.querySelector("#alias-creator-code") as HTMLInputElement;
-    this.linkInput = this.querySelector("#alias-creator-link") as HTMLInputElement;
-    this.noteInput = this.querySelector("#alias-creator-note") as HTMLInputElement;    
+    const form = this.querySelector<HTMLFormElement>("#alias-creator-form");
+    const codeInput = this.querySelector<HTMLInputElement>(
+      "#alias-creator-code",
+    );
+    const linkInput = this.querySelector<HTMLInputElement>(
+      "#alias-creator-link",
+    );
+    const noteInput = this.querySelector<HTMLInputElement>(
+      "#alias-creator-note",
+    );
+
+    if (!form || !codeInput || !linkInput || !noteInput) {
+      return;
+    }
+
+    this.state = { form, codeInput, linkInput, noteInput };
 
     this.setupCodeInput();
     this.setupLinkInput();
@@ -43,78 +64,88 @@ export class AliasCreatorElement extends HTMLElement {
   //////////////////////////////////////////////////////////
 
   private setupCodeInput = () => {
-    this.codeInput?.addEventListener("input", this.codeOnChange);
-    this.codeInput?.addEventListener("blur", this.codeOnBlur);
-  }
+    if (this.state === undefined) return;
+    this.state.codeInput.addEventListener("input", this.codeOnChange);
+    this.state.codeInput.addEventListener("blur", this.codeOnBlur);
+  };
 
   private codeOnChange = () => {
     if (this.validateCode()) {
       this.setCodeValidity();
       return;
     }
-    const value = this.codeInput?.value ?? "";
-    if (value === "") {
+
+    if (this.state === undefined) return;
+    if (this.state.codeInput.value === "") {
       this.setCodeValidity("Must provide an alias.");
     }
-  }
+  };
 
   private codeOnBlur = () => {
     if (this.validateCode()) {
       this.setCodeValidity();
       return;
     }
-    this.codeInput!.value = "";
+
+    if (this.state === undefined) return;
+    this.state.codeInput.value = "";
     this.setCodeValidity("Must provide an alias.");
-  }
+  };
 
   private validateCode = () => {
-    return this.codeInput?.value.trim() ?? "" !== "";    
-  }
+    if (this.state === undefined) return false;
+    return this.state.codeInput.value.trim() !== "";
+  };
 
   private setCodeValidity = (message?: string) => {
-    const validation = this.querySelector("#alias-creator-code-validation") as HTMLElement
+    if (this.state === undefined) return;
+    const validation = this.querySelector(
+      "#alias-creator-code-validation",
+    ) as HTMLElement;
     if (message) {
-      this.codeInput?.setCustomValidity(message);
+      this.state.codeInput.setCustomValidity(message);
       validation.innerText = message;
     } else {
-      this.codeInput?.setCustomValidity("");
+      this.state.codeInput.setCustomValidity("");
       validation.innerText = "";
     }
-  }
+  };
 
   //////////////////////////////////////////////////////////
   // Link Input Validation
   //////////////////////////////////////////////////////////
 
   private setupLinkInput = () => {
-    this.linkInput?.addEventListener("input", this.linkOnChange);
-    this.linkInput?.addEventListener("blur", this.linkOnBlur);
-  }
+    if (this.state === undefined) return;
+    this.state.linkInput.addEventListener("input", this.linkOnChange);
+    this.state.linkInput.addEventListener("blur", this.linkOnBlur);
+  };
 
   private linkOnChange = () => {
-
     if (this.validateLink()) {
       this.setLinkValidity();
       return;
     }
     this.setLinkValidity("Must provide a valid link.");
-  }
+  };
 
   private linkOnBlur = () => {
     if (this.validateLink()) {
       this.setLinkValidity();
       return;
     }
-    if ((this.linkInput?.value.trim() ?? "") === "") {
-      this.linkInput!.value = "https://";
+
+    if (this.state === undefined) return;
+    if (this.state.linkInput.value.trim() === "") {
+      this.state.linkInput.value = "https://";
     }
     this.setLinkValidity("Must provide a valid link.");
-  }
+  };
 
   private validateLink = () => {
-    const link = this.linkInput?.value.trim() ?? "";
-    return this.tryCreateUrl(link) !== undefined;
-  }
+    if (this.state === undefined) return false;
+    return this.tryCreateUrl(this.state.linkInput.value.trim()) !== undefined;
+  };
 
   private tryCreateUrl(link: string): URL | undefined {
     try {
@@ -125,39 +156,40 @@ export class AliasCreatorElement extends HTMLElement {
   }
 
   private setLinkValidity = (message?: string) => {
-    const validation = this.querySelector("#alias-creator-link-validation") as HTMLElement
+    if (this.state === undefined) return;
+    const validation = this.querySelector(
+      "#alias-creator-link-validation",
+    ) as HTMLElement;
     if (message) {
-      this.linkInput?.setCustomValidity(message);
+      this.state.linkInput.setCustomValidity(message);
       validation.innerText = message;
     } else {
-      this.linkInput?.setCustomValidity("");
+      this.state.linkInput.setCustomValidity("");
       validation.innerText = "";
     }
-  }
+  };
 
   private setLinkToCurrent = () => {
-    browser.tabs.query({ currentWindow: true, active: true })
-      .then(tabs => {
-        if (this.linkInput === undefined) {
-          return;
-        }
-        const url = tabs[0].url ?? "";
-        const isValid = this.tryCreateUrl(url) !== undefined;
-        if (isValid) {
-          this.linkInput.value = url;
-          this.linkOnBlur();
-        }
-      });
-  }
+    browser.tabs.query({ currentWindow: true, active: true }).then((tabs) => {
+      if (this.state === undefined) return;
+      const url = tabs[0].url ?? "";
+      const isValid = this.tryCreateUrl(url) !== undefined;
+      if (isValid) {
+        this.state.linkInput.value = url;
+        this.linkOnBlur();
+      }
+    });
+  };
 
   //////////////////////////////////////////////////////////
   // Submission Handling
   //////////////////////////////////////////////////////////
 
   private setupForm = () => {
-    this.form?.addEventListener("submit", this.handleSubmit);
+    if (this.state === undefined) return;
+    this.state.form.addEventListener("submit", this.handleSubmit);
     this.setLinkToCurrent();
-  }
+  };
 
   private handleSubmit = async (event: SubmitEvent) => {
     event.preventDefault();
@@ -181,59 +213,66 @@ export class AliasCreatorElement extends HTMLElement {
       this.dispatchCreate(newAlias);
       this.dispatchSetPage("manage");
     }
-  }
+  };
 
   private validateAlias = () => {
     return this.validateCode() && this.validateLink();
-  }
+  };
 
   private createAlias = (): AliasCreate => {
+    if (this.state === undefined) return { code: "", link: "", note: "" };
     return {
-      code: this.codeInput?.value.trim() ?? "",
-      link: this.linkInput?.value.trim() ?? "",
-      note: this.noteInput?.value.trim() ?? "",
+      code: this.state.codeInput.value.trim(),
+      link: this.state.linkInput.value.trim(),
+      note: this.state.noteInput.value.trim(),
     };
-  }
+  };
 
-  private requestCreate = async (alias: AliasCreate): Promise<ResponseMessage> => {
+  private requestCreate = async (
+    alias: AliasCreate,
+  ): Promise<ResponseMessage> => {
     return await this.messenger.send({
       type: RequestType.ALIAS_CREATE,
       data: alias,
     });
-  }
+  };
 
   private setSubmitValidity = (message?: string) => {
-    const validation = this.querySelector("#alias-creator-submit-validation") as HTMLElement
+    const validation = this.querySelector(
+      "#alias-creator-submit-validation",
+    ) as HTMLElement;
     if (message) {
       validation.innerText = message;
     } else {
       validation.innerText = "";
     }
-  }
+  };
 
   private resetInputs = () => {
-    if (this.codeInput === undefined || this.linkInput === undefined || this.noteInput === undefined) {
-      return;
-    }
-    this.codeInput.value = "";
-    this.linkInput.value = "https://";
-    this.noteInput.value = "";
+    if (this.state === undefined) return;
+    this.state.codeInput.value = "";
+    this.state.linkInput.value = "https://";
+    this.state.noteInput.value = "";
     this.setCodeValidity();
     this.setLinkValidity();
     this.setSubmitValidity();
-  }
+  };
 
   private dispatchCreate = (aliasCreate: AliasCreate) => {
-    this.dispatchEvent(new CustomEvent("createalias", {
-      detail: aliasCreate,
-      bubbles: true,
-    }));
-  }
+    this.dispatchEvent(
+      new CustomEvent("createalias", {
+        detail: aliasCreate,
+        bubbles: true,
+      }),
+    );
+  };
 
   private dispatchSetPage = (page: PageName) => {
-    this.dispatchEvent(new CustomEvent("setpage", {
-      detail: page,
-      bubbles: true,
-    }));
-  }
+    this.dispatchEvent(
+      new CustomEvent("setpage", {
+        detail: page,
+        bubbles: true,
+      }),
+    );
+  };
 }

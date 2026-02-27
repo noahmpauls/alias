@@ -17,13 +17,11 @@
 
     "strict": true,
     "skipLibCheck": true,
-    
+
     "baseUrl": "src",
     "paths": {
       "@alias/*": ["lib/*"]
     }
   },
-  "include": [
-    "src/**/*"
-  ]
+  "include": ["src/**/*"]
 }

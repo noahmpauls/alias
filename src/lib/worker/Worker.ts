@@ -1,7 +1,11 @@
 import { SyncedCache } from "@alias/cache";
 import { Controller } from "@alias/controller";
 import { AliasContext } from "@alias/data";
-import { BrowserEvents, type IWorkerEventEmitter, type OmniboxEvent } from "@alias/events";
+import {
+  BrowserEvents,
+  type IWorkerEventEmitter,
+  type OmniboxEvent,
+} from "@alias/events";
 import type { RequestMessage, Respondable } from "@alias/message";
 
 export class Worker<TEvents extends IWorkerEventEmitter> {
@@ -9,7 +13,9 @@ export class Worker<TEvents extends IWorkerEventEmitter> {
   constructor(
     readonly events: TEvents,
     private readonly context: AliasContext,
-    private readonly initializeController: (context: AliasContext) => Promise<Controller>,
+    private readonly initializeController: (
+      context: AliasContext,
+    ) => Promise<Controller>,
   ) {
     this.controller = new SyncedCache(this.createController);
   }
@@ -21,9 +27,9 @@ export class Worker<TEvents extends IWorkerEventEmitter> {
       async (context) => {
         const aliases = await context.fetch();
         return Controller.browser(aliases);
-      }
+      },
     );
-  }
+  };
 
   private createController = async (): Promise<Controller> =>
     this.initializeController(this.context);
@@ -32,28 +38,29 @@ export class Worker<TEvents extends IWorkerEventEmitter> {
     const controller = await this.controller.value();
     controller.handleOmnibox(event);
     await this.context.commit();
-  }
+  };
 
   private onRequest = async (request: Respondable<RequestMessage>) => {
-    this.controller.value()
-      .then(controller => controller.handleRequest(request))
+    this.controller
+      .value()
+      .then((controller) => controller.handleRequest(request))
       .then(() => this.context.commit());
-  }
+  };
 
   start = () => {
     this.events.onOmnibox.set(this.onOmnibox);
     this.events.onRequest.set(this.onRequest);
     this.events.start();
-  }
+  };
 
   stop = () => {
     this.events.stop();
     this.events.onRequest.clear();
     this.events.onOmnibox.clear();
-  }
+  };
 
   clear = async () => {
     await this.context.clear();
     await this.controller.clear();
-  }
+  };
 }

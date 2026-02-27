@@ -3,9 +3,9 @@
  * all asynchronous functions executed through the `sync` method.
  */
 export class Synchronizer {
-  private readonly queue: (() => Promise<any>)[];
+  private readonly queue: (() => Promise<unknown>)[];
   private ready: boolean;
-  
+
   constructor() {
     this.queue = [];
     this.ready = true;
@@ -13,13 +13,15 @@ export class Synchronizer {
 
   /**
    * Synchronize the execution of an asynchronous function.
-   * 
+   *
    * @param func the function to execute synchronously
    * @returns asynchronous function return value
    */
   async sync<T>(func: () => Promise<T>): Promise<T> {
     return new Promise((resolve) => {
-      this.queue.push(async () => { resolve(await func()) });
+      this.queue.push(async () => {
+        resolve(await func());
+      });
       this.doQueue();
     });
   }

@@ -1,3 +1,3 @@
-export * from "./types";
-export { MemoryStorage } from "./MemoryStorage";
 export { BrowserStorage } from "./BrowserStorage";
+export { MemoryStorage } from "./MemoryStorage";
+export * from "./types";

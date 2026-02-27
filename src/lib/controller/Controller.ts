@@ -1,43 +1,57 @@
-import type { Alias, AliasCreate } from "@alias/alias";
+import type { Alias } from "@alias/alias";
 import type { IContextSet } from "@alias/data";
-import { OmniboxEventType, type OmniboxChangeEvent, type OmniboxEnterEvent, type OmniboxEvent } from "@alias/events";
-import { RequestType, ResponseType, type AliasCreateRequest, type AliasDeleteRequest, type AliasUpdateRequest, type AliasesGetRequest, type RequestMessage, type Respondable } from "@alias/message";
+import {
+  type OmniboxChangeEvent,
+  type OmniboxEnterEvent,
+  type OmniboxEvent,
+  OmniboxEventType,
+} from "@alias/events";
+import {
+  type AliasCreateRequest,
+  type AliasDeleteRequest,
+  type AliasesGetRequest,
+  type AliasUpdateRequest,
+  type RequestMessage,
+  RequestType,
+  type Respondable,
+  ResponseType,
+} from "@alias/message";
 import { BrowserTabs, type ITabs } from "@alias/tabs";
 
 export class Controller {
   constructor(
     private readonly aliases: IContextSet<Alias>,
     private readonly tabs: ITabs,
-  ) { }
+  ) {}
 
-  static browser = (
-    aliases: IContextSet<Alias>,
-  ): Controller => {
+  static browser = (aliases: IContextSet<Alias>): Controller => {
     return new Controller(aliases, BrowserTabs);
-  }
+  };
 
   handleOmnibox = (event: OmniboxEvent) => {
     switch (event.type) {
-      case (OmniboxEventType.CHANGE): {
+      case OmniboxEventType.CHANGE: {
         this.handleOmniboxChange(event);
         break;
       }
-      case (OmniboxEventType.ENTER): {
+      case OmniboxEventType.ENTER: {
         this.handleOmniboxEnter(event);
         break;
       }
     }
-  }
+  };
 
   private readonly handleOmniboxChange = (event: OmniboxChangeEvent) => {
     const { text, suggest } = event;
     const completions = this.getAliasCompletions(text);
     completions.sort((a, b) => a.code.localeCompare(b.code));
-    suggest(completions.map(a => ({
-      content: a.code,
-      description: a.note,
-    })));
-  }
+    suggest(
+      completions.map((a) => ({
+        content: a.code,
+        description: a.note,
+      })),
+    );
+  };
 
   private readonly handleOmniboxEnter = (event: OmniboxEnterEvent) => {
     const { text, disposition } = event;
@@ -58,7 +72,7 @@ export class Controller {
         this.tabs.create(alias.link, false);
       }
     }
-  }
+  };
 
   handleRequest = (request: Respondable<RequestMessage>) => {
     switch (request.type) {
@@ -79,7 +93,7 @@ export class Controller {
         break;
       }
     }
-  }
+  };
 
   private handleAliasesGet = (message: Respondable<AliasesGetRequest>) => {
     const aliases = this.aliases.get();
@@ -87,16 +101,16 @@ export class Controller {
       type: ResponseType.ALIASES_GET,
       data: aliases,
     });
-  }
+  };
 
   private handleAliasCreate = (message: Respondable<AliasCreateRequest>) => {
     const createAlias = message.data;
-    const existing = this.aliases.get(a => a.code === createAlias.code);
+    const existing = this.aliases.get((a) => a.code === createAlias.code);
     if (existing.length > 0) {
       message.respond({
         type: ResponseType.ERROR,
         data: {
-          message: `Alias "${createAlias.code}" already exists.`
+          message: `Alias "${createAlias.code}" already exists.`,
         },
       });
       return;
@@ -110,25 +124,27 @@ export class Controller {
       type: ResponseType.ALIAS_CREATE,
       data: newAlias,
     });
-  }
+  };
 
   private handleAliasUpdate = (message: Respondable<AliasUpdateRequest>) => {
     const updateAlias = message.data;
-    const existingAlias = this.aliases.get(a => a.id === updateAlias.id)[0];
+    const existingAlias = this.aliases.get((a) => a.id === updateAlias.id)[0];
     if (existingAlias === undefined) {
       return {
         type: ResponseType.ERROR,
         data: {
           message: `Alias with ID ${updateAlias.id} does not exist.`,
-        }
-      }
+        },
+      };
     }
-    const existing = this.aliases.get(a => a.id !== updateAlias.id && a.code === updateAlias.code);
+    const existing = this.aliases.get(
+      (a) => a.id !== updateAlias.id && a.code === updateAlias.code,
+    );
     if (existing.length > 0) {
       message.respond({
         type: ResponseType.ERROR,
         data: {
-          message: `Alias "${updateAlias.code}" already exists.`
+          message: `Alias "${updateAlias.code}" already exists.`,
         },
       });
       return;
@@ -147,17 +163,17 @@ export class Controller {
       type: ResponseType.ALIAS_UPDATE,
       data: existingAlias,
     });
-  }
+  };
 
   private handleAliasDelete = (message: Respondable<AliasDeleteRequest>) => {
     const deleteAlias = message.data;
-    const existingAlias = this.aliases.get(a => a.id === deleteAlias.id)[0];
+    const existingAlias = this.aliases.get((a) => a.id === deleteAlias.id)[0];
     if (existingAlias === undefined) {
       message.respond({
         type: ResponseType.ERROR,
         data: {
           message: `Alias with ID ${deleteAlias.id} does not exist.`,
-        }
+        },
       });
       return;
     }
@@ -166,15 +182,15 @@ export class Controller {
       type: ResponseType.ALIAS_DELETE,
       data: existingAlias,
     });
-  }
+  };
 
   private getAliasMatch = (code: string): Alias | undefined => {
-    return this.aliases.get(a => a.code === code)[0];
-  }
+    return this.aliases.get((a) => a.code === code)[0];
+  };
 
   private getAliasCompletions = (codePrefix: string): Alias[] => {
-    return this.aliases.get(a => a.code.startsWith(codePrefix));
-  }
+    return this.aliases.get((a) => a.code.startsWith(codePrefix));
+  };
 
   private getBestAlias = (text: string): Alias | undefined => {
     const match = this.getAliasMatch(text);
@@ -186,5 +202,5 @@ export class Controller {
       return completions[0];
     }
     return undefined;
-  }
+  };
 }

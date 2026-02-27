@@ -1,8 +1,23 @@
-import type { Alias, AliasUpdate, AliasDelete } from "@alias/alias";
-import { RequestType, ResponseType, type IClientMessenger, type ResponseMessage } from "@alias/message";
+import type { Alias, AliasDelete, AliasUpdate } from "@alias/alias";
+import {
+  type IClientMessenger,
+  RequestType,
+  type ResponseMessage,
+  ResponseType,
+} from "@alias/message";
 import { BrowserClientMessenger } from "@alias/message/browser";
 
 const ALIAS_MANAGER_NAME = "alias-manager";
+
+type ConnectedState = {
+  alias: Alias;
+  form: HTMLFormElement;
+  codeInput: HTMLInputElement;
+  linkInput: HTMLInputElement;
+  noteInput: HTMLInputElement;
+  deleteButton: HTMLButtonElement;
+  submitButton: HTMLButtonElement;
+};
 
 export class AliasManagerElement extends HTMLElement {
   static readonly ELEMENT_NAME = ALIAS_MANAGER_NAME;
@@ -12,16 +27,10 @@ export class AliasManagerElement extends HTMLElement {
       window.AliasManagerElement = AliasManagerElement;
       window.customElements.define(ALIAS_MANAGER_NAME, AliasManagerElement);
     }
-  }
+  };
 
   private messenger: IClientMessenger;
-  private alias: Alias | undefined;
-  private form : HTMLFormElement | null = null;
-  private codeInput: HTMLInputElement | null = null;
-  private linkInput: HTMLInputElement | null = null;
-  private noteInput: HTMLInputElement | null = null;
-  private deleteButton: HTMLButtonElement | null = null;
-  private submitButton: HTMLButtonElement | null = null;
+  private state: ConnectedState | undefined = undefined;
 
   constructor() {
     super();
@@ -29,26 +38,48 @@ export class AliasManagerElement extends HTMLElement {
   }
 
   connectedCallback() {
-    this.alias = this.getAliasData();
-    if (this.alias === undefined) {
+    const alias = this.getAliasData();
+    if (alias === undefined) {
       return;
     }
 
-    this.form = this.querySelector(`#alias-manager-${this.alias.id}`);
-    this.codeInput = this.querySelector(`#code-${this.alias.id}`);
-    if (this.codeInput !== null) {
-      this.codeInput.value = this.alias.code;
+    const form = this.querySelector<HTMLFormElement>(
+      `#alias-manager-${alias.id}`,
+    );
+    const codeInput = this.querySelector<HTMLInputElement>(`#code-${alias.id}`);
+    const linkInput = this.querySelector<HTMLInputElement>(`#link-${alias.id}`);
+    const noteInput = this.querySelector<HTMLInputElement>(`#note-${alias.id}`);
+    const deleteButton = this.querySelector<HTMLButtonElement>(
+      `#delete-${alias.id}`,
+    );
+    const submitButton = this.querySelector<HTMLButtonElement>(
+      `#submit-${alias.id}`,
+    );
+
+    if (
+      !form ||
+      !codeInput ||
+      !linkInput ||
+      !noteInput ||
+      !deleteButton ||
+      !submitButton
+    ) {
+      return;
     }
-    this.linkInput = this.querySelector(`#link-${this.alias.id}`);
-    if (this.linkInput !== null) {
-      this.linkInput.value = this.alias.link;
-    }
-    this.noteInput = this.querySelector(`#note-${this.alias.id}`);
-    if (this.noteInput !== null) {
-      this.noteInput.value = this.alias.note;
-    }
-    this.deleteButton = this.querySelector(`#delete-${this.alias.id}`);
-    this.submitButton = this.querySelector(`#submit-${this.alias.id}`);
+
+    this.state = {
+      alias,
+      form,
+      codeInput,
+      linkInput,
+      noteInput,
+      deleteButton,
+      submitButton,
+    };
+
+    codeInput.value = alias.code;
+    linkInput.value = alias.link;
+    noteInput.value = alias.note;
 
     if (!this.isReadonly()) {
       this.setupDeleteButton();
@@ -57,7 +88,7 @@ export class AliasManagerElement extends HTMLElement {
       this.setupForm();
     } else {
       this.removeDeleteButton();
-      this.disableForm();      
+      this.disableForm();
       this.setInputsReadonly();
     }
   }
@@ -67,107 +98,128 @@ export class AliasManagerElement extends HTMLElement {
     const code = this.dataset.code;
     const link = this.dataset.link;
     const note = this.dataset.note;
-    if (id === undefined || code === undefined || link === undefined || note === undefined) {
+    if (
+      id === undefined ||
+      code === undefined ||
+      link === undefined ||
+      note === undefined
+    ) {
       return undefined;
     }
     return { id, code, link, note: note };
-  }
+  };
 
   private isReadonly = (): boolean => {
     return this.getAttribute("readonly") === "true";
-  }
+  };
 
   private readonlyCodeValidity = (): string | null => {
     return this.getAttribute("readonly-code-validity");
-  }
+  };
 
   //////////////////////////////////////////////////////////
   // Delete Button
   //////////////////////////////////////////////////////////
 
   private setupDeleteButton = () => {
-    this.deleteButton?.addEventListener("click", async () => {
-      const aliasDelete = { id: this.alias!.id };
+    if (this.state === undefined) return;
+    this.state.deleteButton.addEventListener("click", async () => {
+      if (this.state === undefined) return;
+      const aliasDelete = { id: this.state.alias.id };
       const response = await this.requestDelete(aliasDelete);
       if (response.type === ResponseType.ALIAS_DELETE) {
         const deletedAlias = response.data;
         this.dispatchDelete(deletedAlias);
       }
-    })
-  }
+    });
+  };
 
-  private requestDelete = async (aliasDelete: AliasDelete): Promise<ResponseMessage> => {
+  private requestDelete = async (
+    aliasDelete: AliasDelete,
+  ): Promise<ResponseMessage> => {
     return await this.messenger.send({
       type: RequestType.ALIAS_DELETE,
       data: aliasDelete,
     });
-  }
+  };
 
   private dispatchDelete = (deletedAlias: Alias) => {
-    this.dispatchEvent(new CustomEvent("deletealias", {
-      detail: deletedAlias,
-      bubbles: true,
-    }));
-  }
+    this.dispatchEvent(
+      new CustomEvent("deletealias", {
+        detail: deletedAlias,
+        bubbles: true,
+      }),
+    );
+  };
 
   private removeDeleteButton = () => {
-    this.deleteButton?.remove();
-  }
+    if (this.state === undefined) return;
+    this.state.deleteButton.remove();
+  };
 
   //////////////////////////////////////////////////////////
   // Code Input Validation
   //////////////////////////////////////////////////////////
 
   private setupCodeInput = () => {
-    this.codeInput?.addEventListener("input", this.codeOnChange);
-    this.codeInput?.addEventListener("blur", this.codeOnBlur);
-  }
+    if (this.state === undefined) return;
+    this.state.codeInput.addEventListener("input", this.codeOnChange);
+    this.state.codeInput.addEventListener("blur", this.codeOnBlur);
+  };
 
   private codeOnChange = () => {
     if (this.validateCode()) {
       this.setCodeValidity();
       return;
     }
-    const value = this.codeInput?.value ?? "";
-    if (value === "") {
+
+    if (this.state === undefined) return;
+    if (this.state.codeInput.value === "") {
       this.setCodeValidity("Must provide an alias.");
     }
-  }
+  };
 
   private codeOnBlur = () => {
     if (this.validateCode()) {
       this.setCodeValidity();
       return;
     }
-    this.codeInput!.value = "";
+
+    if (this.state === undefined) return;
+    this.state.codeInput.value = "";
     this.setCodeValidity("Must provide an alias.");
-  }
+  };
 
   private validateCode = () => {
-    return this.codeInput?.value.trim() ?? "" !== "";    
-  }
+    if (this.state === undefined) return false;
+    return this.state.codeInput.value.trim() !== "";
+  };
 
   private setCodeValidity = (message?: string) => {
-    const validation = this.querySelector(`#code-${this.alias?.id}-validation`) as HTMLElement
+    if (this.state === undefined) return;
+    const validation = this.querySelector(
+      `#code-${this.state.alias.id}-validation`,
+    ) as HTMLElement;
     if (message) {
-      this.codeInput?.classList.add("invalid");
-      this.codeInput?.setCustomValidity(message);
+      this.state.codeInput.classList.add("invalid");
+      this.state.codeInput.setCustomValidity(message);
       validation.innerText = message;
     } else {
-      this.codeInput?.classList.remove("invalid");
-      this.codeInput?.setCustomValidity("");
+      this.state.codeInput.classList.remove("invalid");
+      this.state.codeInput.setCustomValidity("");
       validation.innerText = "";
     }
-  }
+  };
 
   //////////////////////////////////////////////////////////
   // Link Input Validation
   //////////////////////////////////////////////////////////
 
   private setupLinkInput = () => {
-    this.linkInput?.addEventListener("input", this.linkOnChange);
-    this.linkInput?.addEventListener("blur", this.linkOnBlur);
-  }
+    if (this.state === undefined) return;
+    this.state.linkInput.addEventListener("input", this.linkOnChange);
+    this.state.linkInput.addEventListener("blur", this.linkOnBlur);
+  };
 
   private linkOnChange = () => {
     if (this.validateLink()) {
@@ -175,23 +227,25 @@ export class AliasManagerElement extends HTMLElement {
       return;
     }
     this.setLinkValidity("Must provide a valid link.");
-  }
+  };
 
   private linkOnBlur = () => {
     if (this.validateLink()) {
       this.setLinkValidity();
       return;
     }
-    if ((this.linkInput?.value.trim() ?? "") === "") {
-      this.linkInput!.value = "https://";
+
+    if (this.state === undefined) return;
+    if (this.state.linkInput.value.trim() === "") {
+      this.state.linkInput.value = "https://";
     }
     this.setLinkValidity("Must provide a valid link.");
-  }
+  };
 
   private validateLink = () => {
-    const link = this.linkInput?.value.trim() ?? "";
-    return this.tryCreateUrl(link) !== undefined;
-  }
+    if (this.state === undefined) return false;
+    return this.tryCreateUrl(this.state.linkInput.value.trim()) !== undefined;
+  };
 
   private tryCreateUrl(link: string): URL | undefined {
     try {
@@ -202,30 +256,39 @@ export class AliasManagerElement extends HTMLElement {
   }
 
   private setLinkValidity = (message?: string) => {
-    const validation = this.querySelector(`#link-${this.alias?.id}-validation`) as HTMLElement
+    if (this.state === undefined) return;
+    const validation = this.querySelector(
+      `#link-${this.state.alias.id}-validation`,
+    ) as HTMLElement;
     if (message) {
-      this.linkInput?.classList.add("invalid");
-      this.linkInput?.setCustomValidity(message);
+      this.state.linkInput.classList.add("invalid");
+      this.state.linkInput.setCustomValidity(message);
       validation.innerText = message;
     } else {
-      this.linkInput?.classList.remove("invalid");
-      this.linkInput?.setCustomValidity("");
+      this.state.linkInput.classList.remove("invalid");
+      this.state.linkInput.setCustomValidity("");
       validation.innerText = "";
     }
-  }
+  };
 
   //////////////////////////////////////////////////////////
   // Submission Handling
   //////////////////////////////////////////////////////////
 
   private setupForm = () => {
-    this.form?.addEventListener("submit", this.handleSubmit);
-    const updateListener = () => this.setChangeVisibility(this.aliasCanUpdate());
-    for (const input of [this.codeInput, this.linkInput, this.noteInput]) {
-      input?.addEventListener("input", updateListener);
-      input?.addEventListener("blur", updateListener);
+    if (this.state === undefined) return;
+    this.state.form.addEventListener("submit", this.handleSubmit);
+    const updateListener = () =>
+      this.setChangeVisibility(this.aliasCanUpdate());
+    for (const input of [
+      this.state.codeInput,
+      this.state.linkInput,
+      this.state.noteInput,
+    ]) {
+      input.addEventListener("input", updateListener);
+      input.addEventListener("blur", updateListener);
     }
-  }
+  };
 
   private handleSubmit = async (event: SubmitEvent) => {
     event.preventDefault();
@@ -245,110 +308,126 @@ export class AliasManagerElement extends HTMLElement {
       const updatedAlias = response.data;
       this.dispatchUpdate(updatedAlias);
     }
-  }
+  };
 
   private validateAlias = () => {
     return this.validateCode() && this.validateLink();
-  }
+  };
 
   private createAliasUpdate = (): AliasUpdate => {
+    if (this.state === undefined) return { id: "" };
     return {
-      id: this.alias?.id ?? "",
-      code: this.codeInput?.value.trim() ?? "",
-      link: this.linkInput?.value.trim() ?? "",
-      note: this.noteInput?.value.trim() ?? "",
-    }
-  }
+      id: this.state.alias.id,
+      code: this.state.codeInput.value.trim(),
+      link: this.state.linkInput.value.trim(),
+      note: this.state.noteInput.value.trim(),
+    };
+  };
 
-  private requestUpdate = async (aliasUpdate: AliasUpdate): Promise<ResponseMessage> => {
+  private requestUpdate = async (
+    aliasUpdate: AliasUpdate,
+  ): Promise<ResponseMessage> => {
     return await this.messenger.send({
       type: RequestType.ALIAS_UPDATE,
       data: aliasUpdate,
     });
-  }
+  };
 
   private dispatchUpdate = (updatedAlias: Alias) => {
-    this.dispatchEvent(new CustomEvent("updatealias", {
-      detail: updatedAlias,
-      bubbles: true,
-    }));
-  }
+    this.dispatchEvent(
+      new CustomEvent("updatealias", {
+        detail: updatedAlias,
+        bubbles: true,
+      }),
+    );
+  };
 
   private setSubmitValidity = (message?: string) => {
-    const validation = this.querySelector(`#submit-${this.alias?.id}-validation`) as HTMLElement
+    if (this.state === undefined) return;
+    const validation = this.querySelector(
+      `#submit-${this.state.alias.id}-validation`,
+    ) as HTMLElement;
     if (message) {
       validation.innerText = message;
     } else {
       validation.innerText = "";
     }
-  }
+  };
 
   private setChangeVisibility = (visible: boolean) => {
+    if (this.state === undefined) return;
     if (visible) {
-      this.submitButton!.style.display = "";
+      this.state.submitButton.style.display = "";
       this.classList.add("changed");
     } else {
-      this.submitButton!.style.display = "none";
+      this.state.submitButton.style.display = "none";
       this.classList.remove("changed");
     }
-  }
+  };
 
   private aliasCanUpdate = (): boolean => {
-    const codeUpdated = this.codeInput?.value !== this.alias?.code;
-    const linkUpdated = this.linkInput?.value !== this.alias?.link;
-    const noteUpdated = this.noteInput?.value !== this.alias?.note;
+    if (this.state === undefined) return false;
+    const codeUpdated = this.state.codeInput.value !== this.state.alias.code;
+    const linkUpdated = this.state.linkInput.value !== this.state.alias.link;
+    const noteUpdated = this.state.noteInput.value !== this.state.alias.note;
     return codeUpdated || linkUpdated || noteUpdated;
-  }
+  };
 
   private disableForm = () => {
-    this.form?.addEventListener("submit", (event: SubmitEvent) => {
+    if (this.state === undefined) return;
+    this.state.form.addEventListener("submit", (event: SubmitEvent) => {
       event.preventDefault();
     });
-  }
+  };
 
   private setInputsReadonly = () => {
-    if (this.codeInput !== null) {
-      this.codeOnChange();
-      const customValidity = this.readonlyCodeValidity();
-      if (customValidity) {
-        this.setCodeValidity(customValidity);
-      }
-      this.codeInput.disabled = true;
+    if (this.state === undefined) return;
+    this.codeOnChange();
+    const customValidity = this.readonlyCodeValidity();
+    if (customValidity) {
+      this.setCodeValidity(customValidity);
     }
-    if (this.linkInput !== null) {
-      this.linkOnChange();
-      this.linkInput.disabled = true;
-    }
-    if (this.noteInput !== null) {
-      this.noteInput.disabled = true;
-    }
-  }
+    this.state.codeInput.disabled = true;
+    this.linkOnChange();
+    this.state.linkInput.disabled = true;
+    this.state.noteInput.disabled = true;
+  };
 
   //////////////////////////////////////////////////////////
   // Template Setup
   //////////////////////////////////////////////////////////
 
   static initializeTemplate = (alias: Alias): HTMLElement => {
-    const templateElement = document.getElementById(ALIAS_MANAGER_NAME) as HTMLTemplateElement;
+    const templateElement = document.getElementById(
+      ALIAS_MANAGER_NAME,
+    ) as HTMLTemplateElement;
     const template = templateElement.content.cloneNode(true) as HTMLElement;
     const form = template.querySelector("#alias-manager-id") as HTMLFormElement;
     form.id = `alias-manager-${alias.id}`;
     for (const field of ["code", "link", "note"]) {
       const input = template.querySelector(`#${field}-id`) as HTMLInputElement;
-      const label = template.querySelector(`[for="${field}-id"`) as HTMLLabelElement | null;
+      const label = template.querySelector(
+        `[for="${field}-id"`,
+      ) as HTMLLabelElement | null;
       input.id = `${field}-${alias.id}`;
       if (label !== null) {
         label.htmlFor = `${field}-${alias.id}`;
       }
     }
     for (const field of ["code", "link", "submit"]) {
-      const validation = template.querySelector(`#${field}-id-validation`) as HTMLElement;
+      const validation = template.querySelector(
+        `#${field}-id-validation`,
+      ) as HTMLElement;
       validation.id = `${field}-${alias.id}-validation`;
     }
-    const submitButton = template.querySelector("#submit-id") as HTMLButtonElement;
+    const submitButton = template.querySelector(
+      "#submit-id",
+    ) as HTMLButtonElement;
     submitButton.id = `submit-${alias.id}`;
-    const deleteButton = template.querySelector("#delete-id") as HTMLButtonElement;
+    const deleteButton = template.querySelector(
+      "#delete-id",
+    ) as HTMLButtonElement;
     deleteButton.id = `delete-${alias.id}`;
     return template;
-  }
+  };
 }

@@ -1,4 +1,4 @@
-import type { Alias, AliasCreate, AliasDelete, AliasUpdate } from "@alias/alias";
+import type { Alias } from "@alias/alias";
 import type { AliasCreatorElement } from "./AliasCreatorElement";
 import type { AliasDataElement } from "./AliasDataElement";
 import type { AliasListElement } from "./AliasListElement";
@@ -10,14 +10,14 @@ import type { AliasDataImporterElement } from "./AliasDataImporterElement";
 
 declare global {
   interface Window {
-    AliasCreatorElement: typeof AliasCreatorElement
-    AliasDataElement: typeof AliasDataElement
-    AliasDataImporterElement: typeof AliasDataImporterElement
-    AliasFileImporterElement: typeof AliasFileImporterElement
-    AliasListElement: typeof AliasListElement
-    AliasManagerElement: typeof AliasManagerElement
-    AliasPagerElement: typeof AliasPagerElement
-    AliasPagesElement: typeof AliasPagesElement
+    AliasCreatorElement: typeof AliasCreatorElement;
+    AliasDataElement: typeof AliasDataElement;
+    AliasDataImporterElement: typeof AliasDataImporterElement;
+    AliasFileImporterElement: typeof AliasFileImporterElement;
+    AliasListElement: typeof AliasListElement;
+    AliasManagerElement: typeof AliasManagerElement;
+    AliasPagerElement: typeof AliasPagerElement;
+    AliasPagesElement: typeof AliasPagesElement;
   }
   interface HTMLElementTagNameMap {
     [AliasCreatorElement.ELEMENT_NAME]: AliasCreatorElement;
@@ -30,10 +30,10 @@ declare global {
     [AliasPagesElement.ELEMENT_NAME]: AliasPagesElement;
   }
   interface GlobalEventHandlersEventMap {
-    "createalias": CustomEvent<Alias>;
-    "updatealias": CustomEvent<Alias>;
-    "deletealias": CustomEvent<Alias>;
-    "setpage": CustomEvent<PageName>;
-    "extractaliasdata": CustomEvent<{ filename: string, aliases: Alias[] }>;
+    createalias: CustomEvent<Alias>;
+    updatealias: CustomEvent<Alias>;
+    deletealias: CustomEvent<Alias>;
+    setpage: CustomEvent<PageName>;
+    extractaliasdata: CustomEvent<{ filename: string; aliases: Alias[] }>;
   }
 }

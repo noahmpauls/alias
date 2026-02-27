@@ -33,9 +33,11 @@
     "_build:scripts": "node scripts/esbuild.js",
     "_build:types": "tsc",
     "_package:firefox:archive": "web-ext build --filename {name}-{version}-firefox.zip --artifacts-dir archives/firefox",
-    "_package:chromium:archive": "web-ext build --filename {name}-{version}-chromium.zip --artifacts-dir archives/chromium"
+    "_package:chromium:archive": "web-ext build --filename {name}-{version}-chromium.zip --artifacts-dir archives/chromium",
+    "check": "biome check"
   },
   "devDependencies": {
+    "@biomejs/biome": "2.4.4",
     "@jest/globals": "^29.4.3",
     "@types/webextension-polyfill": "^0.10.0",
     "esbuild": "^0.25.8",

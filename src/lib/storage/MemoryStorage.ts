@@ -4,13 +4,13 @@ import type { IStorage } from "./types";
  * Represents in-memory storage. Useful for testing.
  */
 export class MemoryStorage implements IStorage {
-  private readonly storage: Map<string, any> = new Map();
+  private readonly storage: Map<string, unknown> = new Map();
 
   clear = async () => {
     for (const key of this.storage.keys()) {
       await this.delete(key);
     }
-  }
+  };
 
   async get<TValue>(key: string, fallback: TValue): Promise<TValue> {
     return Promise.resolve((this.storage.get(key) as TValue) ?? fallback);
