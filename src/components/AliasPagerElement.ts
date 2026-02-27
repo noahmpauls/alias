@@ -10,14 +10,10 @@ export class AliasPagerElement extends HTMLElement {
       window.AliasPagerElement = AliasPagerElement;
       window.customElements.define(ALIAS_PAGER_NAME, AliasPagerElement);
     }
-  }
-
-  constructor() {
-    super();
-  }
+  };
 
   connectedCallback() {
-    this.addEventListener("click", this.setPage)
+    this.addEventListener("click", this.setPage);
   }
 
   private setPage = () => {
@@ -26,10 +22,11 @@ export class AliasPagerElement extends HTMLElement {
       console.warn("no page name provided");
       return;
     }
-    this.dispatchEvent(new CustomEvent<PageName>("setpage", {
-      detail: pageName,
-      bubbles: true,
-    }));
-  }
-
+    this.dispatchEvent(
+      new CustomEvent<PageName>("setpage", {
+        detail: pageName,
+        bubbles: true,
+      }),
+    );
+  };
 }

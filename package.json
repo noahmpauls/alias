@@ -18,6 +18,7 @@
     ]
   },
   "scripts": {
+    "check": "biome check --write",
     "start:firefox": "npm-run-all -l _build:firefox:manifest --parallel -rl _watch:scripts _watch:types _watch:webext",
     "start:chromium": "npm-run-all -l _build:chromium:manifest --parallel -rl _watch:scripts _watch:types",
     "build:firefox": "run-s -l _build:firefox:manifest _build:types _build:scripts",
@@ -36,6 +37,7 @@
     "_package:chromium:archive": "web-ext build --filename {name}-{version}-chromium.zip --artifacts-dir archives/chromium"
   },
   "devDependencies": {
+    "@biomejs/biome": "2.4.4",
     "@jest/globals": "^29.4.3",
     "@types/webextension-polyfill": "^0.10.0",
     "esbuild": "^0.25.8",

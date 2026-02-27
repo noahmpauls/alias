@@ -6,27 +6,26 @@ import type { IStorage } from "./types";
  * Persistent data manipulation through browser local extension storage.
  */
 export class BrowserStorage implements IStorage {
-  constructor(
-    private readonly bucket: Browser.Storage.StorageArea,
-  ) { }
+  constructor(private readonly bucket: Browser.Storage.StorageArea) {}
 
   /**
    * @returns browser session storage
    */
   static session = (): BrowserStorage => {
     return new BrowserStorage(browser.storage.session);
-  }
+  };
 
   /**
    * @returns browser local storage
    */
   static local = (): BrowserStorage => {
     return new BrowserStorage(browser.storage.local);
-  }
+  };
 
   async get<T>(key: string, fallback: T): Promise<T> {
-    const getArg = ({ [key]: fallback });
-    return await this.bucket.get(getArg)
+    const getArg = { [key]: fallback };
+    return await this.bucket
+      .get(getArg)
       .then((data: Record<string, T>) => data[key]);
   }
 
@@ -38,4 +37,3 @@ export class BrowserStorage implements IStorage {
     await this.bucket.remove(key);
   }
 }
-

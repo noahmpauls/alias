@@ -1,2 +1,2 @@
-export * from "./types";
 export { BrowserTabs } from "./BrowserTabs";
+export * from "./types";

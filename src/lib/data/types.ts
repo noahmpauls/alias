@@ -1,7 +1,7 @@
 /**
  * Represets a data context that exposes data for reading and writing, and
  * allows data modifications to be saved.
- * 
+ *
  * @typeParam T runtime object type
  */
 export interface IContext<T> {

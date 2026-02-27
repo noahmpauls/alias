@@ -12,9 +12,7 @@ export class SyncedCache<T> {
   /**
    * @param initializer the function used to intialize the cache value
    */
-  constructor(
-    private readonly initializer: () => Promise<T>,
-  ) { }
+  constructor(private readonly initializer: () => Promise<T>) {}
 
   /**
    * @returns whether the cache has been initialized
@@ -41,7 +39,7 @@ export class SyncedCache<T> {
     await this.sync.sync(async () => {
       this.cache = undefined;
     });
-  }
+  };
 
   private async initialize(): Promise<void> {
     if (this.cache !== undefined) {

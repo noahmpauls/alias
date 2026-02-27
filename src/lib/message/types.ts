@@ -1,8 +1,13 @@
-import type { Alias, AliasCreate, AliasDelete, AliasUpdate } from "@alias/alias";
+import type {
+  Alias,
+  AliasCreate,
+  AliasDelete,
+  AliasUpdate,
+} from "@alias/alias";
 
 export type IClientMessenger = {
-  send: (message: RequestMessage) => Promise<ResponseMessage>,
-}
+  send: (message: RequestMessage) => Promise<ResponseMessage>;
+};
 
 export enum RequestType {
   ALIASES_GET,
@@ -12,36 +17,34 @@ export enum RequestType {
 }
 
 export type Respondable<R> = R & {
-  respond: (response: ResponseMessage) => void,
-}
+  respond: (response: ResponseMessage) => void;
+};
 
 export type RequestMessage =
   | AliasesGetRequest
   | AliasCreateRequest
   | AliasUpdateRequest
-  | AliasDeleteRequest
-  ;
+  | AliasDeleteRequest;
 
 export type AliasesGetRequest = {
-  type: RequestType.ALIASES_GET,
-  data?: never,
-}
+  type: RequestType.ALIASES_GET;
+  data?: never;
+};
 
 export type AliasCreateRequest = {
-  type: RequestType.ALIAS_CREATE,
-  data: AliasCreate,
-}
+  type: RequestType.ALIAS_CREATE;
+  data: AliasCreate;
+};
 
 export type AliasUpdateRequest = {
-  type: RequestType.ALIAS_UPDATE,
-  data: AliasUpdate,
-}
+  type: RequestType.ALIAS_UPDATE;
+  data: AliasUpdate;
+};
 
 export type AliasDeleteRequest = {
-  type: RequestType.ALIAS_DELETE,
-  data: AliasDelete,
-}
-
+  type: RequestType.ALIAS_DELETE;
+  data: AliasDelete;
+};
 
 export enum ResponseType {
   ERROR,
@@ -56,32 +59,31 @@ export type ResponseMessage =
   | AliasesGetResponse
   | AliasCreateResponse
   | AliasUpdateResponse
-  | AliasDeleteResponse
-  ;
+  | AliasDeleteResponse;
 
 export type ErrorResponse = {
-  type: ResponseType.ERROR,
+  type: ResponseType.ERROR;
   data: {
-    message: string,
-  }
-}
+    message: string;
+  };
+};
 
 export type AliasesGetResponse = {
-  type: ResponseType.ALIASES_GET,
-  data: Alias[],
-}
+  type: ResponseType.ALIASES_GET;
+  data: Alias[];
+};
 
 export type AliasCreateResponse = {
-  type: ResponseType.ALIAS_CREATE,
-  data: Alias,
-}
+  type: ResponseType.ALIAS_CREATE;
+  data: Alias;
+};
 
 export type AliasUpdateResponse = {
-  type: ResponseType.ALIAS_UPDATE,
-  data: Alias,
-}
+  type: ResponseType.ALIAS_UPDATE;
+  data: Alias;
+};
 
 export type AliasDeleteResponse = {
-  type: ResponseType.ALIAS_DELETE,
-  data: Alias,
-}
+  type: ResponseType.ALIAS_DELETE;
+  data: Alias;
+};

@@ -1,2 +1,2 @@
-export * from "./types";
 export { BrowserEvents } from "./BrowserEvents";
+export * from "./types";

@@ -10,6 +10,6 @@ AliasDataImporterElement.register();
 
 const dataImporter = document.querySelector("alias-data-importer");
 
-document.addEventListener("extractaliasdata", event => {
+document.addEventListener("extractaliasdata", (event) => {
   dataImporter?.setData(event.detail.filename, event.detail.aliases);
 });
