@@ -1,6 +1,6 @@
 import type { Alias } from "@alias/alias";
 
-export const EXAMPLE_ALIASES: Alias[] = [
+export const seedData = (): Alias[] => [
   {
     code: "arch",
     link: "https://archlinux.org",
@@ -34,7 +34,7 @@ export const EXAMPLE_ALIASES: Alias[] = [
   {
     code: "mail",
     link: "https://app.fastmail.com",
-    note: "Email"
+    note: "Email",
   },
   {
     code: "mdn",

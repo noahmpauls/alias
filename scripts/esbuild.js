@@ -29,6 +29,9 @@ const files = [
   "popup",
 ].map(scriptEntry);
 
+const args = new Set(process.argv);
+const watch = args.has("--watch") || args.has("-w");
+
 const config = {
   entryPoints: files,
   bundle: true,
@@ -37,10 +40,8 @@ const config = {
   outdir: path.resolve("bin"),
   plugins: [plugin],
   color: true,
+  define: { ESBUILD_DEV: `${watch}` },
 };
-
-const args = new Set(process.argv);
-const watch = args.has("--watch") || args.has("-w");
 
 if (watch) {
   console.log("watching...");

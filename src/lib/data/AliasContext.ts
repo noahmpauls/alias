@@ -3,8 +3,10 @@ import { BrowserStorage, type IStorage } from "@alias/storage";
 import type { IContext, IContextSet } from "./types";
 import { SyncedCache } from "@alias/cache";
 import { ArrayContextSet } from "./ContextSet";
+import { seedData } from "./seedData";
 
-const ALIAS_DATA_KEY = "aliases"
+const ALIAS_DATA_KEY = "aliases";
+const DEFAULT_ALIASES: Alias[] = ESBUILD_DEV ? seedData() : [];
 
 export class AliasContext implements IContext<IContextSet<Alias>> {
   private readonly cache: SyncedCache<Alias[]>;
@@ -13,7 +15,7 @@ export class AliasContext implements IContext<IContextSet<Alias>> {
     private readonly storage: IStorage
   ) {
     this.cache = new SyncedCache(async () => {
-      const aliases = this.storage.get<Alias[]>(ALIAS_DATA_KEY, []);
+      const aliases = this.storage.get<Alias[]>(ALIAS_DATA_KEY, DEFAULT_ALIASES);
       return aliases;
     });
   }
