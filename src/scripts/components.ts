@@ -1,20 +1,5 @@
 import type { Alias } from "@alias/alias";
-import { AliasCreatorElement } from "components/AliasCreatorElement";
-import { AliasDataElement } from "components/AliasDataElement";
-import { AliasDataImporterElement } from "components/AliasDataImporterElement";
-import { AliasFileImporterElement } from "components/AliasFileImporterElement";
-import { AliasListElement } from "components/AliasListElement";
-import { AliasManagerElement } from "components/AliasManagerElement";
-import type { PageName } from "components/AliasPagesElement";
-import { AliasPagesElement } from "components/AliasPagesElement";
-
-AliasCreatorElement.register();
-AliasDataElement.register();
-AliasDataImporterElement.register();
-AliasFileImporterElement.register();
-AliasListElement.register();
-AliasManagerElement.register();
-AliasPagesElement.register();
+import type { PageName } from "components/LitAliasPagesElement";
 
 declare global {
   interface GlobalEventHandlersEventMap {
@@ -26,15 +11,6 @@ declare global {
   }
 }
 
-export {
-  AliasCreatorElement,
-  AliasDataElement,
-  AliasDataImporterElement,
-  AliasFileImporterElement,
-  AliasListElement,
-  AliasManagerElement,
-  AliasPagesElement,
-};
 export { LitAliasCreatorElement } from "components/LitAliasCreatorElement";
 export { LitAliasDataElement } from "components/LitAliasDataElement";
 export { LitAliasDataImporterElement } from "components/LitAliasDataImporterElement";

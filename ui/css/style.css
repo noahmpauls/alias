@@ -188,8 +188,7 @@ svg.icon {
   }
 }
 
-alias-list,
-lit-alias-list {
+alias-list {
   & > ul {
     margin-block-start: 1rem;
     padding: 0;
@@ -271,8 +270,7 @@ lit-alias-list {
   }
 }
 
-alias-creator .input-container > * + *,
-lit-alias-creator .input-container > * + * {
+alias-creator .input-container > * + * {
   margin-block-start: 0.4rem;
 }
 
@@ -289,8 +287,7 @@ lit-alias-creator .input-container > * + * {
   }
 }
 
-alias-manager,
-lit-alias-manager {
+alias-manager {
   display: block;
   border: 1px solid transparent;
   border-radius: 0.4rem;
@@ -373,8 +370,7 @@ lit-alias-manager {
   }
 }
 
-alias-data,
-lit-alias-data {
+alias-data {
   display: block;
   margin-block-end: 3rem;
 

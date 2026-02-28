@@ -1,7 +1,7 @@
 import { customElement, property } from "lit/decorators.js";
 import { BaseElement } from "./BaseElement";
 
-type PageName = string;
+export type PageName = string;
 
 declare global {
   interface HTMLElementTagNameMap {

@@ -1,11 +1,9 @@
-alias-pages,
-lit-alias-pages {
+alias-pages {
   display: block;
   height: 100vh;
 }
 
-alias-file-importer,
-lit-alias-file-importer {
+alias-file-importer {
   display: block;
   block-size: 100%;
   inline-size: 100%;
@@ -36,8 +34,7 @@ lit-alias-file-importer {
   }
 }
 
-alias-data-importer,
-lit-alias-data-importer {
+alias-data-importer {
   display: block;
   padding: 0.5rem;
 
