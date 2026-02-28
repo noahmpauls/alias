@@ -270,7 +270,8 @@ alias-list {
   }
 }
 
-alias-creator .input-container > * + * {
+alias-creator .input-container > * + *,
+lit-alias-creator .input-container > * + * {
   margin-block-start: 0.4rem;
 }
 

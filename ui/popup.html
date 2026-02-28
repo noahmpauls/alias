@@ -73,34 +73,7 @@
         </nav>
       </header>
       <main>
-        <alias-creator>
-          <form id="alias-creator-form" class="input-container">
-            <div>
-              <label for="alias-creator-code">Code:</label>
-              <input name="code" id="alias-creator-code" type="text" style="font-weight: bold; font-family: monospace;">
-              <span id="alias-creator-code-validation" class="offset validation-error"></span>
-            </div>
-            <div>
-              <label for="alias-creator-link">Link:</label>
-              <input name="link" id="alias-creator-link" type="text" value="https://">
-              <span id="alias-creator-link-validation" class="offset validation-error"></span>
-            </div>
-            <div>
-              <label for="alias-creator-note">Note:</label>
-              <input name="notes" id="alias-creator-note" type="text">
-            </div>
-            <div>
-              <button id="alias-creator-submit" class="offset filled positive" type="submit">
-                <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <line x1="12" y1="5" x2="12" y2="19"></line>
-                  <line x1="5" y1="12" x2="19" y2="12"></line>
-                </svg>
-                Create
-              </button>
-              <span id="alias-creator-submit-validation" class="offset validation-error"></span>
-            </div>
-          </form>
-        </alias-creator>
+        <lit-alias-creator></lit-alias-creator>
       </main>
     </div>
 

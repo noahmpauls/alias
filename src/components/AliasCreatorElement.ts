@@ -11,6 +11,15 @@ import type { PageName } from "./AliasPagesElement";
 
 const ALIAS_CREATOR_NAME = "alias-creator";
 
+declare global {
+  interface Window {
+    AliasCreatorElement: typeof AliasCreatorElement;
+  }
+  interface HTMLElementTagNameMap {
+    [ALIAS_CREATOR_NAME]: AliasCreatorElement;
+  }
+}
+
 type ConnectedState = {
   form: HTMLFormElement;
   codeInput: HTMLInputElement;
