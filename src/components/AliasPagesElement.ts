@@ -1,5 +1,14 @@
 const ALIAS_PAGES_NAME = "alias-pages";
 
+declare global {
+  interface Window {
+    AliasPagesElement: typeof AliasPagesElement;
+  }
+  interface HTMLElementTagNameMap {
+    [ALIAS_PAGES_NAME]: AliasPagesElement;
+  }
+}
+
 export type PageName = string;
 
 type ConnectedState = {

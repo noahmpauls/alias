@@ -24,7 +24,6 @@ declare global {
     AliasFileImporterElement: typeof AliasFileImporterElement;
     AliasListElement: typeof AliasListElement;
     AliasManagerElement: typeof AliasManagerElement;
-    AliasPagesElement: typeof AliasPagesElement;
   }
   interface HTMLElementTagNameMap {
     [AliasCreatorElement.ELEMENT_NAME]: AliasCreatorElement;
@@ -33,7 +32,6 @@ declare global {
     [AliasFileImporterElement.ELEMENT_NAME]: AliasFileImporterElement;
     [AliasListElement.ELEMENT_NAME]: AliasListElement;
     [AliasManagerElement.ELEMENT_NAME]: AliasManagerElement;
-    [AliasPagesElement.ELEMENT_NAME]: AliasPagesElement;
   }
   interface GlobalEventHandlersEventMap {
     createalias: CustomEvent<Alias>;
@@ -54,3 +52,4 @@ export {
   AliasPagesElement,
 };
 export { LitAliasPagerElement } from "components/LitAliasPagerElement";
+export { LitAliasPagesElement } from "components/LitAliasPagesElement";
