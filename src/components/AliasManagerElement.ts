@@ -13,13 +13,13 @@ import { editIcon, linkIcon, saveIcon, terminalIcon, trashIcon } from "./icons";
 
 declare global {
   interface HTMLElementTagNameMap {
-    [LitAliasManagerElement.ELEMENT_NAME]: LitAliasManagerElement;
+    [AliasManagerElement.ELEMENT_NAME]: AliasManagerElement;
   }
 }
 
-@customElement("lit-alias-manager")
-export class LitAliasManagerElement extends BaseElement {
-  static readonly ELEMENT_NAME = "lit-alias-manager";
+@customElement("alias-manager")
+export class AliasManagerElement extends BaseElement {
+  static readonly ELEMENT_NAME = "alias-manager";
 
   private messenger: IClientMessenger = BrowserClientMessenger;
 

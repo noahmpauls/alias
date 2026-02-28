@@ -5,13 +5,13 @@ export type PageName = string;
 
 declare global {
   interface HTMLElementTagNameMap {
-    [LitAliasPagesElement.ELEMENT_NAME]: LitAliasPagesElement;
+    [AliasPagesElement.ELEMENT_NAME]: AliasPagesElement;
   }
 }
 
-@customElement("lit-alias-pages")
-export class LitAliasPagesElement extends BaseElement {
-  static readonly ELEMENT_NAME = "lit-alias-pages";
+@customElement("alias-pages")
+export class AliasPagesElement extends BaseElement {
+  static readonly ELEMENT_NAME = "alias-pages";
 
   @property({ type: String, reflect: true })
   target: string = "";
@@ -42,7 +42,7 @@ export class LitAliasPagesElement extends BaseElement {
     }
     const element = document.getElementById(this.target);
     if (element === null) {
-      console.error("lit-alias-pages could not find target!");
+      console.error("alias-pages could not find target!");
     }
     return element ?? this;
   }

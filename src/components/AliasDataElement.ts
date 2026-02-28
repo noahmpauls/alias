@@ -14,13 +14,13 @@ import { exportIcon, importIcon } from "./icons";
 
 declare global {
   interface HTMLElementTagNameMap {
-    [LitAliasDataElement.ELEMENT_NAME]: LitAliasDataElement;
+    [AliasDataElement.ELEMENT_NAME]: AliasDataElement;
   }
 }
 
-@customElement("lit-alias-data")
-export class LitAliasDataElement extends BaseElement {
-  static readonly ELEMENT_NAME = "lit-alias-data";
+@customElement("alias-data")
+export class AliasDataElement extends BaseElement {
+  static readonly ELEMENT_NAME = "alias-data";
 
   private messenger: IClientMessenger = BrowserClientMessenger;
 

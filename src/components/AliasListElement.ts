@@ -11,13 +11,13 @@ import { BaseElement } from "./BaseElement";
 
 declare global {
   interface HTMLElementTagNameMap {
-    [LitAliasListElement.ELEMENT_NAME]: LitAliasListElement;
+    [AliasListElement.ELEMENT_NAME]: AliasListElement;
   }
 }
 
-@customElement("lit-alias-list")
-export class LitAliasListElement extends BaseElement {
-  static readonly ELEMENT_NAME = "lit-alias-list";
+@customElement("alias-list")
+export class AliasListElement extends BaseElement {
+  static readonly ELEMENT_NAME = "alias-list";
 
   private messenger: IClientMessenger = BrowserClientMessenger;
 
@@ -138,13 +138,11 @@ export class LitAliasListElement extends BaseElement {
 
   private renderEmptyAliases() {
     return html`
-      <ul id="aliases">
-        <li>
-          <p style="text-align: center; margin-block: 2rem;">
-            <i>You don't have any aliases yet.</i>
-          </p>
-        </li>
-      </ul>
+      <li>
+        <p style="text-align: center; margin-block: 2rem;">
+          <i>You don't have any aliases yet.</i>
+        </p>
+      </li>
     `;
   }
 
@@ -153,12 +151,12 @@ export class LitAliasListElement extends BaseElement {
       ${aliases.map(
         (alias) => html`
           <li data-id=${alias.id} data-code=${alias.code}>
-            <lit-alias-manager
+            <alias-manager
               alias-id=${alias.id}
               code=${alias.code}
               link=${alias.link}
               note=${alias.note}
-            ></lit-alias-manager>
+            ></alias-manager>
           </li>
         `,
       )}

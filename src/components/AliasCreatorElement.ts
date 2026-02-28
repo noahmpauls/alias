@@ -14,13 +14,13 @@ import { plusIcon } from "./icons";
 
 declare global {
   interface HTMLElementTagNameMap {
-    [LitAliasCreatorElement.ELEMENT_NAME]: LitAliasCreatorElement;
+    [AliasCreatorElement.ELEMENT_NAME]: AliasCreatorElement;
   }
 }
 
-@customElement("lit-alias-creator")
-export class LitAliasCreatorElement extends BaseElement {
-  static readonly ELEMENT_NAME = "lit-alias-creator";
+@customElement("alias-creator")
+export class AliasCreatorElement extends BaseElement {
+  static readonly ELEMENT_NAME = "alias-creator";
 
   private messenger: IClientMessenger = BrowserClientMessenger;
 

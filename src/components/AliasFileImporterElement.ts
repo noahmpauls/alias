@@ -11,13 +11,13 @@ type FileError = {
 
 declare global {
   interface HTMLElementTagNameMap {
-    [LitAliasFileImporterElement.ELEMENT_NAME]: LitAliasFileImporterElement;
+    [AliasFileImporterElement.ELEMENT_NAME]: AliasFileImporterElement;
   }
 }
 
-@customElement("lit-alias-file-importer")
-export class LitAliasFileImporterElement extends BaseElement {
-  static readonly ELEMENT_NAME = "lit-alias-file-importer";
+@customElement("alias-file-importer")
+export class AliasFileImporterElement extends BaseElement {
+  static readonly ELEMENT_NAME = "alias-file-importer";
 
   @state()
   private _error: FileError | null = null;

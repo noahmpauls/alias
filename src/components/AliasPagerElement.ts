@@ -1,16 +1,16 @@
 import { customElement, property } from "lit/decorators.js";
+import type { PageName } from "./AliasPagesElement";
 import { BaseElement } from "./BaseElement";
-import type { PageName } from "./LitAliasPagesElement";
 
 declare global {
   interface HTMLElementTagNameMap {
-    [LitAliasPagerElement.ELEMENT_NAME]: LitAliasPagerElement;
+    [AliasPagerElement.ELEMENT_NAME]: AliasPagerElement;
   }
 }
 
-@customElement("lit-alias-pager")
-export class LitAliasPagerElement extends BaseElement {
-  static readonly ELEMENT_NAME = "lit-alias-pager";
+@customElement("alias-pager")
+export class AliasPagerElement extends BaseElement {
+  static readonly ELEMENT_NAME = "alias-pager";
 
   @property({ type: String, reflect: true })
   page: PageName = "";

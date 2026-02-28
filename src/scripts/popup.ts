@@ -1,17 +1,13 @@
-import type { LitAliasListElement } from "scripts/components";
-
-const aliasList = document.querySelector(
-  "lit-alias-list",
-) as LitAliasListElement;
+const aliasList = document.querySelector("alias-list");
 
 document.addEventListener("createalias", (event) => {
-  aliasList.createAlias(event.detail);
+  aliasList?.createAlias(event.detail);
 });
 
 document.addEventListener("updatealias", (event) => {
-  aliasList.updateAlias(event.detail);
+  aliasList?.updateAlias(event.detail);
 });
 
 document.addEventListener("deletealias", (event) => {
-  aliasList.deleteAlias(event.detail);
+  aliasList?.deleteAlias(event.detail);
 });

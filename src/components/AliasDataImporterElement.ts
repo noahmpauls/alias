@@ -26,13 +26,13 @@ type ImportData = {
 
 declare global {
   interface HTMLElementTagNameMap {
-    [LitAliasDataImporterElement.ELEMENT_NAME]: LitAliasDataImporterElement;
+    [AliasDataImporterElement.ELEMENT_NAME]: AliasDataImporterElement;
   }
 }
 
-@customElement("lit-alias-data-importer")
-export class LitAliasDataImporterElement extends BaseElement {
-  static readonly ELEMENT_NAME = "lit-alias-data-importer";
+@customElement("alias-data-importer")
+export class AliasDataImporterElement extends BaseElement {
+  static readonly ELEMENT_NAME = "alias-data-importer";
 
   private messenger: IClientMessenger = BrowserClientMessenger;
 
@@ -126,7 +126,7 @@ export class LitAliasDataImporterElement extends BaseElement {
     const classes = `less-hover ${excluded ? "negative" : "neutral"}`;
     return html`
       <li data-id=${alias.id} data-code=${alias.code}>
-        <lit-alias-manager
+        <alias-manager
           class=${classes}
           alias-id=${alias.id}
           code=${alias.code}
@@ -134,7 +134,7 @@ export class LitAliasDataImporterElement extends BaseElement {
           note=${alias.note}
           readonly
           readonly-code-validity=${codeValidity ?? ""}
-        ></lit-alias-manager>
+        ></alias-manager>
       </li>
     `;
   };
