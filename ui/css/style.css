@@ -288,7 +288,8 @@ lit-alias-creator .input-container > * + * {
   }
 }
 
-alias-manager {
+alias-manager,
+lit-alias-manager {
   display: block;
   border: 1px solid transparent;
   border-radius: 0.4rem;
@@ -371,7 +372,8 @@ alias-manager {
   }
 }
 
-alias-data {
+alias-data,
+lit-alias-data {
   display: block;
   margin-block-end: 3rem;
 

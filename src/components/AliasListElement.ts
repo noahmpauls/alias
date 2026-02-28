@@ -5,7 +5,7 @@ import {
   ResponseType,
 } from "@alias/message";
 import { BrowserClientMessenger } from "@alias/message/browser";
-import { AliasManagerElement } from "./AliasManagerElement";
+import type { LitAliasManagerElement } from "./LitAliasManagerElement";
 
 const ALIAS_LIST_NAME = "alias-list";
 
@@ -82,13 +82,13 @@ export class AliasListElement extends HTMLElement {
     if (this.state === undefined) return;
     const filterFn = this.createAliasFilter(filter);
     for (const aliasListing of this.state.aliasList.querySelectorAll(
-      "alias-manager",
+      "lit-alias-manager",
     )) {
       const alias: Alias = {
-        id: aliasListing.dataset.id ?? "",
-        code: aliasListing.dataset.code ?? "",
-        link: aliasListing.dataset.link ?? "",
-        note: aliasListing.dataset.note ?? "",
+        id: aliasListing.aliasId,
+        code: aliasListing.code,
+        link: aliasListing.link,
+        note: aliasListing.note,
       };
       const visible = filterFn(alias);
       aliasListing.style.display = visible ? "" : "none";
@@ -199,14 +199,12 @@ export class AliasListElement extends HTMLElement {
     return container;
   };
 
-  private createAliasManager = (alias: Alias): AliasManagerElement => {
-    const template = AliasManagerElement.initializeTemplate(alias);
-    const manager = document.createElement("alias-manager");
-    manager.replaceChildren(template);
-    manager.dataset.id = alias.id;
-    manager.dataset.code = alias.code;
-    manager.dataset.link = alias.link;
-    manager.dataset.note = alias.note;
+  private createAliasManager = (alias: Alias): LitAliasManagerElement => {
+    const manager = document.createElement("lit-alias-manager");
+    manager.aliasId = alias.id;
+    manager.code = alias.code;
+    manager.link = alias.link;
+    manager.note = alias.note;
     return manager;
   };
 
@@ -225,13 +223,13 @@ export class AliasListElement extends HTMLElement {
 
   private getTotalAliases = (): number => {
     if (this.state === undefined) return 0;
-    return this.state.aliasList.querySelectorAll("alias-manager").length;
+    return this.state.aliasList.querySelectorAll("lit-alias-manager").length;
   };
 
   private getVisibleAliases = (): number => {
     if (this.state === undefined) return 0;
-    return [...this.state.aliasList.querySelectorAll("alias-manager")].filter(
-      (a: HTMLElement) => a.style.display !== "none",
-    ).length;
+    return [
+      ...this.state.aliasList.querySelectorAll("lit-alias-manager"),
+    ].filter((a) => a.style.display !== "none").length;
   };
 }

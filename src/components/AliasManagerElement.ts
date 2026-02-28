@@ -9,6 +9,15 @@ import { BrowserClientMessenger } from "@alias/message/browser";
 
 const ALIAS_MANAGER_NAME = "alias-manager";
 
+declare global {
+  interface Window {
+    AliasManagerElement: typeof AliasManagerElement;
+  }
+  interface HTMLElementTagNameMap {
+    [ALIAS_MANAGER_NAME]: AliasManagerElement;
+  }
+}
+
 type ConnectedState = {
   alias: Alias;
   form: HTMLFormElement;

@@ -8,7 +8,6 @@ import {
 import { BrowserClientMessenger } from "@alias/message/browser";
 import { html } from "lit";
 import { customElement, state } from "lit/decorators.js";
-import { AliasManagerElement } from "./AliasManagerElement";
 import { BaseElement } from "./BaseElement";
 import { importIcon } from "./icons";
 
@@ -122,37 +121,22 @@ export class LitAliasDataImporterElement extends BaseElement {
   // Included/Excluded Lists
   //////////////////////////////////////////////////////////
 
-  private createAliasListing = (validity: AliasValidity): HTMLElement => {
-    const manager = this.createReadonlyAliasManager(validity);
-    const container = document.createElement("li");
-    container.dataset.id = validity.alias.id;
-    container.dataset.code = validity.alias.code;
-    container.appendChild(manager);
-    return container;
-  };
-
-  private createReadonlyAliasManager = (
-    validity: AliasValidity,
-  ): AliasManagerElement => {
+  private renderAliasListing = (validity: AliasValidity) => {
     const { alias, excluded, codeValidity } = validity;
-    const template = AliasManagerElement.initializeTemplate(alias);
-    const manager = document.createElement("alias-manager");
-    manager.setAttribute("readonly", "true");
-    manager.classList.add("less-hover");
-    if (excluded) {
-      manager.classList.add("negative");
-      if (codeValidity) {
-        manager.setAttribute("readonly-code-validity", codeValidity);
-      }
-    } else {
-      manager.classList.add("neutral");
-    }
-    manager.replaceChildren(template);
-    manager.dataset.id = alias.id;
-    manager.dataset.code = alias.code;
-    manager.dataset.link = alias.link;
-    manager.dataset.note = alias.note;
-    return manager;
+    const classes = `less-hover ${excluded ? "negative" : "neutral"}`;
+    return html`
+      <li data-id=${alias.id} data-code=${alias.code}>
+        <lit-alias-manager
+          class=${classes}
+          alias-id=${alias.id}
+          code=${alias.code}
+          link=${alias.link}
+          note=${alias.note}
+          readonly
+          readonly-code-validity=${codeValidity ?? ""}
+        ></lit-alias-manager>
+      </li>
+    `;
   };
 
   //////////////////////////////////////////////////////////
@@ -196,7 +180,7 @@ export class LitAliasDataImporterElement extends BaseElement {
     return html`
       <details id="import-excluded" class="negative">
         <summary>Excluded (${excluded.length})</summary>
-        <ul>${excluded.map((v) => this.createAliasListing(v))}</ul>
+        <ul>${excluded.map((v) => this.renderAliasListing(v))}</ul>
       </details>
     `;
   }
@@ -206,7 +190,7 @@ export class LitAliasDataImporterElement extends BaseElement {
     return html`
       <details id="import-included" class="neutral" open>
         <summary>Included (${included.length})</summary>
-        <ul>${included.map((v) => this.createAliasListing(v))}</ul>
+        <ul>${included.map((v) => this.renderAliasListing(v))}</ul>
       </details>
     `;
   }
