@@ -188,7 +188,8 @@ svg.icon {
   }
 }
 
-alias-list {
+alias-list,
+lit-alias-list {
   & > ul {
     margin-block-start: 1rem;
     padding: 0;

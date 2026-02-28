@@ -1,6 +1,8 @@
-import type { AliasListElement } from "scripts/components";
+import type { LitAliasListElement } from "scripts/components";
 
-const aliasList = document.querySelector("alias-list") as AliasListElement;
+const aliasList = document.querySelector(
+  "lit-alias-list",
+) as LitAliasListElement;
 
 document.addEventListener("createalias", (event) => {
   aliasList.createAlias(event.detail);
