@@ -1,58 +1,40 @@
 import type { Alias } from "@alias/alias";
-import type { PageName } from "./AliasPagesElement";
+import { html } from "lit";
+import { customElement, query, state } from "lit/decorators.js";
+import { BaseElement } from "./BaseElement";
+import { fileIcon } from "./icons";
 
-const ALIAS_FILE_IMPORTER_NAME = "alias-file-importer";
+type FileError = {
+  main: string;
+  detail: string;
+};
 
 declare global {
-  interface Window {
-    AliasFileImporterElement: typeof AliasFileImporterElement;
-  }
   interface HTMLElementTagNameMap {
-    [ALIAS_FILE_IMPORTER_NAME]: AliasFileImporterElement;
+    [LitAliasFileImporterElement.ELEMENT_NAME]: LitAliasFileImporterElement;
   }
 }
 
-type ConnectedState = {
-  fileInput: HTMLInputElement;
-  errorBox: HTMLDivElement;
-};
+@customElement("lit-alias-file-importer")
+export class LitAliasFileImporterElement extends BaseElement {
+  static readonly ELEMENT_NAME = "lit-alias-file-importer";
 
-export class AliasFileImporterElement extends HTMLElement {
-  static readonly ELEMENT_NAME = ALIAS_FILE_IMPORTER_NAME;
+  @state()
+  private _error: FileError | null = null;
 
-  static register = () => {
-    if (!window.customElements.get(ALIAS_FILE_IMPORTER_NAME)) {
-      window.AliasFileImporterElement = AliasFileImporterElement;
-      window.customElements.define(
-        ALIAS_FILE_IMPORTER_NAME,
-        AliasFileImporterElement,
-      );
-    }
-  };
+  @query("#file-input")
+  private fileInput: HTMLInputElement | undefined;
 
-  private state: ConnectedState | undefined = undefined;
-
-  connectedCallback() {
-    const fileInput = this.querySelector<HTMLInputElement>("#file-input");
-    const errorBox = this.querySelector<HTMLDivElement>("#file-error");
-
-    if (!fileInput || !errorBox) {
-      return;
-    }
-
-    this.state = { fileInput, errorBox };
-
-    this.setupFileInput();
+  override connectedCallback() {
+    super.connectedCallback();
   }
 
-  private setupFileInput = () => {
-    if (this.state === undefined) return;
-    this.state.fileInput.addEventListener("change", this.handleFileSelect);
-  };
+  //////////////////////////////////////////////////////////
+  // File Parsing
+  //////////////////////////////////////////////////////////
 
   private handleFileSelect = () => {
-    if (this.state === undefined) return;
-    const files = this.state.fileInput.files ?? [];
+    const files = this.fileInput?.files ?? [];
     if (files.length === 0) {
       return;
     }
@@ -68,10 +50,6 @@ export class AliasFileImporterElement extends HTMLElement {
     });
     reader.readAsText(file);
   };
-
-  //////////////////////////////////////////////////////////
-  // File Parsing
-  //////////////////////////////////////////////////////////
 
   private parseFileContent = (
     filename: string,
@@ -153,41 +131,12 @@ export class AliasFileImporterElement extends HTMLElement {
   // Error Box
   //////////////////////////////////////////////////////////
 
-  private showErrorBox = (main: string, detail?: string) => {
-    if (this.state === undefined) return;
-    this.setErrorBoxMain(main);
-    this.setErrorBoxDetail(detail);
-    this.state.errorBox.style.display = "";
-  };
-
-  private setErrorBoxMain = (message: string) => {
-    if (this.state === undefined) return;
-    const main =
-      this.state.errorBox.querySelector<HTMLParagraphElement>(
-        "#file-error-main",
-      );
-    if (!main) {
-      return;
-    }
-    main.innerText = message;
-  };
-
-  private setErrorBoxDetail = (message: string = "") => {
-    if (this.state === undefined) return;
-    const detail =
-      this.state.errorBox.querySelector<HTMLParagraphElement>(
-        "#file-error-detail",
-      );
-    if (!detail) {
-      return;
-    }
-    detail.innerText = message;
-    detail.style.display = message === "" ? "none" : "";
+  private showErrorBox = (main: string, detail: string) => {
+    this._error = { main, detail };
   };
 
   private hideErrorBox = () => {
-    if (this.state === undefined) return;
-    this.state.errorBox.style.display = "none";
+    this._error = null;
   };
 
   //////////////////////////////////////////////////////////
@@ -203,7 +152,7 @@ export class AliasFileImporterElement extends HTMLElement {
     );
   };
 
-  private dispatchSetPage = (page: PageName) => {
+  private dispatchSetPage = (page: string) => {
     this.dispatchEvent(
       new CustomEvent("setpage", {
         detail: page,
@@ -211,4 +160,31 @@ export class AliasFileImporterElement extends HTMLElement {
       }),
     );
   };
+
+  private renderError() {
+    if (this._error === null) return "";
+    return html`
+      <div id="file-error" class="flex-stack center" style="--g: 0.5rem;">
+        <p id="file-error-main">${this._error.main}</p>
+        <p id="file-error-detail">${this._error.detail}</p>
+      </div>
+    `;
+  }
+
+  override render() {
+    return html`
+      <div class="center-col flex-stack" style="--g: 2rem;">
+        <div class="flex-stack center" style="--g: 0.5rem;">
+          <label id="file-button" class="button neutral filled" for="file-input">
+            ${fileIcon}
+            Select File
+          </label>
+          <input id="file-input" type="file" style="display: none;" @change=${this.handleFileSelect}>
+          <!-- TODO: enable drag and drop -->
+          <!--<p style="text-align: center;">Or drag and drop a file anywhere.</p>-->
+        </div>
+        ${this.renderError()}
+      </div>
+    `;
+  }
 }
