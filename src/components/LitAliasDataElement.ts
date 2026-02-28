@@ -7,63 +7,25 @@ import {
   ResponseType,
 } from "@alias/message";
 import { BrowserClientMessenger } from "@alias/message/browser";
-
-const ALIAS_DATA_NAME = "alias-data";
+import { html } from "lit";
+import { customElement } from "lit/decorators.js";
+import { BaseElement } from "./BaseElement";
 
 declare global {
-  interface Window {
-    AliasDataElement: typeof AliasDataElement;
-  }
   interface HTMLElementTagNameMap {
-    [ALIAS_DATA_NAME]: AliasDataElement;
+    [LitAliasDataElement.ELEMENT_NAME]: LitAliasDataElement;
   }
 }
 
-type ConnectedState = {
-  exportButton: HTMLButtonElement;
-  importButton: HTMLButtonElement;
-};
+@customElement("lit-alias-data")
+export class LitAliasDataElement extends BaseElement {
+  static readonly ELEMENT_NAME = "lit-alias-data";
 
-export class AliasDataElement extends HTMLElement {
-  static readonly ELEMENT_NAME = ALIAS_DATA_NAME;
-
-  static register = () => {
-    if (!window.customElements.get(ALIAS_DATA_NAME)) {
-      window.AliasDataElement = AliasDataElement;
-      window.customElements.define(ALIAS_DATA_NAME, AliasDataElement);
-    }
-  };
-
-  private messenger: IClientMessenger;
-  private state: ConnectedState | undefined = undefined;
-
-  constructor() {
-    super();
-    this.messenger = BrowserClientMessenger;
-  }
-
-  connectedCallback() {
-    const exportButton = this.querySelector<HTMLButtonElement>("#export");
-    const importButton = this.querySelector<HTMLButtonElement>("#import");
-
-    if (!exportButton || !importButton) {
-      return;
-    }
-
-    this.state = { exportButton, importButton };
-
-    this.setupExportButton();
-    this.setupImportButton();
-  }
+  private messenger: IClientMessenger = BrowserClientMessenger;
 
   //////////////////////////////////////////////////////////
   // Export Button
   //////////////////////////////////////////////////////////
-
-  private setupExportButton = () => {
-    if (this.state === undefined) return;
-    this.state.exportButton.addEventListener("click", this.exportAliasData);
-  };
 
   private exportAliasData = async () => {
     const aliases = await this.getAliases();
@@ -87,7 +49,7 @@ export class AliasDataElement extends HTMLElement {
       );
       return [];
     }
-    const externalAliases = response.data.map((a) => {
+    return response.data.map((a) => {
       const result: AliasExternal = {
         code: a.code,
         link: a.link,
@@ -97,7 +59,6 @@ export class AliasDataElement extends HTMLElement {
       }
       return result;
     });
-    return externalAliases;
   };
 
   private toDataString = (aliases: AliasExternal[]): string => {
@@ -109,11 +70,6 @@ export class AliasDataElement extends HTMLElement {
   // Import Button
   //////////////////////////////////////////////////////////
 
-  private setupImportButton = () => {
-    if (this.state === undefined) return;
-    this.state.importButton.addEventListener("click", this.openImportWindow);
-  };
-
   private openImportWindow = () => {
     browser.windows.create({
       url: "/ui/import.html",
@@ -122,4 +78,27 @@ export class AliasDataElement extends HTMLElement {
       height: 540,
     });
   };
+
+  override render() {
+    return html`
+      <div class="h-stack center">
+        <button id="export" class="filled neutral" @click=${this.exportAliasData}>
+          <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="17 8 12 3 7 8"></polyline>
+            <line x1="12" y1="3" x2="12" y2="15"></line>
+          </svg>
+          Export Aliases
+        </button>
+        <button id="import" class="filled neutral" @click=${this.openImportWindow}>
+          <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          Import Aliases
+        </button>
+      </div>
+    `;
+  }
 }

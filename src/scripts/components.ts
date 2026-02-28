@@ -19,7 +19,6 @@ AliasPagesElement.register();
 declare global {
   interface Window {
     AliasCreatorElement: typeof AliasCreatorElement;
-    AliasDataElement: typeof AliasDataElement;
     AliasDataImporterElement: typeof AliasDataImporterElement;
     AliasFileImporterElement: typeof AliasFileImporterElement;
     AliasListElement: typeof AliasListElement;
@@ -27,7 +26,6 @@ declare global {
   }
   interface HTMLElementTagNameMap {
     [AliasCreatorElement.ELEMENT_NAME]: AliasCreatorElement;
-    [AliasDataElement.ELEMENT_NAME]: AliasDataElement;
     [AliasDataImporterElement.ELEMENT_NAME]: AliasDataImporterElement;
     [AliasFileImporterElement.ELEMENT_NAME]: AliasFileImporterElement;
     [AliasListElement.ELEMENT_NAME]: AliasListElement;
@@ -51,5 +49,6 @@ export {
   AliasManagerElement,
   AliasPagesElement,
 };
+export { LitAliasDataElement } from "components/LitAliasDataElement";
 export { LitAliasPagerElement } from "components/LitAliasPagerElement";
 export { LitAliasPagesElement } from "components/LitAliasPagesElement";
