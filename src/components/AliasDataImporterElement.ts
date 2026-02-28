@@ -11,6 +11,15 @@ import type { PageName } from "./AliasPagesElement";
 
 const ALIAS_DATA_IMPORTER_NAME = "alias-data-importer";
 
+declare global {
+  interface Window {
+    AliasDataImporterElement: typeof AliasDataImporterElement;
+  }
+  interface HTMLElementTagNameMap {
+    [ALIAS_DATA_IMPORTER_NAME]: AliasDataImporterElement;
+  }
+}
+
 type AliasValidity = {
   alias: Alias;
   excluded: boolean;

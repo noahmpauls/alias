@@ -36,7 +36,8 @@ lit-alias-file-importer {
   }
 }
 
-alias-data-importer {
+alias-data-importer,
+lit-alias-data-importer {
   display: block;
   padding: 0.5rem;
 
