@@ -5,7 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="/ui/css/style.css">
   <link rel="stylesheet" href="/ui/css/popup.css">
-  <script src="/bin/popup.js" defer></script>
+  <script type="module" src="/bin/components.js"></script>
+  <script type="module" src="/bin/popup.js"></script>
 </head>
 <body>
   <alias-pages>
@@ -13,7 +14,7 @@
     <div data-page="manage">
       <header>
         <nav class="h-stack split">
-          <alias-pager page="create">
+          <lit-alias-pager page="create">
             <button class="filled positive" title="Create Alias" aria-label="Create Alias" style="padding-inline-start: 0.3rem;">
               <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -21,10 +22,10 @@
               </svg>
               Create
             </button>
-          </alias-pager>
+          </lit-alias-pager>
           <div class="h-stack">
             <!-- Eventually this should link to a website to learn more about the extension. -->
-            <!-- <alias-pager page="help">
+            <!-- <lit-alias-pager page="help">
               <button class="icon subtle muted" title="Help" aria-label="Help">
                 <svg class="icon large" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <circle cx="12" cy="12" r="10"></circle>
@@ -32,15 +33,15 @@
                   <line x1="12" y1="17" x2="12.01" y2="17"></line>
                 </svg>
               </button>
-            </alias-pager> -->
-            <alias-pager page="tools">
+            </lit-alias-pager> -->
+            <lit-alias-pager page="tools">
             <button class="icon subtle muted" title="Tools" aria-label="Tools">
               <svg class="icon large" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z">
                 </path>
               </svg>
             </button>
-            </alias-pager>
+            </lit-alias-pager>
           </div>
         </nav>
       </header>
@@ -61,14 +62,14 @@
     <div data-page="create">
       <header>
         <nav class="h-stack split">
-          <alias-pager page="manage">
+          <lit-alias-pager page="manage">
             <button class="icon subtle muted" title="Back" aria-label="Back">
               <svg class="icon large" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="19" y1="12" x2="5" y2="12"></line>
                 <polyline points="12 19 5 12 12 5"></polyline>
               </svg>
             </button>
-          </alias-pager>
+          </lit-alias-pager>
         </nav>
       </header>
       <main>
@@ -106,14 +107,14 @@
     <div data-page="tools">
       <header>
         <nav class="h-stack split">
-          <alias-pager page="manage">
+          <lit-alias-pager page="manage">
             <button class="icon subtle muted" title="Back" aria-label="Back">
               <svg class="icon large" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="19" y1="12" x2="5" y2="12"></line>
                 <polyline points="12 19 5 12 12 5"></polyline>
               </svg>
             </button>
-          </alias-pager>
+          </lit-alias-pager>
         </nav>
       </header>
       <main>

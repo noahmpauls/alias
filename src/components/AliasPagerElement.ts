@@ -2,6 +2,15 @@ import type { PageName } from "./AliasPagesElement";
 
 const ALIAS_PAGER_NAME = "alias-pager";
 
+declare global {
+  interface Window {
+    AliasPagerElement: typeof AliasPagerElement;
+  }
+  interface HTMLElementTagNameMap {
+    [AliasPagerElement.ELEMENT_NAME]: AliasPagerElement;
+  }
+}
+
 export class AliasPagerElement extends HTMLElement {
   static readonly ELEMENT_NAME = ALIAS_PAGER_NAME;
 

@@ -4,19 +4,24 @@
     "preserveWatchOutput": true,
     "pretty": true,
 
-    "target": "es2015",
-    "lib": ["es2015", "DOM"],
-
-    "module": "es2015",
-    "moduleResolution": "node",
-
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "verbatimModuleSyntax": true,
-
     "strict": true,
     "skipLibCheck": true,
+
+    "target": "ESNext",
+    "lib": ["ESNext", "DOM"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+
+    // recommended for esbuild
+    "esModuleInterop": true,
+    "isolatedModules": true,
+
+    // required for lit element
+    "verbatimModuleSyntax": true,
+    "experimentalDecorators": true,
+
+    // required for existing browsers
+    "useDefineForClassFields": false,
 
     "baseUrl": "src",
     "paths": {

@@ -25,7 +25,7 @@ const scriptEntry = (file) => ({
   out: file,
 });
 
-const files = ["background", "import", "popup"].map(scriptEntry);
+const files = ["background", "components", "import", "popup"].map(scriptEntry);
 
 const args = new Set(process.argv);
 const watch = args.has("--watch") || args.has("-w");
@@ -34,6 +34,7 @@ const config = {
   entryPoints: files,
   bundle: true,
   format: "esm",
+  target: "esnext",
   ignoreAnnotations: true,
   outdir: path.resolve("bin"),
   plugins: [plugin],
