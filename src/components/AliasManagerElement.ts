@@ -211,6 +211,14 @@ export class AliasManagerElement extends BaseElement {
   };
 
   //////////////////////////////////////////////////////////
+  // Note Input Validation
+  //////////////////////////////////////////////////////////
+
+  private noteOnChange = () => {
+    this.updateChanged();
+  };
+
+  //////////////////////////////////////////////////////////
   // Submission Handling
   //////////////////////////////////////////////////////////
 
@@ -283,6 +291,12 @@ export class AliasManagerElement extends BaseElement {
     const linkUpdated = this.linkInput.value !== this.link;
     const noteUpdated = this.noteInput.value !== this.note;
     this._changed = codeUpdated || linkUpdated || noteUpdated;
+    // FIXME: this doesn't seem very idiomatic in Lit...
+    if (this._changed) {
+      this.classList.add("changed");
+    } else {
+      this.classList.remove("changed");
+    }
   };
 
   //////////////////////////////////////////////////////////
@@ -299,9 +313,9 @@ export class AliasManagerElement extends BaseElement {
   }
 
   private renderSubmitButton() {
-    if (this.readonly) return "";
+    if (this.readonly || !this._changed) return "";
     return html`
-      <button id="submit-button" type="submit" class="offset icon filled neutral" style="display: ${this._changed ? "" : "none"};">
+      <button id="submit-button" type="submit" class="offset icon filled neutral">
         ${saveIcon}
         Save
       </button>
@@ -341,7 +355,7 @@ export class AliasManagerElement extends BaseElement {
             ${editIcon}
           </label>
           <input class="subtle" id="note-input" aria-label="Note" type="text"
-            .value=${this.note} ?disabled=${this.readonly}>
+            @input=${this.noteOnChange} .value=${this.note} ?disabled=${this.readonly}>
         </div>
         <div>
           ${this.renderSubmitButton()}
