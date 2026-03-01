@@ -7,7 +7,7 @@ import {
 } from "@alias/message";
 import { BrowserClientMessenger } from "@alias/message/browser";
 import { html } from "lit";
-import { customElement, property, query, state } from "lit/decorators.js";
+import { customElement, property, state } from "lit/decorators.js";
 import { BaseElement } from "./BaseElement";
 import { editIcon, linkIcon, saveIcon, terminalIcon, trashIcon } from "./icons";
 
@@ -41,14 +41,26 @@ export class AliasManagerElement extends BaseElement {
   @property({ type: String, attribute: "readonly-code-validity" })
   readonlyCodeValidity: string = "";
 
-  @query("#code-input")
-  private codeInput: HTMLInputElement | undefined;
+  private get codeInput(): HTMLInputElement | undefined {
+    return (
+      this.querySelector<HTMLInputElement>(`#code-input-${this.aliasId}`) ??
+      undefined
+    );
+  }
 
-  @query("#link-input")
-  private linkInput: HTMLInputElement | undefined;
+  private get linkInput(): HTMLInputElement | undefined {
+    return (
+      this.querySelector<HTMLInputElement>(`#link-input-${this.aliasId}`) ??
+      undefined
+    );
+  }
 
-  @query("#note-input")
-  private noteInput: HTMLInputElement | undefined;
+  private get noteInput(): HTMLInputElement | undefined {
+    return (
+      this.querySelector<HTMLInputElement>(`#note-input-${this.aliasId}`) ??
+      undefined
+    );
+  }
 
   @state()
   private _codeValidation: string = "";
@@ -306,7 +318,7 @@ export class AliasManagerElement extends BaseElement {
   private renderDeleteButton() {
     if (this.readonly) return "";
     return html`
-      <button id="delete-button" class="icon subtle negative" type="button" @click=${this.handleDelete}>
+      <button id="delete-button-${this.aliasId}" class="icon subtle negative" type="button" @click=${this.handleDelete}>
         ${trashIcon}
       </button>
     `;
@@ -315,46 +327,47 @@ export class AliasManagerElement extends BaseElement {
   private renderSubmitButton() {
     if (this.readonly || !this._changed) return "";
     return html`
-      <button id="submit-button" type="submit" class="offset icon filled neutral">
+      <button id="submit-button-${this.aliasId}" type="submit" class="offset icon filled neutral">
         ${saveIcon}
         Save
       </button>
-      <span id="submit-validation" class="offset validation-error">${this._submitValidation}</span>
+      <span id="submit-validation-${this.aliasId}" class="offset validation-error">${this._submitValidation}</span>
     `;
   }
 
   override render() {
+    const id = this.aliasId;
     return html`
-      <form id="alias-manager-form" class="input-container" @submit=${this.handleSubmit}>
+      <form id="alias-manager-${id}" class="input-container" @submit=${this.handleSubmit}>
         <div>
-          <label for="code-input" title="Code">
+          <label for="code-input-${id}" title="Code">
             ${terminalIcon}
             ${" "}
           </label>
           <div class="grow-first">
             <h2>
-              <input class="subtle" id="code-input" aria-label="Alias" type="text"
+              <input class="subtle" id="code-input-${id}" aria-label="Alias" type="text"
                 .value=${this.code} ?disabled=${this.readonly}
                 @input=${this.codeOnChange} @blur=${this.codeOnBlur}>
             </h2>
             ${this.renderDeleteButton()}
           </div>
-          <span id="code-validation" class="offset validation-error">${this._codeValidation}</span>
+          <span id="code-validation-${id}" class="offset validation-error">${this._codeValidation}</span>
         </div>
         <div>
-          <label for="link-input" title="Link" class="subdued">
+          <label for="link-input-${id}" title="Link" class="subdued">
             ${linkIcon}
           </label>
-          <input class="subtle" id="link-input" aria-label="Link" type="text"
+          <input class="subtle" id="link-input-${id}" aria-label="Link" type="text"
             .value=${this.link} ?disabled=${this.readonly}
             @input=${this.linkOnChange} @blur=${this.linkOnBlur}>
-          <span id="link-validation" class="offset validation-error">${this._linkValidation}</span>
+          <span id="link-validation-${id}" class="offset validation-error">${this._linkValidation}</span>
         </div>
         <div>
-          <label for="note-input" title="Note" class="subdued">
+          <label for="note-input-${id}" title="Note" class="subdued">
             ${editIcon}
           </label>
-          <input class="subtle" id="note-input" aria-label="Note" type="text"
+          <input class="subtle" id="note-input-${id}" aria-label="Note" type="text"
             @input=${this.noteOnChange} .value=${this.note} ?disabled=${this.readonly}>
         </div>
         <div>
