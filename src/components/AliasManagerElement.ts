@@ -291,24 +291,27 @@ export class AliasManagerElement extends BaseElement {
   };
 
   private updateChanged = () => {
-    if (
-      this.codeInput === undefined ||
-      this.linkInput === undefined ||
-      this.noteInput === undefined
-    ) {
-      this._changed = false;
-      return;
-    }
-    const codeUpdated = this.codeInput.value !== this.code;
-    const linkUpdated = this.linkInput.value !== this.link;
-    const noteUpdated = this.noteInput.value !== this.note;
-    this._changed = codeUpdated || linkUpdated || noteUpdated;
+    this._changed = this.isChanged();
     // FIXME: this doesn't seem very idiomatic in Lit...
     if (this._changed) {
       this.classList.add("changed");
     } else {
       this.classList.remove("changed");
     }
+  };
+
+  private isChanged = (): boolean => {
+    if (
+      this.codeInput === undefined ||
+      this.linkInput === undefined ||
+      this.noteInput === undefined
+    ) {
+      return false;
+    }
+    const codeUpdated = this.codeInput.value !== this.code;
+    const linkUpdated = this.linkInput.value !== this.link;
+    const noteUpdated = this.noteInput.value !== this.note;
+    return codeUpdated || linkUpdated || noteUpdated;
   };
 
   //////////////////////////////////////////////////////////
