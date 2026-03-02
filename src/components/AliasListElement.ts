@@ -7,6 +7,7 @@ import {
 import { BrowserClientMessenger } from "@alias/message/browser";
 import { html } from "lit";
 import { customElement, query, state } from "lit/decorators.js";
+import { repeat } from "lit/directives/repeat.js";
 import { BaseElement } from "./BaseElement";
 
 declare global {
@@ -148,7 +149,9 @@ export class AliasListElement extends BaseElement {
 
   private renderAliasListEntries(aliases: Alias[]) {
     return html`
-      ${aliases.map(
+      ${repeat(
+        aliases,
+        (alias) => alias.id,
         (alias) => html`
           <li data-id=${alias.id} data-code=${alias.code}>
             <alias-manager
