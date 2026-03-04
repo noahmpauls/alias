@@ -88,6 +88,10 @@ export class AliasManagerElement extends BaseElement {
     this.linkOnChange();
   }
 
+  override willUpdate() {
+    this.updateChanged();
+  }
+
   //////////////////////////////////////////////////////////
   // Delete Button
   //////////////////////////////////////////////////////////
@@ -292,12 +296,6 @@ export class AliasManagerElement extends BaseElement {
 
   private updateChanged = () => {
     this._changed = this.isChanged();
-    // FIXME: this doesn't seem very idiomatic in Lit...
-    if (this._changed) {
-      this.classList.add("changed");
-    } else {
-      this.classList.remove("changed");
-    }
   };
 
   private isChanged = (): boolean => {
@@ -341,7 +339,7 @@ export class AliasManagerElement extends BaseElement {
   override render() {
     const id = this.aliasId;
     return html`
-      <form id="alias-manager-${id}" class="input-container" @submit=${this.handleSubmit}>
+      <form id="alias-manager-${id}" class="input-container ${this._changed ? "changed" : ""}" @submit=${this.handleSubmit}>
         <div>
           <label for="code-input-${id}" title="Code">
             ${terminalIcon}

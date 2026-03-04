@@ -287,13 +287,12 @@ alias-creator .input-container > * + * {
   }
 }
 
-alias-manager {
+alias-manager > form {
   display: block;
   border: 1px solid transparent;
   border-radius: 0.4rem;
   padding-block: 0.2rem;
-  padding-inline-start: 0;
-  padding-inline-end: 0.4rem;
+  padding-inline: 0.4rem;
 
   > * + * {
     margin-block-start: 0.3rem;
